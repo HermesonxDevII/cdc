@@ -15,7 +15,7 @@ export default function Index() {
 
         <ThemedView style={styles.box}>
           <TemplateCard
-            imageSource={require('../../../assets/images/templates/pokemon/basic/normal_type.png')}
+            imageSource={require('../../../assets/images/templates/pokemon/basic/normal.png')}
             href='/pokemon/pokemon_card'
           />
 
