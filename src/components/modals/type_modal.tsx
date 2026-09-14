@@ -1,16 +1,17 @@
-import React from 'react';
 import { Modal, StyleSheet, TouchableOpacity, View, Text, Image } from 'react-native';
 
+const BASE_URL = '../../../assets/images/icons/pokemon_types';
+
 const POKEMON_TYPES = [
-  { id: 'dark', source: require('../../../assets/images/icons/pokemon_types/dark.png') },
-  { id: 'eletric', source: require('../../../assets/images/icons/pokemon_types/eletric.png') },
-  { id: 'fighter', source: require('../../../assets/images/icons/pokemon_types/fighter.png') },
-  { id: 'fire', source: require('../../../assets/images/icons/pokemon_types/fire.png') },
-  { id: 'grass', source: require('../../../assets/images/icons/pokemon_types/grass.png') },
-  { id: 'metal', source: require('../../../assets/images/icons/pokemon_types/metal.png') },
-  { id: 'normal', source: require('../../../assets/images/icons/pokemon_types/normal.png') },
-  { id: 'psychic', source: require('../../../assets/images/icons/pokemon_types/psychic.png') },
-  { id: 'water', source: require('../../../assets/images/icons/pokemon_types/water.png') },
+  { id: 'dark', source: require(`${BASE_URL}/dark.png`) },
+  { id: 'eletric', source: require(`${BASE_URL}/eletric.png`) },
+  { id: 'fighter', source: require(`${BASE_URL}/fighter.png`) },
+  { id: 'fire', source: require(`${BASE_URL}/fire.png`) },
+  { id: 'grass', source: require(`${BASE_URL}/grass.png`) },
+  { id: 'metal', source: require(`${BASE_URL}/metal.png`) },
+  { id: 'normal', source: require(`${BASE_URL}/normal.png`) },
+  { id: 'psychic', source: require(`${BASE_URL}/psychic.png`) },
+  { id: 'water', source: require(`${BASE_URL}/water.png`) },
 ];
 
 interface TypeModalProps {

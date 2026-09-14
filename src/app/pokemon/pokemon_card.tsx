@@ -9,16 +9,18 @@ import { Back } from '@/components/back';
 import { TypeModal } from '@/components/modals/type_modal';
 
 // Mapeamento de todas as texturas de cartas baseadas no tipo
+const BASE_URL = '../../../assets/images/templates/pokemon/basic';
+
 const TEMPLATES: Record<string, any> = {
-  dark: require('../../../assets/images/templates/pokemon/basic/dark.png'),
-  eletric: require('../../../assets/images/templates/pokemon/basic/eletric.png'),
-  fighter: require('../../../assets/images/templates/pokemon/basic/fighter.png'),
-  fire: require('../../../assets/images/templates/pokemon/basic/fire.png'),
-  grass: require('../../../assets/images/templates/pokemon/basic/grass.png'),
-  metal: require('../../../assets/images/templates/pokemon/basic/metal.png'),
-  normal: require('../../../assets/images/templates/pokemon/basic/normal.png'),
-  psychic: require('../../../assets/images/templates/pokemon/basic/psychic.png'),
-  water: require('../../../assets/images/templates/pokemon/basic/water.png'),
+  dark: require(`${BASE_URL}/dark.png`),
+  eletric: require(`${BASE_URL}/eletric.png`),
+  fighter: require(`${BASE_URL}/fighter.png`),
+  fire: require(`${BASE_URL}/fire.png`),
+  grass: require(`${BASE_URL}/grass.png`),
+  metal: require(`${BASE_URL}/metal.png`),
+  normal: require(`${BASE_URL}/normal.png`),
+  psychic: require(`${BASE_URL}/psychic.png`),
+  water: require(`${BASE_URL}/water.png`),
 };
 
 // 1. Definimos o tamanho REAL e gigante da carta para exportação

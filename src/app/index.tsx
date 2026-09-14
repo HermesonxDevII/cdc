@@ -7,6 +7,9 @@ import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { NavigationCard } from '@/components/navigation-card';
 
 export default function HomeScreen() {
+
+  const BASE_URL = '../../assets/images/logos';
+
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
@@ -15,18 +18,18 @@ export default function HomeScreen() {
         <ThemedView style={styles.box}>
           <NavigationCard
             href="/pokemon"
-            imageSource={require('../../assets/images/logos/pokemon_logo.png')}
+            imageSource={require(`${BASE_URL}/pokemon_logo.png`)}
           />
 
           <NavigationCard
             href="/profile"
-            imageSource={require('../../assets/images/logos/yu_gi_oh_logo.png')}
+            imageSource={require(`${BASE_URL}/yu_gi_oh_logo.png`)}
             disabled
           />
 
           <NavigationCard
             href="/profile"
-            imageSource={require('../../assets/images/logos/chaotic_logo.png')}
+            imageSource={require(`${BASE_URL}/chaotic_logo.png`)}
             disabled
           />
         </ThemedView>
