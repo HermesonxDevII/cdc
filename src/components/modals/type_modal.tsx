@@ -1,4 +1,4 @@
-import { Modal, StyleSheet, TouchableOpacity, View, Text, Image } from 'react-native';
+import { Modal, StyleSheet, TouchableOpacity, View, Text, Image, Pressable } from 'react-native';
 
 const BASE_URL = '../../../assets/images/icons/pokemon_types';
 
@@ -28,10 +28,10 @@ export function TypeModal({ visible, onClose, onSelectType }: TypeModalProps) {
       visible={visible}
       onRequestClose={onClose}
     >
-      {/* Overlay escuro no fundo */}
-      <View style={styles.overlay}>
-        {/* Caixa principal do modal */}
-        <View style={styles.modalContent}>
+      {/* Overlay escuro no fundo (agora clicável para fechar o modal) */}
+      <Pressable style={styles.overlay} onPress={onClose}>
+        {/* Caixa principal do modal (evita que o clique vaze pro fundo) */}
+        <View style={styles.modalContent} onStartShouldSetResponder={() => true}>
 
           {/* Botão de Fechar no topo direito */}
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
@@ -50,7 +50,7 @@ export function TypeModal({ visible, onClose, onSelectType }: TypeModalProps) {
             ))}
           </View>
         </View>
-      </View>
+      </Pressable>
     </Modal>
   );
 }

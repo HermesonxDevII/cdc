@@ -7,6 +7,7 @@ import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 
 import { Back } from '@/components/back';
 import { TypeModal } from '@/components/modals/type_modal';
+import { HpModal } from '@/components/modals/hp_modal';
 
 // Mapeamento de todas as texturas de cartas baseadas no tipo
 const BASE_URL = '../../../assets/images/templates/pokemon/basic';
@@ -35,6 +36,8 @@ const cardScale = (screenWidth * 0.90) / CARD_REAL_WIDTH;
 
 export default function PokemonCard() {
   const [isTypeModalVisible, setTypeModalVisible] = useState(false);
+  const [isHpModalVisible, setHpModalVisible] = useState(false);
+  
   const [currentTemplate, setCurrentTemplate] = useState(TEMPLATES.normal);
 
   return (
@@ -58,6 +61,12 @@ export default function PokemonCard() {
               onPress={() => setTypeModalVisible(true)}
             />
 
+            {/* Novo Botão Retangular (Para o HP ou outro campo) */}
+            <TouchableOpacity
+              style={styles.hpButton}
+              onPress={() => setHpModalVisible(true)}
+            />
+
             {/* Aqui dentro vão entrar os TextInputs flutuantes logo logo! */}
           </View>
 
@@ -71,6 +80,13 @@ export default function PokemonCard() {
             setCurrentTemplate(TEMPLATES[id]); // Troca a imagem da carta
             setTypeModalVisible(false);        // Fecha o modal logo em seguida
           }}
+        />
+
+        {/* Modal de HP */}
+        <HpModal 
+          visible={isHpModalVisible}
+          onClose={() => setHpModalVisible(false)}
+          onSave={(valor) => console.log('HP Salvo:', valor)}
         />
 
       </SafeAreaView>
@@ -115,22 +131,28 @@ const styles = StyleSheet.create({
     resizeMode: 'contain'
   },
 
-  // Botão editável flutuante
   typeButton: {
     position: 'absolute',
-
-    // POSIÇÃO: Ajuste esses números para encaixar perfeitamente em cima da bolinha!
-    top: 59,       // Aumente para descer o quadrado, diminua para subir
-    right: 68,     // Aumente para empurrar para a esquerda, diminua para colar na borda direita
-
-    // TAMANHO: Ajuste para ficar do tamanho exato da bolinha
-    width: 60,
-    height: 60,
-
-    // VISUAL: O quadrado branco que você pediu
+    top: 59,   // Alinhamento vertical
+    right: 68, // Alinhamento horizontal
+    width: 60,  // Largura
+    height: 60, // Altura
     borderWidth: 3,
     borderColor: 'white',
-    borderRadius: 8, // Deixa as pontas um pouquinho arredondadas
-    backgroundColor: 'rgba(255, 255, 255, 0.2)', // Um fundo branco transparente pra dar destaque visual
+    borderRadius: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)'
+  },
+
+  // Novo botão retangular
+  hpButton: {
+    position: 'absolute',
+    top: 59,    // Mesmo alinhamento vertical da bolinha
+    right: 135, // Fica à esquerda da bolinha (68 da margem + 60 da bolinha + 12 de espaço)
+    width: 100, // Mais largo por ser um retângulo
+    height: 60, // Mesma altura
+    borderWidth: 3,
+    borderColor: 'white',
+    borderRadius: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)'
   }
 })
