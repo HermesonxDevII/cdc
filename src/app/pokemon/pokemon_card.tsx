@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, Dimensions, View, TouchableOpacity } from 'react-native';
+import { Image, StyleSheet, Dimensions, View, TouchableOpacity, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedView } from '@/components/themed-view';
@@ -8,6 +8,7 @@ import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { Back } from '@/components/back';
 import { TypeModal } from '@/components/modals/type_modal';
 import { HpModal } from '@/components/modals/hp_modal';
+import { NameModal } from '@/components/modals/name_modal';
 
 // Mapeamento de todas as texturas de cartas baseadas no tipo
 const BASE_URL = '../../../assets/images/templates/pokemon/basic';
@@ -37,8 +38,11 @@ const cardScale = (screenWidth * 0.90) / CARD_REAL_WIDTH;
 export default function PokemonCard() {
   const [isTypeModalVisible, setTypeModalVisible] = useState(false);
   const [isHpModalVisible, setHpModalVisible] = useState(false);
-  
+  const [isNameModalVisible, setNameModalVisible] = useState(false);
+
   const [currentTemplate, setCurrentTemplate] = useState(TEMPLATES.normal);
+  const [hp, setHp] = useState('');
+  const [name, setName] = useState('');
 
   return (
     <ThemedView style={styles.container}>
@@ -65,7 +69,17 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={styles.hpButton}
               onPress={() => setHpModalVisible(true)}
-            />
+            >
+              {hp ? <Text style={styles.hpText}>{hp} HP</Text> : null}
+            </TouchableOpacity>
+
+            {/* Terceiro Botão Retangular (Para o Nome ou outro campo) */}
+            <TouchableOpacity
+              style={styles.nameButton}
+              onPress={() => setNameModalVisible(true)}
+            >
+              {name ? <Text style={styles.nameText}>{name}</Text> : null}
+            </TouchableOpacity>
 
             {/* Aqui dentro vão entrar os TextInputs flutuantes logo logo! */}
           </View>
@@ -83,10 +97,17 @@ export default function PokemonCard() {
         />
 
         {/* Modal de HP */}
-        <HpModal 
+        <HpModal
           visible={isHpModalVisible}
           onClose={() => setHpModalVisible(false)}
-          onSave={(valor) => console.log('HP Salvo:', valor)}
+          onSave={(valor) => setHp(valor)}
+        />
+
+        {/* Modal de Nome */}
+        <NameModal
+          visible={isNameModalVisible}
+          onClose={() => setNameModalVisible(false)}
+          onSave={(valor) => setName(valor)}
         />
 
       </SafeAreaView>
@@ -143,16 +164,55 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)'
   },
 
-  // Novo botão retangular
   hpButton: {
     position: 'absolute',
-    top: 59,    // Mesmo alinhamento vertical da bolinha
-    right: 135, // Fica à esquerda da bolinha (68 da margem + 60 da bolinha + 12 de espaço)
-    width: 100, // Mais largo por ser um retângulo
-    height: 60, // Mesma altura
+    top: 70,    // Mesmo alinhamento vertical da bolinha
+    right: 130, // Fica à esquerda da bolinha (68 da margem + 60 da bolinha + 12 de espaço)
+    width: 150, // Aumentei de 100 para 140 a seu pedido para dar espaço ao "120 HP"
+    height: 50, // Mesma altura
     borderWidth: 3,
     borderColor: 'white',
     borderRadius: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)'
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center', // Centraliza o texto verticalmente
+    alignItems: 'center',     // Centraliza o texto horizontalmente
+  },
+
+  // Terceiro botão (Para o Nome do Pokémon, etc)
+  nameButton: {
+    position: 'absolute',
+    top: 70,    // Mesmo alinhamento vertical da bolinha
+    left: 80, // Fica à esquerda do botão de HP (135 da margem do hp + 100 da largura do hp + 10 de espaço)
+    width: 250, // Bem mais largo por ser um retângulo gigante (ajuste se precisar)
+    height: 50, // Mesma altura
+    borderWidth: 3,
+    borderColor: 'white',
+    borderRadius: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center', // Centraliza verticalmente
+    alignItems: 'flex-start', // Alinha o nome pela esquerda
+    paddingLeft: 10,          // Dá um espacinho da borda
+  },
+
+  // Texto do Nome
+  nameText: {
+    fontFamily: 'GillSans-Bold',
+    fontSize: 45,
+    color: '#000',
+    textShadowColor: 'white',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+
+  // Texto do HP (Usando a fonte personalizada)
+  hpText: {
+    fontFamily: 'GillSans-Bold',
+    fontSize: 45,
+    color: '#000', // HP geralmente é preto ou bem escuro
+    textAlign: 'center',
+    // Um pouco de sombra para dar leitura melhor
+    textShadowColor: 'white',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   }
 })
