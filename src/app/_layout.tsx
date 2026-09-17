@@ -13,6 +13,7 @@ export default function TabLayout() {
   
   const [loaded, error] = useFonts({
     'GillSans-Bold': require('../../assets/fonts/gill_sans_condensed_bold.ttf'),
+    'GillSans': require('../../assets/fonts/gill_sans.ttf'),
   });
 
   useEffect(() => {

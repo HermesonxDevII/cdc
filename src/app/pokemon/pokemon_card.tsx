@@ -9,6 +9,8 @@ import { Back } from '@/components/back';
 import { TypeModal } from '@/components/modals/type_modal';
 import { HpModal } from '@/components/modals/hp_modal';
 import { NameModal } from '@/components/modals/name_modal';
+import { DescriptionModal } from '@/components/modals/description_modal';
+import { CuriosityModal } from '@/components/modals/curiosity_modal';
 
 // Mapeamento de todas as texturas de cartas baseadas no tipo
 const BASE_URL = '../../../assets/images/templates/pokemon/basic';
@@ -39,10 +41,14 @@ export default function PokemonCard() {
   const [isTypeModalVisible, setTypeModalVisible] = useState(false);
   const [isHpModalVisible, setHpModalVisible] = useState(false);
   const [isNameModalVisible, setNameModalVisible] = useState(false);
+  const [isDescriptionModalVisible, setDescriptionModalVisible] = useState(false);
+  const [isCuriosityModalVisible, setCuriosityModalVisible] = useState(false);
 
   const [currentTemplate, setCurrentTemplate] = useState(TEMPLATES.normal);
   const [hp, setHp] = useState('');
   const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [curiosity, setCuriosity] = useState('');
 
   return (
     <ThemedView style={styles.container}>
@@ -81,6 +87,22 @@ export default function PokemonCard() {
               {name ? <Text style={styles.nameText}>{name}</Text> : null}
             </TouchableOpacity>
 
+            {/* Quarto Botão Retangular (Para algo extra, do lado do nome) */}
+            <TouchableOpacity
+              style={styles.descriptionButton}
+              onPress={() => setDescriptionModalVisible(true)}
+            >
+              {description ? <Text style={styles.descriptionText}>{description}</Text> : null}
+            </TouchableOpacity>
+
+            {/* Quinto Botão Retangular (Para a curiosidade do Pokémon) */}
+            <TouchableOpacity
+              style={styles.curiosityButton}
+              onPress={() => setCuriosityModalVisible(true)}
+            >
+              {curiosity ? <Text style={styles.curiosityText}>{curiosity}</Text> : null}
+            </TouchableOpacity>
+
             {/* Aqui dentro vão entrar os TextInputs flutuantes logo logo! */}
           </View>
 
@@ -108,6 +130,20 @@ export default function PokemonCard() {
           visible={isNameModalVisible}
           onClose={() => setNameModalVisible(false)}
           onSave={(valor) => setName(valor)}
+        />
+
+        {/* Modal de Descrição */}
+        <DescriptionModal
+          visible={isDescriptionModalVisible}
+          onClose={() => setDescriptionModalVisible(false)}
+          onSave={(valor) => setDescription(valor)}
+        />
+
+        {/* Modal de Curiosidade */}
+        <CuriosityModal
+          visible={isCuriosityModalVisible}
+          onClose={() => setCuriosityModalVisible(false)}
+          onSave={(valor) => setCuriosity(valor)}
         />
 
       </SafeAreaView>
@@ -191,17 +227,36 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center', // Centraliza verticalmente
     alignItems: 'flex-start', // Alinha o nome pela esquerda
-    paddingLeft: 10,          // Dá um espacinho da borda
   },
 
-  // Texto do Nome
-  nameText: {
-    fontFamily: 'GillSans-Bold',
-    fontSize: 45,
-    color: '#000',
-    textShadowColor: 'white',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
+  // Quarto botão (Extra, do lado do Nome)
+  descriptionButton: {
+    position: 'absolute',
+    top: 549,
+    left: 105, // O nameButton vai de 80 a 330 (80+250). Com 10 de espaço, começamos no 340.
+    width: 535,
+    height: 35,
+    borderWidth: 3,
+    borderColor: 'white',
+    borderRadius: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center', // Para o texto da descrição ficar centralizado verticalmente
+    alignItems: 'center',     // E horizontalmente
+  },
+
+  // Quinto botão (Curiosidade, que você vai posicionar depois)
+  curiosityButton: {
+    position: 'absolute',
+    top: 912,  // Valor provisório
+    left: 81, // Valor provisório
+    width: 581, // Valor provisório
+    height: 64, // Valor provisório
+    borderWidth: 3,
+    borderColor: 'white',
+    borderRadius: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   // Texto do HP (Usando a fonte personalizada)
@@ -214,5 +269,37 @@ const styles = StyleSheet.create({
     textShadowColor: 'white',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
-  }
+  },
+
+  // Texto do Nome
+  nameText: {
+    fontFamily: 'GillSans-Bold',
+    fontSize: 45,
+    color: '#000',
+    textShadowColor: 'white',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+
+  // Texto da Descrição (Sem itálico ou bold forçado, apenas a fonte normal)
+  descriptionText: {
+    fontFamily: 'GillSans',
+    fontSize: 23,
+    color: '#000',
+    textAlign: 'center',
+    textShadowColor: 'white',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+
+  // Texto da Curiosidade (Mesma fonte e tamanho da descrição)
+  curiosityText: {
+    fontFamily: 'GillSans',
+    fontSize: 23,
+    color: '#000',
+    textAlign: 'center',
+    textShadowColor: 'white',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
 })
