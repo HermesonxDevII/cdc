@@ -21,6 +21,11 @@ import { CuriosityModal } from "@/components/modals/curiosity_modal";
 import { IllustrationModal } from "@/components/modals/illustration_modal";
 import { PokemonNumberModal } from "@/components/modals/pokemon_number_modal";
 import { ExtraInfoModal } from "@/components/modals/extra_info_modal";
+import { WeaknessModal } from "@/components/modals/weakness_modal";
+import { ResistanceModal } from "@/components/modals/resistance_modal";
+import { RetreatModal } from "@/components/modals/retreat_modal";
+import { WeaknessValueModal } from "@/components/modals/weakness_value_modal";
+import { ResistanceValueModal } from "@/components/modals/resistance_value_modal";
 
 // Mapeamento de todas as texturas de cartas baseadas no tipo
 const BASE_URL = "../../../assets/images/templates/pokemon/basic";
@@ -35,6 +40,43 @@ const TEMPLATES: Record<string, any> = {
   normal: require(`${BASE_URL}/normal.png`),
   psychic: require(`${BASE_URL}/psychic.png`),
   water: require(`${BASE_URL}/water.png`),
+};
+
+// Mapeamento dos símbolos (usado pela fraqueza e afins)
+const ICONS_URL = "../../../assets/images/icons/pokemon_types";
+const TYPE_ICONS: Record<string, any> = {
+  // Atuais
+  dark: require(`${ICONS_URL}/dark.png`),
+  eletric: require(`${ICONS_URL}/eletric.png`),
+  fighter: require(`${ICONS_URL}/fighter.png`),
+  fire: require(`${ICONS_URL}/fire.png`),
+  grass: require(`${ICONS_URL}/grass.png`),
+  metal: require(`${ICONS_URL}/metal.png`),
+  normal: require(`${ICONS_URL}/normal.png`),
+  psychic: require(`${ICONS_URL}/psychic.png`),
+  water: require(`${ICONS_URL}/water.png`),
+
+  // Antigos (Clássico)
+  dark_old: require(`${ICONS_URL}/dark_old.png`),
+  eletric_old: require(`${ICONS_URL}/eletric_old.png`),
+  fighter_old: require(`${ICONS_URL}/fighter_old.png`),
+  fire_old: require(`${ICONS_URL}/fire_old.png`),
+  grass_old: require(`${ICONS_URL}/grass_old.png`),
+  metal_old: require(`${ICONS_URL}/metal_old.png`),
+  normal_old: require(`${ICONS_URL}/normal_old.png`),
+  psychic_old: require(`${ICONS_URL}/psychic_old.png`),
+  water_old: require(`${ICONS_URL}/water_old.png`),
+
+  // Antigos 2 (Retrô)
+  dark_old_2: require(`${ICONS_URL}/dark_old_2.png`),
+  eletric_old_2: require(`${ICONS_URL}/eletric_old_2.png`),
+  fighter_old_2: require(`${ICONS_URL}/fighter_old_2.png`),
+  fire_old_2: require(`${ICONS_URL}/fire_old_2.png`),
+  grass_old_2: require(`${ICONS_URL}/grass_old_2.png`),
+  metal_old_2: require(`${ICONS_URL}/metal_old_2.png`),
+  normal_old_2: require(`${ICONS_URL}/normal_old_2.png`),
+  psychic_old_2: require(`${ICONS_URL}/psychic_old_2.png`),
+  water_old_2: require(`${ICONS_URL}/water_old_2.png`),
 };
 
 // 1. Definimos o tamanho REAL e gigante da carta para exportação
@@ -59,6 +101,11 @@ export default function PokemonCard() {
   const [isPokemonNumberModalVisible, setPokemonNumberModalVisible] =
     useState(false);
   const [isExtraInfoModalVisible, setExtraInfoModalVisible] = useState(false);
+  const [isWeaknessModalVisible, setWeaknessModalVisible] = useState(false);
+  const [isResistanceModalVisible, setResistanceModalVisible] = useState(false);
+  const [isRetreatModalVisible, setRetreatModalVisible] = useState(false);
+  const [isWeaknessValueModalVisible, setWeaknessValueModalVisible] = useState(false);
+  const [isResistanceValueModalVisible, setResistanceValueModalVisible] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
 
   const [currentTemplate, setCurrentTemplate] = useState(TEMPLATES.normal);
@@ -69,6 +116,11 @@ export default function PokemonCard() {
   const [illustration, setIllustration] = useState("");
   const [pokemonNumber, setPokemonNumber] = useState("");
   const [extraInfo, setExtraInfo] = useState("");
+  const [weakness, setWeakness] = useState("");
+  const [weaknessValue, setWeaknessValue] = useState("");
+  const [resistance, setResistance] = useState("");
+  const [resistanceValue, setResistanceValue] = useState("");
+  const [retreat, setRetreat] = useState<{ symbol: string; count: number } | null>(null);
 
   return (
     <ThemedView style={styles.container}>
@@ -130,6 +182,93 @@ export default function PokemonCard() {
             >
               {description ? (
                 <Text style={styles.descriptionText}>{description}</Text>
+              ) : null}
+            </TouchableOpacity>
+
+            {/* Décimo Botão Retangular (Para fraqueza, abaixo da descrição) */}
+            <TouchableOpacity
+              style={[
+                styles.weaknessButton,
+                isPreviewMode && styles.previewMode,
+                isPreviewMode && {
+                  width: 40,
+                  height: 40,
+                  top: 865, // Posição perfeita que você encontrou para o preview
+                  left: 110
+                },
+              ]}
+              onPress={() => setWeaknessModalVisible(true)}
+              disabled={isPreviewMode}
+            >
+              {weakness ? (
+                <Image source={TYPE_ICONS[weakness]} style={styles.weaknessIcon} />
+              ) : null}
+            </TouchableOpacity>
+
+            {/* Botão de Valor da Fraqueza (Ao lado direito da fraqueza) */}
+            <TouchableOpacity
+              style={[
+                styles.weaknessValueButton,
+                isPreviewMode && styles.previewMode,
+                isPreviewMode && { left: 150 }, // Valor ajustado para o modo preview
+              ]}
+              onPress={() => setWeaknessValueModalVisible(true)}
+              disabled={isPreviewMode}
+            >
+              {weaknessValue ? (
+                <Text style={styles.weaknessValueText}>{weaknessValue}</Text>
+              ) : null}
+            </TouchableOpacity>
+
+            {/* Décimo Primeiro Botão (Ao lado da fraqueza) */}
+            <TouchableOpacity
+              style={[
+                styles.resistanceButton,
+                isPreviewMode && styles.previewMode,
+                isPreviewMode && {
+                  width: 40,
+                  height: 40,
+                  top: 865, // Ajuste para o preview
+                  left: 340.5 // Ajuste calculado (-2.5px da diferença)
+                },
+              ]}
+              onPress={() => setResistanceModalVisible(true)}
+              disabled={isPreviewMode}
+            >
+              {resistance ? (
+                <Image source={TYPE_ICONS[resistance]} style={styles.resistanceIcon} />
+              ) : null}
+            </TouchableOpacity>
+
+            {/* Botão de Valor da Resistência (Ao lado direito da resistência) */}
+            <TouchableOpacity
+              style={[
+                styles.resistanceValueButton,
+                isPreviewMode && styles.previewMode,
+              ]}
+              onPress={() => setResistanceValueModalVisible(true)}
+              disabled={isPreviewMode}
+            >
+              {resistanceValue ? (
+                <Text style={styles.resistanceValueText}>{resistanceValue}</Text>
+              ) : null}
+            </TouchableOpacity>
+
+            {/* Décimo Segundo Botão (Custo de Recuo, ao lado da Resistência) */}
+            <TouchableOpacity
+              style={[
+                styles.retreatButton,
+                isPreviewMode && styles.previewMode,
+              ]}
+              onPress={() => setRetreatModalVisible(true)}
+              disabled={isPreviewMode}
+            >
+              {retreat ? (
+                <View style={{ flexDirection: 'row', gap: 2 }}>
+                  {Array.from({ length: retreat.count }).map((_, i) => (
+                    <Image key={i} source={TYPE_ICONS[retreat.symbol]} style={styles.retreatIcon} />
+                  ))}
+                </View>
               ) : null}
             </TouchableOpacity>
 
@@ -252,6 +391,56 @@ export default function PokemonCard() {
           visible={isExtraInfoModalVisible}
           onClose={() => setExtraInfoModalVisible(false)}
           onSave={(valor) => setExtraInfo(valor)}
+        />
+
+        {/* Modal de Fraqueza */}
+        <WeaknessModal
+          visible={isWeaknessModalVisible}
+          onClose={() => setWeaknessModalVisible(false)}
+          onSelectWeakness={(id) => {
+            setWeakness(id);
+            setWeaknessModalVisible(false);
+          }}
+        />
+
+        {/* Modal de Resistência */}
+        <ResistanceModal
+          visible={isResistanceModalVisible}
+          onClose={() => setResistanceModalVisible(false)}
+          onSelectResistance={(id) => {
+            setResistance(id);
+            setResistanceModalVisible(false);
+          }}
+        />
+
+        {/* Modal de Custo de Recuo */}
+        <RetreatModal
+          visible={isRetreatModalVisible}
+          onClose={() => setRetreatModalVisible(false)}
+          onSave={(symbol, count) => {
+            setRetreat({ symbol, count });
+            setRetreatModalVisible(false);
+          }}
+        />
+
+        {/* Modal de Valor da Fraqueza */}
+        <WeaknessValueModal
+          visible={isWeaknessValueModalVisible}
+          onClose={() => setWeaknessValueModalVisible(false)}
+          onSave={(value) => {
+            setWeaknessValue(value);
+            setWeaknessValueModalVisible(false);
+          }}
+        />
+
+        {/* Modal de Valor da Resistência */}
+        <ResistanceValueModal
+          visible={isResistanceValueModalVisible}
+          onClose={() => setResistanceValueModalVisible(false)}
+          onSave={(value) => {
+            setResistanceValue(value);
+            setResistanceValueModalVisible(false);
+          }}
         />
 
         {/* Bottom Bar / Footer */}
@@ -445,6 +634,99 @@ const styles = StyleSheet.create({
     alignItems: "center", // E horizontalmente
   },
 
+  // Décimo botão (Fraqueza, Abaixo da descrição)
+  weaknessButton: {
+    position: "absolute",
+    top: 862.5, // Ajustei -2.5px para o centro do botão continuar no mesmo lugar!
+    left: 107.5, // Ajustei -2.5px
+    width: 45, // Tamanho que você queria no modo edição
+    height: 45,
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  // Botão de Valor da Fraqueza (Ao lado da fraqueza)
+  weaknessValueButton: {
+    position: "absolute",
+    top: 862.5,
+    left: 155, // Valor provisório
+    width: 40,
+    height: 40,
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  // Décimo primeiro botão (Ao lado da fraqueza)
+  resistanceButton: {
+    position: "absolute",
+    top: 862.5, // Mesmo alinhamento vertical
+    left: 338, // Valor provisório (à direita da fraqueza)
+    width: 45,
+    height: 45,
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  // Botão de Valor da Resistência
+  resistanceValueButton: {
+    position: "absolute",
+    top: 862.5,
+    left: 385, // Valor provisório
+    width: 40,
+    height: 40,
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  // Décimo segundo botão (Custo de Recuo)
+  retreatButton: {
+    position: "absolute",
+    top: 862.5, // Mesmo alinhamento vertical
+    right: 80, // Valor provisório
+    width: 130,
+    height: 45,
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  weaknessIcon: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "contain",
+  },
+
+  resistanceIcon: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "contain",
+  },
+
+  retreatIcon: {
+    width: 40,
+    height: 40,
+    resizeMode: "contain",
+  },
+
   // Quinto botão (Curiosidade, que você vai posicionar depois)
   curiosityButton: {
     position: "absolute",
@@ -542,6 +824,26 @@ const styles = StyleSheet.create({
   curiosityText: {
     fontFamily: "GillSans",
     fontSize: 23,
+    color: "#000",
+    textAlign: "center",
+    textShadowColor: "white",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+
+  weaknessValueText: {
+    fontFamily: "GillSans",
+    fontSize: 25,
+    color: "#000",
+    textAlign: "center",
+    textShadowColor: "white",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+
+  resistanceValueText: {
+    fontFamily: "GillSans",
+    fontSize: 25,
     color: "#000",
     textAlign: "center",
     textShadowColor: "white",
