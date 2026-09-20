@@ -49,6 +49,52 @@ const TEMPLATES: Record<string, any> = {
   water: require(`${BASE_URL}/water.png`),
 };
 
+type CardState = {
+  currentTemplate: any;
+  pokemonImage: string | null;
+  hp: string;
+  name: string;
+  description: string;
+  curiosity: string;
+  illustration: string;
+  pokemonNumber: string;
+  extraInfo: string;
+  weakness: string;
+  weaknessValue: string;
+  resistance: string;
+  resistanceValue: string;
+  retreat: { symbol: string; count: number } | null;
+  firstSkill: { name: string; description: string } | null;
+  firstSkillDamage: string;
+  firstSkillEnergy: { symbol: string; count: number } | null;
+  secondSkill: { name: string; description: string } | null;
+  secondSkillDamage: string;
+  secondSkillEnergy: { symbol: string; count: number } | null;
+};
+
+const initialState: CardState = {
+  currentTemplate: TEMPLATES.normal,
+  pokemonImage: null,
+  hp: "",
+  name: "",
+  description: "",
+  curiosity: "",
+  illustration: "",
+  pokemonNumber: "",
+  extraInfo: "",
+  weakness: "",
+  weaknessValue: "",
+  resistance: "",
+  resistanceValue: "",
+  retreat: null,
+  firstSkill: null,
+  firstSkillDamage: "",
+  firstSkillEnergy: null,
+  secondSkill: null,
+  secondSkillDamage: "",
+  secondSkillEnergy: null,
+};
+
 // Mapeamento dos símbolos (usado pela fraqueza e afins)
 const ICONS_URL = "../../../assets/images/icons/pokemon_types";
 const TYPE_ICONS: Record<string, any> = {
@@ -122,54 +168,41 @@ export default function PokemonCard() {
   const [isDiscardModalVisible, setDiscardModalVisible] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
 
-  const [currentTemplate, setCurrentTemplate] = useState(TEMPLATES.normal);
+  const [history, setHistory] = useState<CardState[]>([initialState]);
+  const [historyIndex, setHistoryIndex] = useState(0);
 
-  // Imagem do Pokémon
-  const [pokemonImage, setPokemonImage] = useState<string | null>(null);
-  const [hp, setHp] = useState("");
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [curiosity, setCuriosity] = useState("");
-  const [illustration, setIllustration] = useState("");
-  const [pokemonNumber, setPokemonNumber] = useState("");
-  const [extraInfo, setExtraInfo] = useState("");
-  const [weakness, setWeakness] = useState("");
-  const [weaknessValue, setWeaknessValue] = useState("");
-  const [resistance, setResistance] = useState("");
-  const [resistanceValue, setResistanceValue] = useState("");
-  const [retreat, setRetreat] = useState<{ symbol: string; count: number } | null>(null);
-  const [firstSkill, setFirstSkill] = useState<{ name: string; description: string } | null>(null);
-  const [firstSkillDamage, setFirstSkillDamage] = useState("");
-  const [firstSkillEnergy, setFirstSkillEnergy] = useState<{ symbol: string; count: number } | null>(null);
-  const [secondSkill, setSecondSkill] = useState<{ name: string; description: string } | null>(null);
-  const [secondSkillDamage, setSecondSkillDamage] = useState("");
-  const [secondSkillEnergy, setSecondSkillEnergy] = useState<{ symbol: string; count: number } | null>(null);
+  const currentState = history[historyIndex];
+
+  const updateCard = (updates: Partial<CardState>) => {
+    const newState = { ...currentState, ...updates };
+    const newHistory = history.slice(0, historyIndex + 1);
+    newHistory.push(newState);
+    setHistory(newHistory);
+    setHistoryIndex(newHistory.length - 1);
+  };
+
+  const undo = () => {
+    if (historyIndex > 0) setHistoryIndex(historyIndex - 1);
+  };
+
+  const redo = () => {
+    if (historyIndex < history.length - 1) setHistoryIndex(historyIndex + 1);
+  };
+
+  const canUndo = historyIndex > 0;
+  const canRedo = historyIndex < history.length - 1;
+
+  const {
+    currentTemplate, pokemonImage, hp, name, description, curiosity,
+    illustration, pokemonNumber, extraInfo, weakness, weaknessValue,
+    resistance, resistanceValue, retreat, firstSkill, firstSkillDamage,
+    firstSkillEnergy, secondSkill, secondSkillDamage, secondSkillEnergy
+  } = currentState;
 
   const router = useRouter();
 
   const hasChanges = () => {
-    return (
-      hp !== "" ||
-      name !== "" ||
-      description !== "" ||
-      curiosity !== "" ||
-      illustration !== "" ||
-      pokemonNumber !== "" ||
-      extraInfo !== "" ||
-      currentTemplate !== TEMPLATES.normal ||
-      weakness !== "" ||
-      resistance !== "" ||
-      retreat !== null ||
-      weaknessValue !== "" ||
-      resistanceValue !== "" ||
-      firstSkill !== null ||
-      firstSkillDamage !== "" ||
-      firstSkillEnergy !== null ||
-      secondSkill !== null ||
-      secondSkillDamage !== "" ||
-      secondSkillEnergy !== null ||
-      pokemonImage !== null
-    );
+    return historyIndex > 0;
   };
 
   const handleBack = () => {
@@ -185,7 +218,7 @@ export default function PokemonCard() {
   useEffect(() => {
     const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBack);
     return () => backHandler.remove();
-  }, [hp, name, description, curiosity, illustration, pokemonNumber, extraInfo, currentTemplate, weakness, resistance, retreat, weaknessValue, resistanceValue, firstSkill, firstSkillDamage, firstSkillEnergy, secondSkill, secondSkillDamage, secondSkillEnergy, pokemonImage]);
+  }, [historyIndex]);
 
   const pickImage = async () => {
     // Pede permissão para acessar a galeria
@@ -203,7 +236,7 @@ export default function PokemonCard() {
     });
 
     if (!result.canceled) {
-      setPokemonImage(result.assets[0].uri);
+      updateCard({ pokemonImage: result.assets[0].uri });
     }
   };
 
@@ -532,13 +565,14 @@ export default function PokemonCard() {
           </View>
         </View>
 
-        {/* Modal embutido na tela que só aparece quando isTypeModalVisible for true */}
+        {/* Modal de Tipo */}
         <TypeModal
           visible={isTypeModalVisible}
           onClose={() => setTypeModalVisible(false)}
           onSelectType={(id) => {
-            setCurrentTemplate(TEMPLATES[id]); // Troca a imagem da carta
-            setTypeModalVisible(false); // Fecha o modal logo em seguida
+            const template = TEMPLATES[id as keyof typeof TEMPLATES];
+            updateCard({ currentTemplate: template });
+            setTypeModalVisible(false);
           }}
         />
 
@@ -546,49 +580,70 @@ export default function PokemonCard() {
         <HpModal
           visible={isHpModalVisible}
           onClose={() => setHpModalVisible(false)}
-          onSave={(valor) => setHp(valor)}
+          onSave={(valor) => {
+            updateCard({ hp: valor });
+            setHpModalVisible(false);
+          }}
         />
 
         {/* Modal de Nome */}
         <NameModal
           visible={isNameModalVisible}
           onClose={() => setNameModalVisible(false)}
-          onSave={(valor) => setName(valor)}
+          onSave={(valor) => {
+            updateCard({ name: valor });
+            setNameModalVisible(false);
+          }}
         />
 
         {/* Modal de Descrição */}
         <DescriptionModal
           visible={isDescriptionModalVisible}
           onClose={() => setDescriptionModalVisible(false)}
-          onSave={(valor) => setDescription(valor)}
+          onSave={(valor) => {
+            updateCard({ description: valor });
+            setDescriptionModalVisible(false);
+          }}
         />
 
         {/* Modal de Curiosidade */}
         <CuriosityModal
           visible={isCuriosityModalVisible}
           onClose={() => setCuriosityModalVisible(false)}
-          onSave={(valor) => setCuriosity(valor)}
+          onSave={(valor) => {
+            updateCard({ curiosity: valor });
+            setCuriosityModalVisible(false);
+          }}
         />
 
         {/* Modal de Ilustrador */}
         <IllustrationModal
           visible={isIllustrationModalVisible}
           onClose={() => setIllustrationModalVisible(false)}
-          onSave={(valor) => setIllustration(valor)}
+          onSave={(valor) => {
+            updateCard({ illustration: valor });
+            setIllustrationModalVisible(false);
+          }}
         />
 
         {/* Modal do Número do Pokémon */}
         <PokemonNumberModal
           visible={isPokemonNumberModalVisible}
           onClose={() => setPokemonNumberModalVisible(false)}
-          onSave={(valor) => setPokemonNumber(valor)}
+          onSave={(valor) => {
+            updateCard({ pokemonNumber: valor });
+            setPokemonNumberModalVisible(false);
+          }}
         />
 
         {/* Modal de Informação Extra */}
         <ExtraInfoModal
           visible={isExtraInfoModalVisible}
           onClose={() => setExtraInfoModalVisible(false)}
-          onSave={(valor) => setExtraInfo(valor)}
+          onSave={(valor) => {
+            updateCard({ extraInfo: valor });
+            setExtraInfoModalVisible(false);
+          }}
         />
 
         {/* Modal de Fraqueza */}
@@ -596,7 +651,7 @@ export default function PokemonCard() {
           visible={isWeaknessModalVisible}
           onClose={() => setWeaknessModalVisible(false)}
           onSelectWeakness={(id) => {
-            setWeakness(id);
+            updateCard({ weakness: id });
             setWeaknessModalVisible(false);
           }}
         />
@@ -606,7 +661,7 @@ export default function PokemonCard() {
           visible={isResistanceModalVisible}
           onClose={() => setResistanceModalVisible(false)}
           onSelectResistance={(id) => {
-            setResistance(id);
+            updateCard({ resistance: id });
             setResistanceModalVisible(false);
           }}
         />
@@ -616,7 +671,7 @@ export default function PokemonCard() {
           visible={isRetreatModalVisible}
           onClose={() => setRetreatModalVisible(false)}
           onSave={(symbol, count) => {
-            setRetreat({ symbol, count });
+            updateCard({ retreat: { symbol, count } });
             setRetreatModalVisible(false);
           }}
         />
@@ -626,7 +681,7 @@ export default function PokemonCard() {
           visible={isWeaknessValueModalVisible}
           onClose={() => setWeaknessValueModalVisible(false)}
           onSave={(value) => {
-            setWeaknessValue(value);
+            updateCard({ weaknessValue: value });
             setWeaknessValueModalVisible(false);
           }}
         />
@@ -636,7 +691,7 @@ export default function PokemonCard() {
           visible={isResistanceValueModalVisible}
           onClose={() => setResistanceValueModalVisible(false)}
           onSave={(value) => {
-            setResistanceValue(value);
+            updateCard({ resistanceValue: value });
             setResistanceValueModalVisible(false);
           }}
         />
@@ -646,7 +701,7 @@ export default function PokemonCard() {
           visible={isFirstSkillModalVisible}
           onClose={() => setFirstSkillModalVisible(false)}
           onSave={(skill) => {
-            setFirstSkill(skill);
+            updateCard({ firstSkill: skill });
             setFirstSkillModalVisible(false);
           }}
           title="Primeira Habilidade"
@@ -657,7 +712,7 @@ export default function PokemonCard() {
           visible={isFirstSkillDamageModalVisible}
           onClose={() => setFirstSkillDamageModalVisible(false)}
           onSave={(value) => {
-            setFirstSkillDamage(value);
+            updateCard({ firstSkillDamage: value });
             setFirstSkillDamageModalVisible(false);
           }}
         />
@@ -667,7 +722,7 @@ export default function PokemonCard() {
           visible={isFirstSkillEnergyModalVisible}
           onClose={() => setFirstSkillEnergyModalVisible(false)}
           onSave={(symbol, count) => {
-            setFirstSkillEnergy({ symbol, count });
+            updateCard({ firstSkillEnergy: { symbol, count } });
             setFirstSkillEnergyModalVisible(false);
           }}
         />
@@ -677,7 +732,7 @@ export default function PokemonCard() {
           visible={isSecondSkillModalVisible}
           onClose={() => setSecondSkillModalVisible(false)}
           onSave={(skill) => {
-            setSecondSkill(skill);
+            updateCard({ secondSkill: skill });
             setSecondSkillModalVisible(false);
           }}
           title="Segunda Habilidade"
@@ -688,7 +743,7 @@ export default function PokemonCard() {
           visible={isSecondSkillDamageModalVisible}
           onClose={() => setSecondSkillDamageModalVisible(false)}
           onSave={(value) => {
-            setSecondSkillDamage(value);
+            updateCard({ secondSkillDamage: value });
             setSecondSkillDamageModalVisible(false);
           }}
         />
@@ -698,7 +753,7 @@ export default function PokemonCard() {
           visible={isSecondSkillEnergyModalVisible}
           onClose={() => setSecondSkillEnergyModalVisible(false)}
           onSave={(symbol, count) => {
-            setSecondSkillEnergy({ symbol, count });
+            updateCard({ secondSkillEnergy: { symbol, count } });
             setSecondSkillEnergyModalVisible(false);
           }}
         />
@@ -715,10 +770,11 @@ export default function PokemonCard() {
 
         {/* Bottom Bar / Footer */}
         <View style={styles.footerBar}>
+          {/* Arrow Left -> UNDO */}
           <TouchableOpacity
-            onPress={handleBack}
-            disabled={isPreviewMode}
-            style={{ opacity: isPreviewMode ? 0.3 : 1 }}
+            onPress={undo}
+            disabled={isPreviewMode || !canUndo}
+            style={{ opacity: isPreviewMode || !canUndo ? 0.3 : 1 }}
           >
             <Image
               source={require("../../../assets/images/icons/arrow_left.png")}
@@ -744,10 +800,11 @@ export default function PokemonCard() {
             />
           </TouchableOpacity>
 
+          {/* Arrow Right -> REDO */}
           <TouchableOpacity
-            onPress={() => console.log("Avançar/Seta Direita")}
-            disabled={isPreviewMode}
-            style={{ opacity: isPreviewMode ? 0.3 : 1 }}
+            onPress={redo}
+            disabled={isPreviewMode || !canRedo}
+            style={{ opacity: isPreviewMode || !canRedo ? 0.3 : 1 }}
           >
             <Image
               source={require("../../../assets/images/icons/arrow_right.png")}
