@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Image,
   StyleSheet,
@@ -7,11 +7,14 @@ import {
   TouchableOpacity,
   Text,
   BackHandler,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedView } from "@/components/themed-view";
 import * as ImagePicker from 'expo-image-picker';
+import * as Sharing from 'expo-sharing';
+import { captureRef } from 'react-native-view-shot';
 import { BottomTabInset, MaxContentWidth, Spacing } from "@/constants/theme";
 
 import { Back } from "@/components/back";
@@ -168,6 +171,8 @@ export default function PokemonCard() {
   const [isDiscardModalVisible, setDiscardModalVisible] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
 
+  const cardRef = useRef<View>(null);
+
   const [history, setHistory] = useState<CardState[]>([initialState]);
   const [historyIndex, setHistoryIndex] = useState(0);
 
@@ -240,6 +245,37 @@ export default function PokemonCard() {
     }
   };
 
+  const handleSaveCard = async () => {
+    try {
+      setIsPreviewMode(true);
+
+      // Aguarda 300ms para garantir que o layout renderizou no Preview Mode
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      if (cardRef.current) {
+        const uri = await captureRef(cardRef, {
+          format: "png",
+          quality: 1,
+        });
+
+        const isAvailable = await Sharing.isAvailableAsync();
+        if (isAvailable) {
+          await Sharing.shareAsync(uri, {
+            dialogTitle: 'Salvar Carta Pokémon',
+            mimeType: 'image/png'
+          });
+        } else {
+          Alert.alert('Erro', 'O recurso de compartilhamento não está disponível no seu dispositivo.');
+        }
+      }
+    } catch (error) {
+      Alert.alert('Erro', 'Ocorreu um erro ao exportar a imagem.');
+      console.error(error);
+    } finally {
+      setIsPreviewMode(false);
+    }
+  };
+
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
@@ -248,7 +284,7 @@ export default function PokemonCard() {
         {/* Esse é o wrapper que reserva o espaço reduzido na tela para não quebrar o layout */}
         <View style={styles.scaledWrapper}>
           {/* ESSA é a carta real! Ela tem 744x1045. É dela que vamos tirar o print depois! */}
-          <View style={styles.realSizeCard}>
+          <View ref={cardRef} style={styles.realSizeCard}>
             <Image source={currentTemplate} style={styles.cardImage} />
 
             {/* Botão para trocar o Tipo (Símbolo no canto superior direito) */}
@@ -783,9 +819,8 @@ export default function PokemonCard() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => console.log("Salvar")}
-            disabled={isPreviewMode}
-            style={{ opacity: isPreviewMode ? 0.3 : 1 }}
+            onPress={handleSaveCard}
+            style={{ opacity: 1 }}
           >
             <Image
               source={require("../../../assets/images/icons/save.png")}
