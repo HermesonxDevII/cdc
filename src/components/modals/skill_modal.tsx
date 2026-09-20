@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { Modal, StyleSheet, TouchableOpacity, View, Text, Pressable, TextInput } from 'react-native';
 
-interface ExtraInfoModalProps {
+interface SkillModalProps {
   visible: boolean;
   onClose: () => void;
-  onSave: (value: string) => void;
+  onSave: (skill: { name: string; description: string }) => void;
+  title?: string;
 }
 
-export function ExtraInfoModal({ visible, onClose, onSave }: ExtraInfoModalProps) {
-  const [inputValue, setInputValue] = useState('');
+export function SkillModal({ visible, onClose, onSave, title = "Habilidade" }: SkillModalProps) {
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
 
   return (
@@ -28,40 +30,44 @@ export function ExtraInfoModal({ visible, onClose, onSave }: ExtraInfoModalProps
           {/* Toast de Erro (Canto superior direito) */}
           {toastVisible && (
             <View style={styles.toast}>
-              <Text style={styles.toastText}>Digite a informação extra!</Text>
+              <Text style={styles.toastText}>Preencha o nome e a descrição!</Text>
             </View>
           )}
 
-          <Text style={styles.title}>Informação Extra</Text>
-
-          {/* Input de Valor */}
+          <Text style={styles.title}>{title}</Text>
+          
+          <Text style={styles.label}>Nome da Habilidade</Text>
           <TextInput
             style={styles.input}
-            placeholder="Ex: © 1995, 96, 98 Nintendo, Creatures..."
+            placeholder="Ex: Stun Spore"
             placeholderTextColor="#888"
-            value={inputValue}
-            onChangeText={setInputValue}
+            value={name}
+            onChangeText={setName}
           />
 
-          {/* Botão de Preenchimento Rápido */}
-          <TouchableOpacity
-            style={styles.presetButton}
-            onPress={() => setInputValue("©1995, 96, 98 Nintendo, Creatures, GAMEFREAK. ©1999 Wizards.")}
-          >
-            <Text style={styles.presetButtonText}>Licença de 95</Text>
-          </TouchableOpacity>
+          <Text style={styles.label}>Descrição</Text>
+          <TextInput
+            style={[styles.input, styles.textArea]}
+            placeholder="Ex: Flip a coin. If heads, the Defending Pokémon is now Paralyzed."
+            placeholderTextColor="#888"
+            value={description}
+            onChangeText={setDescription}
+            multiline={true}
+            numberOfLines={4}
+            textAlignVertical="top"
+          />
 
           {/* Botões na base */}
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={[styles.actionButton, { backgroundColor: '#7C3AED' }]}
               onPress={() => {
-                if (!inputValue.trim()) {
+                if (!name.trim() || !description.trim()) {
                   setToastVisible(true);
                   setTimeout(() => setToastVisible(false), 3000);
                   return;
                 }
-                onSave(inputValue);
+                onSave({ name, description });
                 onClose();
               }}
             >
@@ -90,7 +96,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
-    minHeight: '40%',
+    minHeight: '55%',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.25,
@@ -114,11 +120,18 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 20,
     textAlign: 'center',
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#555',
+    marginBottom: 5,
+    marginLeft: 5,
   },
   input: {
     backgroundColor: '#D9D9D9',
@@ -127,6 +140,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
     marginBottom: 20,
+  },
+  textArea: {
+    height: 100,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -144,20 +160,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
-  },
-  presetButton: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#E0E0E0',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 15,
-    marginBottom: 20,
-    marginTop: -10,
-  },
-  presetButtonText: {
-    color: '#333',
-    fontWeight: 'bold',
-    fontSize: 14,
   },
   toast: {
     position: 'absolute',

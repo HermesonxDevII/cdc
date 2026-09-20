@@ -26,6 +26,9 @@ import { ResistanceModal } from "@/components/modals/resistance_modal";
 import { RetreatModal } from "@/components/modals/retreat_modal";
 import { WeaknessValueModal } from "@/components/modals/weakness_value_modal";
 import { ResistanceValueModal } from "@/components/modals/resistance_value_modal";
+import { SkillModal } from "@/components/modals/skill_modal";
+import { SkillDamageModal } from "@/components/modals/skill_damage_modal";
+import { SkillEnergyModal } from "@/components/modals/skill_energy_modal";
 
 // Mapeamento de todas as texturas de cartas baseadas no tipo
 const BASE_URL = "../../../assets/images/templates/pokemon/basic";
@@ -106,6 +109,12 @@ export default function PokemonCard() {
   const [isRetreatModalVisible, setRetreatModalVisible] = useState(false);
   const [isWeaknessValueModalVisible, setWeaknessValueModalVisible] = useState(false);
   const [isResistanceValueModalVisible, setResistanceValueModalVisible] = useState(false);
+  const [isFirstSkillModalVisible, setFirstSkillModalVisible] = useState(false);
+  const [isFirstSkillDamageModalVisible, setFirstSkillDamageModalVisible] = useState(false);
+  const [isFirstSkillEnergyModalVisible, setFirstSkillEnergyModalVisible] = useState(false);
+  const [isSecondSkillModalVisible, setSecondSkillModalVisible] = useState(false);
+  const [isSecondSkillDamageModalVisible, setSecondSkillDamageModalVisible] = useState(false);
+  const [isSecondSkillEnergyModalVisible, setSecondSkillEnergyModalVisible] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
 
   const [currentTemplate, setCurrentTemplate] = useState(TEMPLATES.normal);
@@ -121,6 +130,12 @@ export default function PokemonCard() {
   const [resistance, setResistance] = useState("");
   const [resistanceValue, setResistanceValue] = useState("");
   const [retreat, setRetreat] = useState<{ symbol: string; count: number } | null>(null);
+  const [firstSkill, setFirstSkill] = useState<{ name: string; description: string } | null>(null);
+  const [firstSkillDamage, setFirstSkillDamage] = useState("");
+  const [firstSkillEnergy, setFirstSkillEnergy] = useState<{ symbol: string; count: number } | null>(null);
+  const [secondSkill, setSecondSkill] = useState<{ name: string; description: string } | null>(null);
+  const [secondSkillDamage, setSecondSkillDamage] = useState("");
+  const [secondSkillEnergy, setSecondSkillEnergy] = useState<{ symbol: string; count: number } | null>(null);
 
   return (
     <ThemedView style={styles.container}>
@@ -251,6 +266,115 @@ export default function PokemonCard() {
             >
               {resistanceValue ? (
                 <Text style={styles.resistanceValueText}>{resistanceValue}</Text>
+              ) : null}
+            </TouchableOpacity>
+
+            {/* Custo de Energia da Primeira Habilidade (À esquerda da habilidade) */}
+            <TouchableOpacity
+              style={[
+                styles.firstSkillEnergyButton,
+                isPreviewMode && styles.previewMode,
+                isPreviewMode && firstSkillEnergy && firstSkillEnergy.count >= 3 && { top: 605 },
+              ]}
+              onPress={() => setFirstSkillEnergyModalVisible(true)}
+              disabled={isPreviewMode}
+            >
+              {firstSkillEnergy ? (
+                <View style={styles.skillEnergyContainer}>
+                  {Array.from({ length: firstSkillEnergy.count }).map((_, index) => (
+                    <Image
+                      key={index}
+                      source={TYPE_ICONS[firstSkillEnergy.symbol]}
+                      style={styles.skillEnergyIcon}
+                    />
+                  ))}
+                </View>
+              ) : null}
+            </TouchableOpacity>
+
+            {/* Primeira Habilidade (Abaixo da descrição) */}
+            <TouchableOpacity
+              style={[
+                styles.firstSkillButton,
+                isPreviewMode && styles.previewMode,
+              ]}
+              onPress={() => setFirstSkillModalVisible(true)}
+              disabled={isPreviewMode}
+            >
+              {firstSkill ? (
+                <Text style={styles.skillDescriptionText}>
+                  <Text style={styles.skillNameText}>{firstSkill.name} </Text>
+                  {firstSkill.description}
+                </Text>
+              ) : null}
+            </TouchableOpacity>
+
+            {/* Dano da Primeira Habilidade (Ao lado direito da primeira habilidade) */}
+            <TouchableOpacity
+              style={[
+                styles.firstSkillDamageButton,
+                isPreviewMode && styles.previewMode,
+              ]}
+              onPress={() => setFirstSkillDamageModalVisible(true)}
+              disabled={isPreviewMode}
+            >
+              {firstSkillDamage ? (
+                <Text style={styles.skillDamageText}>{firstSkillDamage}</Text>
+              ) : null}
+            </TouchableOpacity>
+
+            {/* --- SEGUNDA HABILIDADE --- */}
+            {/* Custo de Energia da Segunda Habilidade */}
+            <TouchableOpacity
+              style={[
+                styles.secondSkillEnergyButton,
+                isPreviewMode && styles.previewMode,
+                isPreviewMode && secondSkillEnergy && secondSkillEnergy.count >= 3 && { top: 725 }, // Ajuste igual ao da primeira
+              ]}
+              onPress={() => setSecondSkillEnergyModalVisible(true)}
+              disabled={isPreviewMode}
+            >
+              {secondSkillEnergy ? (
+                <View style={styles.skillEnergyContainer}>
+                  {Array.from({ length: secondSkillEnergy.count }).map((_, index) => (
+                    <Image
+                      key={index}
+                      source={TYPE_ICONS[secondSkillEnergy.symbol]}
+                      style={styles.skillEnergyIcon}
+                    />
+                  ))}
+                </View>
+              ) : null}
+            </TouchableOpacity>
+
+            {/* Segunda Habilidade */}
+            <TouchableOpacity
+              style={[
+                styles.secondSkillButton,
+                isPreviewMode && styles.previewMode,
+              ]}
+              onPress={() => setSecondSkillModalVisible(true)}
+              disabled={isPreviewMode}
+            >
+              {secondSkill ? (
+                <Text style={styles.skillDescriptionText}>
+                  <Text style={styles.skillNameText}>{secondSkill.name} </Text>
+                  {secondSkill.description}
+                </Text>
+              ) : null}
+            </TouchableOpacity>
+
+            {/* Dano da Segunda Habilidade */}
+            <TouchableOpacity
+              style={[
+                styles.secondSkillDamageButton,
+                isPreviewMode && styles.previewMode,
+              ]}
+              onPress={() => setSecondSkillDamageModalVisible(true)}
+              disabled={isPreviewMode}
+            >
+              {secondSkillDamage ? (
+                <Text style={styles.skillDamageText}>{secondSkillDamage}</Text>
               ) : null}
             </TouchableOpacity>
 
@@ -440,6 +564,68 @@ export default function PokemonCard() {
           onSave={(value) => {
             setResistanceValue(value);
             setResistanceValueModalVisible(false);
+          }}
+        />
+
+        {/* Modal da Primeira Habilidade */}
+        <SkillModal
+          visible={isFirstSkillModalVisible}
+          onClose={() => setFirstSkillModalVisible(false)}
+          onSave={(skill) => {
+            setFirstSkill(skill);
+            setFirstSkillModalVisible(false);
+          }}
+          title="Primeira Habilidade"
+        />
+
+        {/* Modal do Dano da Primeira Habilidade */}
+        <SkillDamageModal
+          visible={isFirstSkillDamageModalVisible}
+          onClose={() => setFirstSkillDamageModalVisible(false)}
+          onSave={(value) => {
+            setFirstSkillDamage(value);
+            setFirstSkillDamageModalVisible(false);
+          }}
+        />
+
+        {/* Modal do Custo de Energia da Primeira Habilidade */}
+        <SkillEnergyModal
+          visible={isFirstSkillEnergyModalVisible}
+          onClose={() => setFirstSkillEnergyModalVisible(false)}
+          onSave={(symbol, count) => {
+            setFirstSkillEnergy({ symbol, count });
+            setFirstSkillEnergyModalVisible(false);
+          }}
+        />
+
+        {/* Modal da Segunda Habilidade */}
+        <SkillModal
+          visible={isSecondSkillModalVisible}
+          onClose={() => setSecondSkillModalVisible(false)}
+          onSave={(skill) => {
+            setSecondSkill(skill);
+            setSecondSkillModalVisible(false);
+          }}
+          title="Segunda Habilidade"
+        />
+
+        {/* Modal do Dano da Segunda Habilidade */}
+        <SkillDamageModal
+          visible={isSecondSkillDamageModalVisible}
+          onClose={() => setSecondSkillDamageModalVisible(false)}
+          onSave={(value) => {
+            setSecondSkillDamage(value);
+            setSecondSkillDamageModalVisible(false);
+          }}
+        />
+
+        {/* Modal do Custo de Energia da Segunda Habilidade */}
+        <SkillEnergyModal
+          visible={isSecondSkillEnergyModalVisible}
+          onClose={() => setSecondSkillEnergyModalVisible(false)}
+          onSave={(symbol, count) => {
+            setSecondSkillEnergy({ symbol, count });
+            setSecondSkillEnergyModalVisible(false);
           }}
         />
 
@@ -634,6 +820,118 @@ const styles = StyleSheet.create({
     alignItems: "center", // E horizontalmente
   },
 
+  // Custo de Energia da Primeira Habilidade
+  firstSkillEnergyButton: {
+    position: "absolute",
+    top: 610, // Mesma altura da habilidade (provisório)
+    left: 45, // Provisório (à esquerda da habilidade que está em 135)
+    width: 85, // Provisório
+    height: 100, // Mesma altura inicial (provisório)
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  skillEnergyContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
+    alignContent: "center",
+    gap: 2,
+    width: "100%",
+  },
+
+  skillEnergyIcon: {
+    width: 37,
+    height: 37,
+    resizeMode: "contain",
+  },
+
+  // Primeira Habilidade (Abaixo da descrição)
+  firstSkillButton: {
+    position: "absolute",
+    top: 610, // Valor provisório (abaixo da descrição)
+    left: 135, // Mesmo alinhamento da descrição
+    width: 490, // Mesma largura da descrição
+    height: 100, // Mesma altura da descrição
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "flex-start", // Puxa o texto para o topo removendo o espaço vazio
+    alignItems: "flex-start", // Puxa o texto para a esquerda
+    paddingHorizontal: 5, // Apenas para não encostar literalmente na linha da borda
+    paddingTop: 0, // Garante que comece do topo exato
+  },
+
+  // Dano da Primeira Habilidade (Ao lado direito)
+  firstSkillDamageButton: {
+    position: "absolute",
+    top: 610, // Mesma altura da habilidade
+    left: 630, // Valor provisório (à direita da habilidade)
+    width: 70, // Valor provisório
+    height: 70, // Mesma altura da habilidade
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  // --- SEGUNDA HABILIDADE ---
+
+  // Custo de Energia da Segunda Habilidade
+  secondSkillEnergyButton: {
+    position: "absolute",
+    top: 730, // Provisório (logo abaixo da primeira habilidade)
+    left: 45,
+    width: 85,
+    height: 100,
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  // Segunda Habilidade
+  secondSkillButton: {
+    position: "absolute",
+    top: 730, // Provisório
+    left: 135,
+    width: 490,
+    height: 100,
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    paddingHorizontal: 5,
+    paddingTop: 0,
+  },
+
+  // Dano da Segunda Habilidade
+  secondSkillDamageButton: {
+    position: "absolute",
+    top: 730, // Provisório
+    left: 630,
+    width: 70,
+    height: 70,
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
   // Décimo botão (Fraqueza, Abaixo da descrição)
   weaknessButton: {
     position: "absolute",
@@ -783,8 +1081,9 @@ const styles = StyleSheet.create({
     borderColor: "white",
     borderRadius: 8,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "center", // Puxa para o topo
+    alignItems: "flex-start", // Puxa para a esquerda
+    padding: 0, // Sem padding extra, texto encosta nas bordas
   },
 
   // Texto do HP (Usando a fonte personalizada)
@@ -818,6 +1117,41 @@ const styles = StyleSheet.create({
     textShadowColor: "white",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
+  },
+
+  // Nome da Habilidade (Bold)
+  skillNameText: {
+    fontFamily: "GillSans-Bold",
+    fontSize: 35,
+    color: "#000",
+    textShadowColor: "white",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+    includeFontPadding: false,
+  },
+
+  // Dano da Habilidade (Bold e Grande)
+  skillDamageText: {
+    fontFamily: "GillSans-Bold",
+    fontSize: 45,
+    color: "#000",
+    textAlign: "center",
+    textShadowColor: "white",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+    includeFontPadding: false,
+  },
+
+  // Descrição da Habilidade (Regular)
+  skillDescriptionText: {
+    fontFamily: "GillSans",
+    fontSize: 23,
+    color: "#000",
+    textAlign: "left", // Geralmente o texto das habilidades começa alinhado à esquerda
+    textShadowColor: "white",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+    includeFontPadding: false, // Remove padding extra nativo da fonte no Android
   },
 
   // Texto da Curiosidade (Mesma fonte e tamanho da descrição)
@@ -882,5 +1216,6 @@ const styles = StyleSheet.create({
     textShadowColor: "white",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
+    includeFontPadding: false, // Remove padding nativo da fonte no Android
   },
 });

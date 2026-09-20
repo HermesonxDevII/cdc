@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Modal, StyleSheet, TouchableOpacity, View, Text, Pressable, TextInput } from 'react-native';
 
-interface ExtraInfoModalProps {
+interface SkillDamageModalProps {
   visible: boolean;
   onClose: () => void;
   onSave: (value: string) => void;
 }
 
-export function ExtraInfoModal({ visible, onClose, onSave }: ExtraInfoModalProps) {
+export function SkillDamageModal({ visible, onClose, onSave }: SkillDamageModalProps) {
   const [inputValue, setInputValue] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
 
@@ -28,28 +28,20 @@ export function ExtraInfoModal({ visible, onClose, onSave }: ExtraInfoModalProps
           {/* Toast de Erro (Canto superior direito) */}
           {toastVisible && (
             <View style={styles.toast}>
-              <Text style={styles.toastText}>Digite a informação extra!</Text>
+              <Text style={styles.toastText}>Digite o valor do dano!</Text>
             </View>
           )}
 
-          <Text style={styles.title}>Informação Extra</Text>
-
+          <Text style={styles.title}>Dano da Habilidade</Text>
+          
           {/* Input de Valor */}
           <TextInput
             style={styles.input}
-            placeholder="Ex: © 1995, 96, 98 Nintendo, Creatures..."
+            placeholder="Ex: 30, 50+, 10x"
             placeholderTextColor="#888"
             value={inputValue}
             onChangeText={setInputValue}
           />
-
-          {/* Botão de Preenchimento Rápido */}
-          <TouchableOpacity
-            style={styles.presetButton}
-            onPress={() => setInputValue("©1995, 96, 98 Nintendo, Creatures, GAMEFREAK. ©1999 Wizards.")}
-          >
-            <Text style={styles.presetButtonText}>Licença de 95</Text>
-          </TouchableOpacity>
 
           {/* Botões na base */}
           <View style={styles.buttonContainer}>
@@ -144,20 +136,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
-  },
-  presetButton: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#E0E0E0',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 15,
-    marginBottom: 20,
-    marginTop: -10,
-  },
-  presetButtonText: {
-    color: '#333',
-    fontWeight: 'bold',
-    fontSize: 14,
   },
   toast: {
     position: 'absolute',
