@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedView } from "@/components/themed-view";
+import * as ImagePicker from 'expo-image-picker';
 import { BottomTabInset, MaxContentWidth, Spacing } from "@/constants/theme";
 
 import { Back } from "@/components/back";
@@ -118,6 +119,9 @@ export default function PokemonCard() {
   const [isPreviewMode, setIsPreviewMode] = useState(false);
 
   const [currentTemplate, setCurrentTemplate] = useState(TEMPLATES.normal);
+
+  // Imagem do Pokémon
+  const [pokemonImage, setPokemonImage] = useState<string | null>(null);
   const [hp, setHp] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -136,6 +140,26 @@ export default function PokemonCard() {
   const [secondSkill, setSecondSkill] = useState<{ name: string; description: string } | null>(null);
   const [secondSkillDamage, setSecondSkillDamage] = useState("");
   const [secondSkillEnergy, setSecondSkillEnergy] = useState<{ symbol: string; count: number } | null>(null);
+
+  const pickImage = async () => {
+    // Pede permissão para acessar a galeria
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      alert("Permissão para acessar a galeria é necessária!");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true, // Permite recortar a foto
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setPokemonImage(result.assets[0].uri);
+    }
+  };
 
   return (
     <ThemedView style={styles.container}>
@@ -176,13 +200,17 @@ export default function PokemonCard() {
             {/* Sexto Botão Retangular (Para a Imagem do Pokémon) */}
             <TouchableOpacity
               style={[styles.imageButton, isPreviewMode && styles.previewMode]}
-              onPress={() => console.log("Clicou no botão de imagem!")}
+              onPress={pickImage}
               disabled={isPreviewMode}
             >
-              {!isPreviewMode && (
-                <Text style={styles.imageButtonText}>
-                  Clique aqui para{"\n"}adicionar uma imagem
-                </Text>
+              {pokemonImage ? (
+                <Image source={{ uri: pokemonImage }} style={styles.pokemonImage} />
+              ) : (
+                !isPreviewMode && (
+                  <Text style={styles.imageButtonText}>
+                    Clique aqui para{"\n"}adicionar uma imagem
+                  </Text>
+                )
               )}
             </TouchableOpacity>
 
@@ -789,10 +817,17 @@ const styles = StyleSheet.create({
     height: 387, // Valor provisório (caixa grande para a arte)
     borderWidth: 3,
     borderColor: "white",
-    borderRadius: 8,
+    borderRadius: 2,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     justifyContent: "center",
     alignItems: "center",
+    overflow: "hidden", // Para a imagem não vazar das bordas redondas
+  },
+
+  pokemonImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
   },
 
   imageButtonText: {
