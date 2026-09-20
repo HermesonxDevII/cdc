@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Image,
   StyleSheet,
@@ -6,6 +6,7 @@ import {
   View,
   TouchableOpacity,
   Text,
+  BackHandler,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -30,6 +31,8 @@ import { ResistanceValueModal } from "@/components/modals/resistance_value_modal
 import { SkillModal } from "@/components/modals/skill_modal";
 import { SkillDamageModal } from "@/components/modals/skill_damage_modal";
 import { SkillEnergyModal } from "@/components/modals/skill_energy_modal";
+import { DiscardChangesModal } from "@/components/modals/discard_changes_modal";
+import { useRouter } from "expo-router";
 
 // Mapeamento de todas as texturas de cartas baseadas no tipo
 const BASE_URL = "../../../assets/images/templates/pokemon/basic";
@@ -116,6 +119,7 @@ export default function PokemonCard() {
   const [isSecondSkillModalVisible, setSecondSkillModalVisible] = useState(false);
   const [isSecondSkillDamageModalVisible, setSecondSkillDamageModalVisible] = useState(false);
   const [isSecondSkillEnergyModalVisible, setSecondSkillEnergyModalVisible] = useState(false);
+  const [isDiscardModalVisible, setDiscardModalVisible] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
 
   const [currentTemplate, setCurrentTemplate] = useState(TEMPLATES.normal);
@@ -141,6 +145,48 @@ export default function PokemonCard() {
   const [secondSkillDamage, setSecondSkillDamage] = useState("");
   const [secondSkillEnergy, setSecondSkillEnergy] = useState<{ symbol: string; count: number } | null>(null);
 
+  const router = useRouter();
+
+  const hasChanges = () => {
+    return (
+      hp !== "" ||
+      name !== "" ||
+      description !== "" ||
+      curiosity !== "" ||
+      illustration !== "" ||
+      pokemonNumber !== "" ||
+      extraInfo !== "" ||
+      currentTemplate !== TEMPLATES.normal ||
+      weakness !== "" ||
+      resistance !== "" ||
+      retreat !== null ||
+      weaknessValue !== "" ||
+      resistanceValue !== "" ||
+      firstSkill !== null ||
+      firstSkillDamage !== "" ||
+      firstSkillEnergy !== null ||
+      secondSkill !== null ||
+      secondSkillDamage !== "" ||
+      secondSkillEnergy !== null ||
+      pokemonImage !== null
+    );
+  };
+
+  const handleBack = () => {
+    if (hasChanges()) {
+      setDiscardModalVisible(true);
+      return true;
+    } else {
+      router.push("/pokemon");
+      return true;
+    }
+  };
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBack);
+    return () => backHandler.remove();
+  }, [hp, name, description, curiosity, illustration, pokemonNumber, extraInfo, currentTemplate, weakness, resistance, retreat, weaknessValue, resistanceValue, firstSkill, firstSkillDamage, firstSkillEnergy, secondSkill, secondSkillDamage, secondSkillEnergy, pokemonImage]);
+
   const pickImage = async () => {
     // Pede permissão para acessar a galeria
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -164,7 +210,7 @@ export default function PokemonCard() {
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
-        <Back href="/pokemon" />
+        <Back href="/pokemon" onPress={handleBack} />
 
         {/* Esse é o wrapper que reserva o espaço reduzido na tela para não quebrar o layout */}
         <View style={styles.scaledWrapper}>
@@ -657,10 +703,20 @@ export default function PokemonCard() {
           }}
         />
 
+        {/* Modal de Descarte de Alterações */}
+        <DiscardChangesModal
+          visible={isDiscardModalVisible}
+          onContinue={() => setDiscardModalVisible(false)}
+          onDiscard={() => {
+            setDiscardModalVisible(false);
+            router.push("/pokemon");
+          }}
+        />
+
         {/* Bottom Bar / Footer */}
         <View style={styles.footerBar}>
           <TouchableOpacity
-            onPress={() => console.log("Voltar/Seta Esquerda")}
+            onPress={handleBack}
             disabled={isPreviewMode}
             style={{ opacity: isPreviewMode ? 0.3 : 1 }}
           >

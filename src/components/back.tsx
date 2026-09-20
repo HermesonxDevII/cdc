@@ -1,22 +1,31 @@
-import { Link } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { ThemedView } from '@/components/themed-view';
 
 interface BackProps {
   href: string;
+  onPress?: () => void;
 }
 
-export function Back({ href }: BackProps) {
+export function Back({ href, onPress }: BackProps) {
+  const router = useRouter();
+
+  const handlePress = () => {
+    if (onPress) {
+      onPress();
+    } else {
+      router.push(href as any);
+    }
+  };
+
   return (
     <ThemedView style={styles.box}>
-      <Link href={href as any} asChild>
-        <TouchableOpacity style={styles.card}>
-          <Image
-            source={require('../../assets/images/icons/chevron-left.png')}
-            style={styles.logo}
-          />
-        </TouchableOpacity>
-      </Link>
+      <TouchableOpacity style={styles.card} onPress={handlePress}>
+        <Image
+          source={require('../../assets/images/icons/chevron-left.png')}
+          style={styles.logo}
+        />
+      </TouchableOpacity>
     </ThemedView>
   )
 }
