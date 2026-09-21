@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Modal, StyleSheet, TouchableOpacity, View, Text, Pressable, TextInput } from 'react-native';
+import { Modal, StyleSheet, TouchableOpacity, View, Text, Pressable, TextInput , KeyboardAvoidingView, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface DescriptionModalProps {
   visible: boolean;
@@ -8,6 +9,7 @@ interface DescriptionModalProps {
 }
 
 export function DescriptionModal({ visible, onClose, onSave }: DescriptionModalProps) {
+  const insets = useSafeAreaInsets();
   const [inputValue, setInputValue] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
 
@@ -18,8 +20,9 @@ export function DescriptionModal({ visible, onClose, onSave }: DescriptionModalP
       visible={visible}
       onRequestClose={onClose}
     >
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <Pressable style={styles.overlay} onPress={onClose}>
-        <View style={styles.modalContent} onStartShouldSetResponder={() => true}>
+        <View style={[styles.modalContent, { paddingBottom: insets.bottom + 20 }]} onStartShouldSetResponder={() => true}>
 
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <Text style={styles.closeText}>X</Text>
@@ -69,6 +72,7 @@ export function DescriptionModal({ visible, onClose, onSave }: DescriptionModalP
 
         </View>
       </Pressable>
+    </KeyboardAvoidingView>
     </Modal>
   );
 }

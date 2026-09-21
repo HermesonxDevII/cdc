@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Modal, StyleSheet, TouchableOpacity, View, Text, Pressable, TextInput } from 'react-native';
+import { Modal, StyleSheet, TouchableOpacity, View, Text, Pressable, TextInput , KeyboardAvoidingView, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface SkillModalProps {
   visible: boolean;
@@ -9,6 +10,7 @@ interface SkillModalProps {
 }
 
 export function SkillModal({ visible, onClose, onSave, title = "Habilidade" }: SkillModalProps) {
+  const insets = useSafeAreaInsets();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
@@ -20,8 +22,9 @@ export function SkillModal({ visible, onClose, onSave, title = "Habilidade" }: S
       visible={visible}
       onRequestClose={onClose}
     >
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <Pressable style={styles.overlay} onPress={onClose}>
-        <View style={styles.modalContent} onStartShouldSetResponder={() => true}>
+        <View style={[styles.modalContent, { paddingBottom: insets.bottom + 20 }]} onStartShouldSetResponder={() => true}>
 
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <Text style={styles.closeText}>X</Text>
@@ -81,6 +84,7 @@ export function SkillModal({ visible, onClose, onSave, title = "Habilidade" }: S
 
         </View>
       </Pressable>
+    </KeyboardAvoidingView>
     </Modal>
   );
 }

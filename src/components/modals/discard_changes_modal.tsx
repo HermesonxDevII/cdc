@@ -1,5 +1,6 @@
 import React from 'react';
-import { Modal, StyleSheet, TouchableOpacity, View, Text, Pressable } from 'react-native';
+import { Modal, StyleSheet, TouchableOpacity, View, Text, Pressable , KeyboardAvoidingView, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface DiscardChangesModalProps {
   visible: boolean;
@@ -8,6 +9,7 @@ interface DiscardChangesModalProps {
 }
 
 export function DiscardChangesModal({ visible, onContinue, onDiscard }: DiscardChangesModalProps) {
+  const insets = useSafeAreaInsets();
   return (
     <Modal
       animationType="slide"
@@ -15,8 +17,9 @@ export function DiscardChangesModal({ visible, onContinue, onDiscard }: DiscardC
       visible={visible}
       onRequestClose={onContinue}
     >
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <Pressable style={styles.overlay} onPress={onContinue}>
-        <View style={styles.modalContent} onStartShouldSetResponder={() => true}>
+        <View style={[styles.modalContent, { paddingBottom: insets.bottom + 20 }]} onStartShouldSetResponder={() => true}>
 
           <Text style={styles.title}>Descartar edições?</Text>
           <Text style={styles.description}>
@@ -42,6 +45,7 @@ export function DiscardChangesModal({ visible, onContinue, onDiscard }: DiscardC
 
         </View>
       </Pressable>
+    </KeyboardAvoidingView>
     </Modal>
   );
 }

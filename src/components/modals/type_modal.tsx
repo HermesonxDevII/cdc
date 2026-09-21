@@ -1,4 +1,5 @@
-import { Modal, StyleSheet, TouchableOpacity, View, Text, Image, Pressable } from 'react-native';
+import { Modal, StyleSheet, TouchableOpacity, View, Text, Image, Pressable , KeyboardAvoidingView, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const BASE_URL = '../../../assets/images/icons/pokemon_types';
 
@@ -21,6 +22,7 @@ interface TypeModalProps {
 }
 
 export function TypeModal({ visible, onClose, onSelectType }: TypeModalProps) {
+  const insets = useSafeAreaInsets();
   return (
     <Modal
       animationType="slide"
@@ -29,9 +31,10 @@ export function TypeModal({ visible, onClose, onSelectType }: TypeModalProps) {
       onRequestClose={onClose}
     >
       {/* Overlay escuro no fundo (agora clicável para fechar o modal) */}
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <Pressable style={styles.overlay} onPress={onClose}>
         {/* Caixa principal do modal (evita que o clique vaze pro fundo) */}
-        <View style={styles.modalContent} onStartShouldSetResponder={() => true}>
+        <View style={[styles.modalContent, { paddingBottom: insets.bottom + 20 }]} onStartShouldSetResponder={() => true}>
 
           {/* Botão de Fechar no topo direito */}
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
@@ -51,6 +54,7 @@ export function TypeModal({ visible, onClose, onSelectType }: TypeModalProps) {
           </View>
         </View>
       </Pressable>
+    </KeyboardAvoidingView>
     </Modal>
   );
 }

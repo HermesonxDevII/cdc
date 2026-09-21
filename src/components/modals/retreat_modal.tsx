@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Modal, StyleSheet, TouchableOpacity, View, Text, Image, Pressable } from 'react-native';
+import { Modal, StyleSheet, TouchableOpacity, View, Text, Image, Pressable , KeyboardAvoidingView, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const BASE_URL = '../../../assets/images/icons/pokemon_types';
 const ICONS_DIR = '../../../assets/images/icons';
@@ -47,6 +48,7 @@ interface RetreatModalProps {
 }
 
 export function RetreatModal({ visible, onClose, onSave }: RetreatModalProps) {
+  const insets = useSafeAreaInsets();
   const [step, setStep] = useState<1 | 2>(1);
   const [activeTab, setActiveTab] = useState<'current' | 'old' | 'old_2'>('current');
   const [selectedSymbol, setSelectedSymbol] = useState('');
@@ -95,8 +97,9 @@ export function RetreatModal({ visible, onClose, onSave }: RetreatModalProps) {
       visible={visible}
       onRequestClose={onClose}
     >
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <Pressable style={styles.overlay} onPress={onClose}>
-        <View style={styles.modalContent} onStartShouldSetResponder={() => true}>
+        <View style={[styles.modalContent, { paddingBottom: insets.bottom + 20 }]} onStartShouldSetResponder={() => true}>
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <Text style={styles.closeText}>X</Text>
           </TouchableOpacity>
@@ -171,6 +174,7 @@ export function RetreatModal({ visible, onClose, onSave }: RetreatModalProps) {
 
         </View>
       </Pressable>
+    </KeyboardAvoidingView>
     </Modal>
   );
 }

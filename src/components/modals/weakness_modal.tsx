@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Modal, StyleSheet, TouchableOpacity, View, Text, Image, Pressable } from 'react-native';
+import { Modal, StyleSheet, TouchableOpacity, View, Text, Image, Pressable , KeyboardAvoidingView, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const BASE_URL = '../../../assets/images/icons/pokemon_types';
 
@@ -46,6 +47,7 @@ interface WeaknessModalProps {
 }
 
 export function WeaknessModal({ visible, onClose, onSelectWeakness }: WeaknessModalProps) {
+  const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<'current' | 'old' | 'old_2'>('current');
 
   const getActiveList = () => {
@@ -61,8 +63,9 @@ export function WeaknessModal({ visible, onClose, onSelectWeakness }: WeaknessMo
       visible={visible}
       onRequestClose={onClose}
     >
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <Pressable style={styles.overlay} onPress={onClose}>
-        <View style={styles.modalContent} onStartShouldSetResponder={() => true}>
+        <View style={[styles.modalContent, { paddingBottom: insets.bottom + 20 }]} onStartShouldSetResponder={() => true}>
 
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <Text style={styles.closeText}>X</Text>
@@ -103,6 +106,7 @@ export function WeaknessModal({ visible, onClose, onSelectWeakness }: WeaknessMo
           </View>
         </View>
       </Pressable>
+    </KeyboardAvoidingView>
     </Modal>
   );
 }

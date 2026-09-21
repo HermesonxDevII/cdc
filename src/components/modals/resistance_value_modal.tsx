@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Modal, StyleSheet, TouchableOpacity, View, Text, Pressable, TextInput } from 'react-native';
+import { Modal, StyleSheet, TouchableOpacity, View, Text, Pressable, TextInput , KeyboardAvoidingView, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface ResistanceValueModalProps {
   visible: boolean;
@@ -8,6 +9,7 @@ interface ResistanceValueModalProps {
 }
 
 export function ResistanceValueModal({ visible, onClose, onSave }: ResistanceValueModalProps) {
+  const insets = useSafeAreaInsets();
   const [inputValue, setInputValue] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
 
@@ -18,8 +20,9 @@ export function ResistanceValueModal({ visible, onClose, onSave }: ResistanceVal
       visible={visible}
       onRequestClose={onClose}
     >
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <Pressable style={styles.overlay} onPress={onClose}>
-        <View style={styles.modalContent} onStartShouldSetResponder={() => true}>
+        <View style={[styles.modalContent, { paddingBottom: insets.bottom + 20 }]} onStartShouldSetResponder={() => true}>
 
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <Text style={styles.closeText}>X</Text>
@@ -67,6 +70,7 @@ export function ResistanceValueModal({ visible, onClose, onSave }: ResistanceVal
 
         </View>
       </Pressable>
+    </KeyboardAvoidingView>
     </Modal>
   );
 }
