@@ -36,7 +36,7 @@ export function IllustrationModal({ visible, onClose, onSave }: IllustrationModa
           )}
 
           <Text style={styles.title}>Definir Ilustrador</Text>
-          
+
           {/* Input de Valor */}
           <TextInput
             style={styles.input}
@@ -45,6 +45,19 @@ export function IllustrationModal({ visible, onClose, onSave }: IllustrationModa
             value={inputValue}
             onChangeText={setInputValue}
           />
+
+          {/* Atalhos Rápidos */}
+          <View style={styles.presetContainer}>
+            <TouchableOpacity style={styles.presetButton} onPress={() => setInputValue("Keiji Kinebuchi")}>
+              <Text style={styles.presetButtonText}>Keiji Kinebuchi</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.presetButton} onPress={() => setInputValue("Ken Sugimori")}>
+              <Text style={styles.presetButtonText}>Ken Sugimori</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.presetButton} onPress={() => setInputValue("Mitsuhiro Arita")}>
+              <Text style={styles.presetButtonText}>Mitsuhiro Arita</Text>
+            </TouchableOpacity>
+          </View>
 
           {/* Botões na base */}
           <View style={styles.buttonContainer}>
@@ -123,6 +136,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
     marginBottom: 20,
+  },
+  presetContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 20,
+    marginTop: -10,
+  },
+  presetButton: {
+    backgroundColor: '#E0E0E0',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 15,
+  },
+  presetButtonText: {
+    color: '#333',
+    fontWeight: 'bold',
+    fontSize: 14,
   },
   buttonContainer: {
     flexDirection: 'row',
