@@ -112,21 +112,21 @@ export function RetreatModal({ visible, onClose, onSave }: RetreatModalProps) {
                   style={[styles.tabButton, activeTab === 'current' && styles.tabButtonActive]}
                   onPress={() => setActiveTab('current')}
                 >
-                  <Text style={[styles.tabText, activeTab === 'current' && styles.tabTextActive]}>Atual</Text>
+                  <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.tabText, activeTab === 'current' && styles.tabTextActive]}>Atual</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   style={[styles.tabButton, activeTab === 'old' && styles.tabButtonActive]}
                   onPress={() => setActiveTab('old')}
                 >
-                  <Text style={[styles.tabText, activeTab === 'old' && styles.tabTextActive]}>Clássico</Text>
+                  <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.tabText, activeTab === 'old' && styles.tabTextActive]}>Clássico</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   style={[styles.tabButton, activeTab === 'old_2' && styles.tabButtonActive]}
                   onPress={() => setActiveTab('old_2')}
                 >
-                  <Text style={[styles.tabText, activeTab === 'old_2' && styles.tabTextActive]}>Retrô</Text>
+                  <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.tabText, activeTab === 'old_2' && styles.tabTextActive]}>Retrô</Text>
                 </TouchableOpacity>
               </View>
 
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#7C3AED',
   },
   tabText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: 'bold',
     color: '#555',
   },
