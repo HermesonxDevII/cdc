@@ -1354,7 +1354,7 @@ const styles = StyleSheet.create({
 
   // Texto da Descrição (Sem itálico ou bold forçado, apenas a fonte normal)
   descriptionText: {
-    fontFamily: "GillSans",
+    fontFamily: "GillSans-Bold-Italic",
     fontSize: 23,
     color: "#000",
     textAlign: "center",

@@ -9,13 +9,16 @@ import { AnimatedSplashOverlay } from '@/components/animated-icon';
 SplashScreen.preventAutoHideAsync();
 
 export default function TabLayout() {
+  const BASE_URL = '../../assets/fonts';
+
   const colorScheme = useColorScheme();
-  
+
   const [loaded, error] = useFonts({
-    'GillSans-Bold': require('../../assets/fonts/gill_sans_condensed_bold.ttf'),
-    'GillSans': require('../../assets/fonts/gill_sans.ttf'),
-    'Revue': require('../../assets/fonts/Revue.ttf'),
-    'Futura-Heavy': require('../../assets/fonts/Futura_Heavy.ttf'),
+    'GillSans-Bold-Italic': require(`${BASE_URL}/Gill_Sans_Bold_Italic.ttf`),
+    'GillSans-Bold': require(`${BASE_URL}/gill_sans_condensed_bold.ttf`),
+    'GillSans': require(`${BASE_URL}/gill_sans.ttf`),
+    'Revue': require(`${BASE_URL}/Revue.ttf`),
+    'Futura-Heavy': require(`${BASE_URL}/Futura_Heavy.ttf`),
   });
 
   useEffect(() => {
