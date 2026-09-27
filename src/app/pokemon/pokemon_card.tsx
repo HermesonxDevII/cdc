@@ -1370,7 +1370,7 @@ const styles = StyleSheet.create({
 
   // Texto do Ilustrador
   illustrationText: {
-    fontFamily: "GillSans",
+    fontFamily: "GillSans-Bold",
     fontSize: 16,
     color: "#000",
     textAlign: "left",
