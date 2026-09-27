@@ -294,9 +294,22 @@ export default function PokemonCard() {
               disabled={isPreviewMode}
             />
 
+            {/* Novo Botão para Level (Específico das versões japonesas) */}
+            <TouchableOpacity
+              style={[styles.levelButton, isPreviewMode && styles.previewMode]}
+              disabled={isPreviewMode}
+            >
+              {/* Aqui entrará a lógica do modal e texto no futuro */}
+            </TouchableOpacity>
+
             {/* Segundo Botão Redondo (Para o HP) */}
             <TouchableOpacity
-              style={[styles.hpButton, isPreviewMode && styles.previewMode]}
+              style={[
+                styles.hpButton,
+                isPreviewMode && styles.previewMode,
+                { width: hp.length > 2 ? 150 : 125 },
+                isPreviewMode && { right: 115 }
+              ]}
               onPress={() => setHpModalVisible(true)}
               disabled={isPreviewMode}
             >
@@ -929,18 +942,32 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.2)",
   },
 
+  levelButton: {
+    position: "absolute",
+    top: 75, // Provisório (um pouco mais baixo que o HP pra centralizar ou se alinhar)
+    right: 290, // Provisório (à esquerda da box de HP)
+    width: 80, // Menor que o HP
+    height: 40, // Menor que o HP
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
   hpButton: {
     position: "absolute",
     top: 70, // Mesmo alinhamento vertical da bolinha
-    right: 130, // Fica à esquerda da bolinha (68 da margem + 60 da bolinha + 12 de espaço)
-    width: 150, // Aumentei de 100 para 140 a seu pedido para dar espaço ao "120 HP"
+    right: 130,
+    width: 150,
     height: 50, // Mesma altura
     borderWidth: 3,
     borderColor: "white",
     borderRadius: 8,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
-    justifyContent: "center", // Centraliza o texto verticalmente
-    alignItems: "center", // Centraliza o texto horizontalmente
+    justifyContent: "flex-start", // Centraliza o texto verticalmente
+    alignItems: "flex-start", // Centraliza o texto horizontalmente
   },
 
   // Terceiro botão (Para o Nome do Pokémon, etc)
@@ -1276,7 +1303,7 @@ const styles = StyleSheet.create({
     fontFamily: "GillSans-Bold",
     fontSize: 45,
     color: "#000", // HP geralmente é preto ou bem escuro
-    textAlign: "center",
+    textAlign: "left",
     // Um pouco de sombra para dar leitura melhor
     textShadowColor: "white",
     textShadowOffset: { width: 1, height: 1 },
