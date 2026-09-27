@@ -14,6 +14,8 @@ export default function TabLayout() {
   const [loaded, error] = useFonts({
     'GillSans-Bold': require('../../assets/fonts/gill_sans_condensed_bold.ttf'),
     'GillSans': require('../../assets/fonts/gill_sans.ttf'),
+    'Revue': require('../../assets/fonts/Revue.ttf'),
+    'Futura-Heavy': require('../../assets/fonts/Futura_Heavy.ttf'),
   });
 
   useEffect(() => {

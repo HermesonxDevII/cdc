@@ -25,6 +25,7 @@ import { DescriptionModal } from "@/components/modals/description_modal";
 import { CuriosityModal } from "@/components/modals/curiosity_modal";
 import { IllustrationModal } from "@/components/modals/illustration_modal";
 import { PokemonNumberModal } from "@/components/modals/pokemon_number_modal";
+import { LevelModal } from "@/components/modals/level_modal";
 import { ExtraInfoModal } from "@/components/modals/extra_info_modal";
 import { WeaknessModal } from "@/components/modals/weakness_modal";
 import { ResistanceModal } from "@/components/modals/resistance_modal";
@@ -61,6 +62,7 @@ type CardState = {
   curiosity: string;
   illustration: string;
   pokemonNumber: string;
+  level: string;
   extraInfo: string;
   weakness: string;
   weaknessValue: string;
@@ -84,6 +86,7 @@ const initialState: CardState = {
   curiosity: "",
   illustration: "",
   pokemonNumber: "",
+  level: "",
   extraInfo: "",
   weakness: "",
   weaknessValue: "",
@@ -156,6 +159,7 @@ export default function PokemonCard() {
     useState(false);
   const [isPokemonNumberModalVisible, setPokemonNumberModalVisible] =
     useState(false);
+  const [isLevelModalVisible, setLevelModalVisible] = useState(false);
   const [isExtraInfoModalVisible, setExtraInfoModalVisible] = useState(false);
   const [isWeaknessModalVisible, setWeaknessModalVisible] = useState(false);
   const [isResistanceModalVisible, setResistanceModalVisible] = useState(false);
@@ -199,7 +203,7 @@ export default function PokemonCard() {
 
   const {
     currentTemplate, pokemonImage, hp, name, description, curiosity,
-    illustration, pokemonNumber, extraInfo, weakness, weaknessValue,
+    illustration, pokemonNumber, extraInfo, weakness, weaknessValue, level,
     resistance, resistanceValue, retreat, firstSkill, firstSkillDamage,
     firstSkillEnergy, secondSkill, secondSkillDamage, secondSkillEnergy
   } = currentState;
@@ -296,10 +300,15 @@ export default function PokemonCard() {
 
             {/* Novo Botão para Level (Específico das versões japonesas) */}
             <TouchableOpacity
-              style={[styles.levelButton, isPreviewMode && styles.previewMode]}
+              style={[
+                styles.levelButton,
+                isPreviewMode && styles.previewMode,
+                { right: hp.length > 2 ? 285 : 260 }
+              ]}
+              onPress={() => setLevelModalVisible(true)}
               disabled={isPreviewMode}
             >
-              {/* Aqui entrará a lógica do modal e texto no futuro */}
+              {level ? <Text style={styles.levelText}>Nv.{level}</Text> : null}
             </TouchableOpacity>
 
             {/* Segundo Botão Redondo (Para o HP) */}
@@ -677,6 +686,16 @@ export default function PokemonCard() {
           }}
         />
 
+        {/* Modal do Level */}
+        <LevelModal
+          visible={isLevelModalVisible}
+          onClose={() => setLevelModalVisible(false)}
+          onSave={(valor) => {
+            updateCard({ level: valor });
+            setLevelModalVisible(false);
+          }}
+        />
+
         {/* Modal do Número do Pokémon */}
         <PokemonNumberModal
           visible={isPokemonNumberModalVisible}
@@ -942,12 +961,24 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.2)",
   },
 
+  levelText: {
+    fontFamily: "Revue",
+    fontSize: 25,
+    color: "#000",
+    textAlign: "center",
+    textShadowColor: "white",
+    fontWeight: 'bold',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+    includeFontPadding: false,
+  },
+
   levelButton: {
     position: "absolute",
-    top: 75, // Provisório (um pouco mais baixo que o HP pra centralizar ou se alinhar)
-    right: 290, // Provisório (à esquerda da box de HP)
+    top: 90,
+    right: 285, // Provisório (à esquerda da box de HP)
     width: 80, // Menor que o HP
-    height: 40, // Menor que o HP
+    height: 30, // Menor que o HP
     borderWidth: 3,
     borderColor: "white",
     borderRadius: 8,
@@ -1300,6 +1331,7 @@ const styles = StyleSheet.create({
 
   // Texto do HP (Usando a fonte personalizada)
   hpText: {
+    // fontFamily: "Futura-Heavy",
     fontFamily: "GillSans-Bold",
     fontSize: 45,
     color: "#000", // HP geralmente é preto ou bem escuro
