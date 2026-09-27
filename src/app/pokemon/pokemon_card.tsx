@@ -589,6 +589,7 @@ export default function PokemonCard() {
               style={[
                 styles.extraInfoButton,
                 isPreviewMode && styles.previewMode,
+                isPreviewMode && { left: 200 }
               ]}
               onPress={() => setExtraInfoModalVisible(true)}
               disabled={isPreviewMode}
@@ -1258,7 +1259,7 @@ const styles = StyleSheet.create({
   extraInfoButton: {
     position: "absolute",
     top: 980, // Mesmo alinhamento vertical
-    left: 193, // MÁGICA: Isso centraliza automaticamente, não importa a largura!
+    left: 197, // MÁGICA: Isso centraliza automaticamente, não importa a largura!
     width: 450, // Pode mudar a largura à vontade agora
     height: 25, // Mesma altura do ilustrador
     borderWidth: 3,
@@ -1266,7 +1267,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     justifyContent: "center", // Puxa para o topo
-    alignItems: "flex-start", // Puxa para a esquerda
+    alignItems: "center", // Puxa para a esquerda
     padding: 0, // Sem padding extra, texto encosta nas bordas
   },
 
@@ -1396,7 +1397,7 @@ const styles = StyleSheet.create({
     fontFamily: "GillSans",
     fontSize: 16,
     color: "#000",
-    textAlign: "left",
+    textAlign: "center",
     textShadowColor: "white",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
