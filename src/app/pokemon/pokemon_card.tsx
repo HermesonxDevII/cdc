@@ -558,6 +558,7 @@ export default function PokemonCard() {
               style={[
                 styles.illustrationButton,
                 isPreviewMode && styles.previewMode,
+                isPreviewMode && { left: 45 }
               ]}
               onPress={() => setIllustrationModalVisible(true)}
               disabled={isPreviewMode}
@@ -1227,8 +1228,8 @@ const styles = StyleSheet.create({
   illustrationButton: {
     position: "absolute",
     top: 980, // Valor provisório
-    left: 45, // Valor provisório
-    width: 140, // Valor provisório
+    left: 40, // Valor provisório
+    width: 150, // Valor provisório
     height: 25, // Valor provisório
     borderWidth: 3,
     borderColor: "white",
