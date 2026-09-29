@@ -469,6 +469,7 @@ export default function PokemonCard() {
               style={[
                 styles.firstSkillButton,
                 isPreviewMode && styles.previewMode,
+                (!firstSkill?.description) && { justifyContent: 'center' },
               ]}
               onPress={() => setFirstSkillModalVisible(true)}
               disabled={isPreviewMode}
@@ -524,6 +525,7 @@ export default function PokemonCard() {
               style={[
                 styles.secondSkillButton,
                 isPreviewMode && styles.previewMode,
+                (!secondSkill?.description) && { justifyContent: 'center' },
               ]}
               onPress={() => setSecondSkillModalVisible(true)}
               disabled={isPreviewMode}
@@ -590,7 +592,9 @@ export default function PokemonCard() {
                   {firstSkill ? (
                     <>
                       <Text style={[styles.skillNameText, { textAlign: 'center' }]}>{firstSkill.name} </Text>
-                      <Text style={[styles.skillDescriptionText, { textAlign: 'left', marginTop: 5 }]}>{firstSkill.description}</Text>
+                      {firstSkill.description ? (
+                        <Text style={[styles.skillDescriptionText, { textAlign: 'left', marginTop: 5 }]}>{firstSkill.description}</Text>
+                      ) : null}
                     </>
                   ) : null}
                 </TouchableOpacity>
@@ -1219,7 +1223,7 @@ const styles = StyleSheet.create({
     top: 610, // Mesma altura da habilidade
     left: 630, // Valor provisório (à direita da habilidade)
     width: 70, // Valor provisório
-    height: 70, // Mesma altura da habilidade
+    height: 100, // Mesma altura da habilidade
     borderWidth: 3,
     borderColor: "white",
     borderRadius: 8,
@@ -1268,7 +1272,7 @@ const styles = StyleSheet.create({
     top: 730, // Provisório
     left: 630,
     width: 70,
-    height: 70,
+    height: 100,
     borderWidth: 3,
     borderColor: "white",
     borderRadius: 8,

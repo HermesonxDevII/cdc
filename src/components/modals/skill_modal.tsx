@@ -33,7 +33,7 @@ export function SkillModal({ visible, onClose, onSave, title = "Habilidade" }: S
           {/* Toast de Erro (Canto superior direito) */}
           {toastVisible && (
             <View style={styles.toast}>
-              <Text style={styles.toastText}>Preencha o nome e a descrição!</Text>
+              <Text style={styles.toastText}>Preencha o nome da habilidade!</Text>
             </View>
           )}
 
@@ -48,7 +48,7 @@ export function SkillModal({ visible, onClose, onSave, title = "Habilidade" }: S
             onChangeText={setName}
           />
 
-          <Text style={styles.label}>Descrição</Text>
+          <Text style={styles.label}>Descrição (Opcional)</Text>
           <TextInput
             style={[styles.input, styles.textArea]}
             placeholder="Ex: Flip a coin. If heads, the Defending Pokémon is now Paralyzed."
@@ -65,7 +65,7 @@ export function SkillModal({ visible, onClose, onSave, title = "Habilidade" }: S
             <TouchableOpacity
               style={[styles.actionButton, { backgroundColor: '#7C3AED' }]}
               onPress={() => {
-                if (!name.trim() || !description.trim()) {
+                if (!name.trim()) {
                   setToastVisible(true);
                   setTimeout(() => setToastVisible(false), 3000);
                   return;
