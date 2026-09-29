@@ -36,6 +36,7 @@ import { SkillModal } from "@/components/modals/skill_modal";
 import { SkillDamageModal } from "@/components/modals/skill_damage_modal";
 import { SkillEnergyModal } from "@/components/modals/skill_energy_modal";
 import { DiscardChangesModal } from "@/components/modals/discard_changes_modal";
+import { MenuModal } from "@/components/modals/menu_modal";
 import { useRouter } from "expo-router";
 
 // Mapeamento de todas as texturas de cartas baseadas no tipo
@@ -69,6 +70,7 @@ type CardState = {
   resistance: string;
   resistanceValue: string;
   retreat: { symbol: string; count: number } | null;
+  movesCount: number;
   firstSkill: { name: string; description: string } | null;
   firstSkillDamage: string;
   firstSkillEnergy: { symbol: string; count: number } | null;
@@ -93,6 +95,7 @@ const initialState: CardState = {
   resistance: "",
   resistanceValue: "",
   retreat: null,
+  movesCount: 2,
   firstSkill: null,
   firstSkillDamage: "",
   firstSkillEnergy: null,
@@ -173,6 +176,7 @@ export default function PokemonCard() {
   const [isSecondSkillDamageModalVisible, setSecondSkillDamageModalVisible] = useState(false);
   const [isSecondSkillEnergyModalVisible, setSecondSkillEnergyModalVisible] = useState(false);
   const [isDiscardModalVisible, setDiscardModalVisible] = useState(false);
+  const [isMenuModalVisible, setMenuModalVisible] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
 
   const cardRef = useRef<View>(null);
@@ -204,7 +208,7 @@ export default function PokemonCard() {
   const {
     currentTemplate, pokemonImage, hp, name, description, curiosity,
     illustration, pokemonNumber, extraInfo, weakness, weaknessValue, level,
-    resistance, resistanceValue, retreat, firstSkill, firstSkillDamage,
+    resistance, resistanceValue, retreat, movesCount, firstSkill, firstSkillDamage,
     firstSkillEnergy, secondSkill, secondSkillDamage, secondSkillEnergy
   } = currentState;
 
@@ -434,8 +438,11 @@ export default function PokemonCard() {
               ) : null}
             </TouchableOpacity>
 
-            {/* Custo de Energia da Primeira Habilidade (À esquerda da habilidade) */}
-            <TouchableOpacity
+            {/* --- BLOCO DE 2 HABILIDADES --- */}
+            {movesCount === 2 && (
+              <>
+                {/* Custo de Energia da Primeira Habilidade (À esquerda da habilidade) */}
+                <TouchableOpacity
               style={[
                 styles.firstSkillEnergyButton,
                 isPreviewMode && styles.previewMode,
@@ -542,6 +549,68 @@ export default function PokemonCard() {
                 <Text style={styles.skillDamageText}>{secondSkillDamage}</Text>
               ) : null}
             </TouchableOpacity>
+              </>
+            )}
+
+            {/* --- BLOCO DE 1 HABILIDADE ÚNICA --- */}
+            {movesCount === 1 && (
+              <>
+                {/* Custo de Energia (Habilidade Única) */}
+                <TouchableOpacity
+                  style={[
+                    styles.firstSkillEnergyButton,
+                    isPreviewMode && styles.previewMode,
+                    { top: 670, height: 100 } // Valores provisórios centralizados
+                  ]}
+                  onPress={() => setFirstSkillEnergyModalVisible(true)}
+                  disabled={isPreviewMode}
+                >
+                  {firstSkillEnergy ? (
+                    <View style={styles.skillEnergyContainer}>
+                      {Array.from({ length: firstSkillEnergy.count }).map((_, index) => (
+                        <Image
+                          key={index}
+                          source={TYPE_ICONS[firstSkillEnergy.symbol]}
+                          style={styles.skillEnergyIcon}
+                        />
+                      ))}
+                    </View>
+                  ) : null}
+                </TouchableOpacity>
+
+                {/* Habilidade Única (Nome e Descrição) */}
+                <TouchableOpacity
+                  style={[
+                    styles.singleSkillButton,
+                    isPreviewMode && styles.previewMode,
+                  ]}
+                  onPress={() => setFirstSkillModalVisible(true)}
+                  disabled={isPreviewMode}
+                >
+                  {firstSkill ? (
+                    <>
+                      <Text style={[styles.skillNameText, { textAlign: 'center' }]}>{firstSkill.name} </Text>
+                      <Text style={[styles.skillDescriptionText, { textAlign: 'left', marginTop: 5 }]}>{firstSkill.description}</Text>
+                    </>
+                  ) : null}
+                </TouchableOpacity>
+
+                {/* Dano (Habilidade Única) */}
+                <TouchableOpacity
+                  style={[
+                    styles.firstSkillDamageButton,
+                    isPreviewMode && styles.previewMode,
+                    { top: 670, height: 100 } // Valores provisórios centralizados
+                  ]}
+                  onPress={() => setFirstSkillDamageModalVisible(true)}
+                  disabled={isPreviewMode}
+                >
+                  {firstSkillDamage ? (
+                    <Text style={styles.skillDamageText}>{firstSkillDamage}</Text>
+                  ) : null}
+                </TouchableOpacity>
+              </>
+            )}
 
             {/* Décimo Segundo Botão (Custo de Recuo, ao lado da Resistência) */}
             <TouchableOpacity
@@ -828,6 +897,14 @@ export default function PokemonCard() {
           }}
         />
 
+        {/* Modal de Menu */}
+        <MenuModal
+          visible={isMenuModalVisible}
+          onClose={() => setMenuModalVisible(false)}
+          movesCount={movesCount}
+          onSelectMovesCount={(count) => updateCard({ movesCount: count })}
+        />
+
         {/* Modal de Descarte de Alterações */}
         <DiscardChangesModal
           visible={isDiscardModalVisible}
@@ -877,6 +954,14 @@ export default function PokemonCard() {
           >
             <Image
               source={require("../../../assets/images/icons/arrow_right.png")}
+              style={styles.footerIcon}
+            />
+          </TouchableOpacity>
+
+          {/* Menu Button */}
+          <TouchableOpacity onPress={() => setMenuModalVisible(true)}>
+            <Image
+              source={require("../../../assets/images/icons/menu.png")}
               style={styles.footerIcon}
             />
           </TouchableOpacity>
@@ -1109,6 +1194,23 @@ const styles = StyleSheet.create({
     alignItems: "flex-start", // Puxa o texto para a esquerda
     paddingHorizontal: 5, // Apenas para não encostar literalmente na linha da borda
     paddingTop: 0, // Garante que comece do topo exato
+  },
+
+  // Habilidade Única (Nome e Descrição)
+  singleSkillButton: {
+    position: "absolute",
+    top: 650, // Meio do caminho
+    left: 135,
+    width: 490,
+    height: 145,
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    paddingHorizontal: 5,
   },
 
   // Dano da Primeira Habilidade (Ao lado direito)
