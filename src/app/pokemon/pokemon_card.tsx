@@ -66,11 +66,13 @@ type CardState = {
   level: string;
   extraInfo: string;
   weakness: string;
+  secondWeakness: string | null;
   weaknessValue: string;
   resistance: string;
   resistanceValue: string;
   retreat: { symbol: string; count: number } | null;
   movesCount: number;
+  weaknessesCount: number;
   hasPassiveSkill: boolean;
   passiveSkill: { name: string; description: string } | null;
   firstSkill: { name: string; description: string } | null;
@@ -93,11 +95,13 @@ const initialState: CardState = {
   level: "",
   extraInfo: "",
   weakness: "",
+  secondWeakness: null,
   weaknessValue: "",
   resistance: "",
   resistanceValue: "",
   retreat: null,
   movesCount: 2,
+  weaknessesCount: 1,
   hasPassiveSkill: false,
   passiveSkill: null,
   firstSkill: null,
@@ -169,6 +173,7 @@ export default function PokemonCard() {
   const [isLevelModalVisible, setLevelModalVisible] = useState(false);
   const [isExtraInfoModalVisible, setExtraInfoModalVisible] = useState(false);
   const [isWeaknessModalVisible, setWeaknessModalVisible] = useState(false);
+  const [isSecondWeaknessModalVisible, setSecondWeaknessModalVisible] = useState(false);
   const [isResistanceModalVisible, setResistanceModalVisible] = useState(false);
   const [isRetreatModalVisible, setRetreatModalVisible] = useState(false);
   const [isWeaknessValueModalVisible, setWeaknessValueModalVisible] = useState(false);
@@ -212,8 +217,8 @@ export default function PokemonCard() {
 
   const {
     currentTemplate, pokemonImage, hp, name, description, curiosity,
-    illustration, pokemonNumber, extraInfo, weakness, weaknessValue, level,
-    resistance, resistanceValue, retreat, movesCount, hasPassiveSkill, passiveSkill, firstSkill, firstSkillDamage,
+    illustration, pokemonNumber, extraInfo, weakness, secondWeakness, weaknessValue, level,
+    resistance, resistanceValue, retreat, movesCount, weaknessesCount, hasPassiveSkill, passiveSkill, firstSkill, firstSkillDamage,
     firstSkillEnergy, secondSkill, secondSkillDamage, secondSkillEnergy
   } = currentState;
 
@@ -373,17 +378,39 @@ export default function PokemonCard() {
                 <Text style={styles.descriptionText}>{description}</Text>
               ) : null}
             </TouchableOpacity>
+            {/* Segunda Fraqueza (Opcional, exibida à esquerda da fraqueza principal) */}
+            {weaknessesCount === 2 && (
+              <TouchableOpacity
+                style={[
+                  styles.secondWeaknessButton,
+                  isPreviewMode && styles.previewMode,
+                  isPreviewMode && {
+                    width: 40,
+                    height: 40,
+                    top: 865,
+                    left: 135,
+                  },
+                ]}
+                onPress={() => setSecondWeaknessModalVisible(true)}
+                disabled={isPreviewMode}
+              >
+                {secondWeakness ? (
+                  <Image source={TYPE_ICONS[secondWeakness]} style={styles.weaknessIcon} />
+                ) : null}
+              </TouchableOpacity>
+            )}
 
             {/* Décimo Botão Retangular (Para fraqueza, abaixo da descrição) */}
             <TouchableOpacity
               style={[
                 styles.weaknessButton,
+                weaknessesCount === 2 && { left: 89 },
                 isPreviewMode && styles.previewMode,
                 isPreviewMode && {
                   width: 40,
                   height: 40,
                   top: 865, // Posição perfeita que você encontrou para o preview
-                  left: 110
+                  left: weaknessesCount === 2 ? 90 : 110 // Mantém a lógica de preview também ajustada
                 },
               ]}
               onPress={() => setWeaknessModalVisible(true)}
@@ -398,8 +425,9 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.weaknessValueButton,
+                weaknessesCount === 2 && { left: 185 },
                 isPreviewMode && styles.previewMode,
-                isPreviewMode && { left: 150 }, // Valor ajustado para o modo preview
+                isPreviewMode && { left: weaknessesCount === 2 ? 180 : 150 }, // Ajuste para modo preview
               ]}
               onPress={() => setWeaknessValueModalVisible(true)}
               disabled={isPreviewMode}
@@ -831,6 +859,16 @@ export default function PokemonCard() {
           }}
         />
 
+        {/* Modal de Segunda Fraqueza */}
+        <WeaknessModal
+          visible={isSecondWeaknessModalVisible}
+          onClose={() => setSecondWeaknessModalVisible(false)}
+          onSelectWeakness={(id) => {
+            updateCard({ secondWeakness: id });
+            setSecondWeaknessModalVisible(false);
+          }}
+        />
+
         {/* Modal de Resistência */}
         <ResistanceModal
           visible={isResistanceModalVisible}
@@ -964,6 +1002,8 @@ export default function PokemonCard() {
               updateCard({ hasPassiveSkill: hasPassive });
             }
           }}
+          weaknessesCount={weaknessesCount}
+          onSelectWeaknessesCount={(count) => updateCard({ weaknessesCount: count })}
         />
 
         {/* Modal de Descarte de Alterações */}
@@ -1358,8 +1398,23 @@ const styles = StyleSheet.create({
   weaknessButton: {
     position: "absolute",
     top: 862.5, // Ajustei -2.5px para o centro do botão continuar no mesmo lugar!
-    left: 107.5, // Ajustei -2.5px
+    left: 107.5,
     width: 45, // Tamanho que você queria no modo edição
+    height: 45,
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  // Segunda Fraqueza (Esquerda da principal)
+  secondWeaknessButton: {
+    position: "absolute",
+    top: 862.5,
+    left: 137,
+    width: 45,
     height: 45,
     borderWidth: 3,
     borderColor: "white",
@@ -1373,7 +1428,7 @@ const styles = StyleSheet.create({
   weaknessValueButton: {
     position: "absolute",
     top: 862.5,
-    left: 155, // Valor provisório
+    left: 155,
     width: 40,
     height: 40,
     borderWidth: 3,

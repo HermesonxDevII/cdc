@@ -9,13 +9,16 @@ interface MenuModalProps {
   onSelectMovesCount: (count: number) => void;
   hasPassiveSkill: boolean;
   onSelectPassiveSkill: (hasPassive: boolean) => void;
+  weaknessesCount: number;
+  onSelectWeaknessesCount: (count: number) => void;
 }
 
-export function MenuModal({ visible, onClose, movesCount, onSelectMovesCount, hasPassiveSkill, onSelectPassiveSkill }: MenuModalProps) {
+export function MenuModal({ visible, onClose, movesCount, onSelectMovesCount, hasPassiveSkill, onSelectPassiveSkill, weaknessesCount, onSelectWeaknessesCount }: MenuModalProps) {
   const insets = useSafeAreaInsets();
 
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [isPassiveSelectOpen, setIsPassiveSelectOpen] = useState(false);
+  const [isWeaknessesSelectOpen, setIsWeaknessesSelectOpen] = useState(false);
 
   const handleSelect = (value: number) => {
     onSelectMovesCount(value);
@@ -25,6 +28,11 @@ export function MenuModal({ visible, onClose, movesCount, onSelectMovesCount, ha
   const handlePassiveSelect = (value: boolean) => {
     onSelectPassiveSkill(value);
     setIsPassiveSelectOpen(false);
+  };
+
+  const handleWeaknessesSelect = (value: number) => {
+    onSelectWeaknessesCount(value);
+    setIsWeaknessesSelectOpen(false);
   };
 
   return (
@@ -105,6 +113,40 @@ export function MenuModal({ visible, onClose, movesCount, onSelectMovesCount, ha
                       onPress={() => handlePassiveSelect(false)}
                     >
                       <Text style={[styles.dropdownOptionText, hasPassiveSkill === false && styles.selectedOptionText]}>Não</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            </View>
+
+            <View style={[styles.optionContainer, { zIndex: 0 }]}>
+              <Text style={styles.label}>Fraquezas:</Text>
+
+              {/* Custom Select Box */}
+              <View style={styles.selectWrapper}>
+                <TouchableOpacity
+                  style={styles.selectBox}
+                  onPress={() => setIsWeaknessesSelectOpen(!isWeaknessesSelectOpen)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.selectValue}>{weaknessesCount}</Text>
+                  <Text style={styles.selectArrow}>{isWeaknessesSelectOpen ? '▲' : '▼'}</Text>
+                </TouchableOpacity>
+
+                {/* Dropdown Options */}
+                {isWeaknessesSelectOpen && (
+                  <View style={styles.dropdownMenu}>
+                    <TouchableOpacity
+                      style={styles.dropdownOption}
+                      onPress={() => handleWeaknessesSelect(1)}
+                    >
+                      <Text style={[styles.dropdownOptionText, weaknessesCount === 1 && styles.selectedOptionText]}>1</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.dropdownOption}
+                      onPress={() => handleWeaknessesSelect(2)}
+                    >
+                      <Text style={[styles.dropdownOptionText, weaknessesCount === 2 && styles.selectedOptionText]}>2</Text>
                     </TouchableOpacity>
                   </View>
                 )}
