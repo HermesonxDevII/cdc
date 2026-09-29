@@ -7,16 +7,24 @@ interface MenuModalProps {
   onClose: () => void;
   movesCount: number;
   onSelectMovesCount: (count: number) => void;
+  hasPassiveSkill: boolean;
+  onSelectPassiveSkill: (hasPassive: boolean) => void;
 }
 
-export function MenuModal({ visible, onClose, movesCount, onSelectMovesCount }: MenuModalProps) {
+export function MenuModal({ visible, onClose, movesCount, onSelectMovesCount, hasPassiveSkill, onSelectPassiveSkill }: MenuModalProps) {
   const insets = useSafeAreaInsets();
-  
+
   const [isSelectOpen, setIsSelectOpen] = useState(false);
+  const [isPassiveSelectOpen, setIsPassiveSelectOpen] = useState(false);
 
   const handleSelect = (value: number) => {
     onSelectMovesCount(value);
     setIsSelectOpen(false);
+  };
+
+  const handlePassiveSelect = (value: boolean) => {
+    onSelectPassiveSkill(value);
+    setIsPassiveSelectOpen(false);
   };
 
   return (
@@ -35,13 +43,13 @@ export function MenuModal({ visible, onClose, movesCount, onSelectMovesCount }: 
 
             <Text style={styles.title}>Opções da Carta</Text>
 
-            <View style={styles.optionContainer}>
+            <View style={[styles.optionContainer, { zIndex: 2 }]}>
               <Text style={styles.label}>Movimentos:</Text>
-              
+
               {/* Custom Select Box */}
               <View style={styles.selectWrapper}>
-                <TouchableOpacity 
-                  style={styles.selectBox} 
+                <TouchableOpacity
+                  style={styles.selectBox}
                   onPress={() => setIsSelectOpen(!isSelectOpen)}
                   activeOpacity={0.7}
                 >
@@ -52,15 +60,14 @@ export function MenuModal({ visible, onClose, movesCount, onSelectMovesCount }: 
                 {/* Dropdown Options */}
                 {isSelectOpen && (
                   <View style={styles.dropdownMenu}>
-                    <TouchableOpacity 
-                      style={styles.dropdownOption} 
+                    <TouchableOpacity
+                      style={styles.dropdownOption}
                       onPress={() => handleSelect(1)}
                     >
                       <Text style={[styles.dropdownOptionText, movesCount === 1 && styles.selectedOptionText]}>1</Text>
                     </TouchableOpacity>
-                    <View style={styles.separator} />
-                    <TouchableOpacity 
-                      style={styles.dropdownOption} 
+                    <TouchableOpacity
+                      style={styles.dropdownOption}
                       onPress={() => handleSelect(2)}
                     >
                       <Text style={[styles.dropdownOptionText, movesCount === 2 && styles.selectedOptionText]}>2</Text>
@@ -68,7 +75,40 @@ export function MenuModal({ visible, onClose, movesCount, onSelectMovesCount }: 
                   </View>
                 )}
               </View>
+            </View>
 
+            <View style={[styles.optionContainer, { zIndex: 1 }]}>
+              <Text style={styles.label}>Habilidade:</Text>
+
+              {/* Custom Select Box */}
+              <View style={styles.selectWrapper}>
+                <TouchableOpacity
+                  style={styles.selectBox}
+                  onPress={() => setIsPassiveSelectOpen(!isPassiveSelectOpen)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.selectValue}>{hasPassiveSkill ? 'Sim' : 'Não'}</Text>
+                  <Text style={styles.selectArrow}>{isPassiveSelectOpen ? '▲' : '▼'}</Text>
+                </TouchableOpacity>
+
+                {/* Dropdown Options */}
+                {isPassiveSelectOpen && (
+                  <View style={styles.dropdownMenu}>
+                    <TouchableOpacity
+                      style={styles.dropdownOption}
+                      onPress={() => handlePassiveSelect(true)}
+                    >
+                      <Text style={[styles.dropdownOptionText, hasPassiveSkill === true && styles.selectedOptionText]}>Sim</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.dropdownOption}
+                      onPress={() => handlePassiveSelect(false)}
+                    >
+                      <Text style={[styles.dropdownOptionText, hasPassiveSkill === false && styles.selectedOptionText]}>Não</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
             </View>
 
           </View>
@@ -187,8 +227,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#7C3AED',
   },
-  separator: {
-    height: 1,
-    backgroundColor: '#eee',
-  }
 });

@@ -71,6 +71,8 @@ type CardState = {
   resistanceValue: string;
   retreat: { symbol: string; count: number } | null;
   movesCount: number;
+  hasPassiveSkill: boolean;
+  passiveSkill: { name: string; description: string } | null;
   firstSkill: { name: string; description: string } | null;
   firstSkillDamage: string;
   firstSkillEnergy: { symbol: string; count: number } | null;
@@ -96,6 +98,8 @@ const initialState: CardState = {
   resistanceValue: "",
   retreat: null,
   movesCount: 2,
+  hasPassiveSkill: false,
+  passiveSkill: null,
   firstSkill: null,
   firstSkillDamage: "",
   firstSkillEnergy: null,
@@ -177,6 +181,7 @@ export default function PokemonCard() {
   const [isSecondSkillEnergyModalVisible, setSecondSkillEnergyModalVisible] = useState(false);
   const [isDiscardModalVisible, setDiscardModalVisible] = useState(false);
   const [isMenuModalVisible, setMenuModalVisible] = useState(false);
+  const [isPassiveSkillModalVisible, setPassiveSkillModalVisible] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
 
   const cardRef = useRef<View>(null);
@@ -208,7 +213,7 @@ export default function PokemonCard() {
   const {
     currentTemplate, pokemonImage, hp, name, description, curiosity,
     illustration, pokemonNumber, extraInfo, weakness, weaknessValue, level,
-    resistance, resistanceValue, retreat, movesCount, firstSkill, firstSkillDamage,
+    resistance, resistanceValue, retreat, movesCount, hasPassiveSkill, passiveSkill, firstSkill, firstSkillDamage,
     firstSkillEnergy, secondSkill, secondSkillDamage, secondSkillEnergy
   } = currentState;
 
@@ -496,8 +501,35 @@ export default function PokemonCard() {
               ) : null}
             </TouchableOpacity>
 
+              </>
+            )}
+
+            {/* --- HABILIDADE PASSIVA --- */}
+            {hasPassiveSkill && (
+              <TouchableOpacity
+                style={[
+                  styles.passiveSkillButton,
+                  isPreviewMode && styles.previewMode,
+                  (!passiveSkill?.description) && { justifyContent: 'center' },
+                ]}
+                onPress={() => setPassiveSkillModalVisible(true)}
+                disabled={isPreviewMode}
+              >
+                {passiveSkill ? (
+                  <Text style={styles.skillDescriptionText}>
+                    <Text style={[styles.skillNameText, { color: '#CC0000', fontSize: 25 }]}>
+                      Poder Pokémon: <Text style={{ color: '#000' }}>{passiveSkill.name} </Text>
+                    </Text>
+                    {passiveSkill.description}
+                  </Text>
+                ) : null}
+              </TouchableOpacity>
+            )}
+
             {/* --- SEGUNDA HABILIDADE --- */}
-            {/* Custo de Energia da Segunda Habilidade */}
+            {(movesCount === 2 || (movesCount === 1 && hasPassiveSkill)) && (
+              <>
+                {/* Custo de Energia da Segunda Habilidade */}
             <TouchableOpacity
               style={[
                 styles.secondSkillEnergyButton,
@@ -555,7 +587,7 @@ export default function PokemonCard() {
             )}
 
             {/* --- BLOCO DE 1 HABILIDADE ÚNICA --- */}
-            {movesCount === 1 && (
+            {movesCount === 1 && !hasPassiveSkill && (
               <>
                 {/* Custo de Energia (Habilidade Única) */}
                 <TouchableOpacity
@@ -850,6 +882,17 @@ export default function PokemonCard() {
           title="Primeira Habilidade"
         />
 
+        {/* Modal de Habilidade Passiva */}
+        <SkillModal
+          visible={isPassiveSkillModalVisible}
+          onClose={() => setPassiveSkillModalVisible(false)}
+          onSave={(skill) => {
+            updateCard({ passiveSkill: skill });
+            setPassiveSkillModalVisible(false);
+          }}
+          title="Habilidade Passiva"
+        />
+
         {/* Modal do Dano da Primeira Habilidade */}
         <SkillDamageModal
           visible={isFirstSkillDamageModalVisible}
@@ -906,7 +949,21 @@ export default function PokemonCard() {
           visible={isMenuModalVisible}
           onClose={() => setMenuModalVisible(false)}
           movesCount={movesCount}
-          onSelectMovesCount={(count) => updateCard({ movesCount: count })}
+          onSelectMovesCount={(count) => {
+            if (count === 2) {
+              updateCard({ movesCount: count, hasPassiveSkill: false });
+            } else {
+              updateCard({ movesCount: count });
+            }
+          }}
+          hasPassiveSkill={hasPassiveSkill}
+          onSelectPassiveSkill={(hasPassive) => {
+            if (hasPassive) {
+              updateCard({ hasPassiveSkill: hasPassive, movesCount: 1 });
+            } else {
+              updateCard({ hasPassiveSkill: hasPassive });
+            }
+          }}
         />
 
         {/* Modal de Descarte de Alterações */}
@@ -1198,6 +1255,22 @@ const styles = StyleSheet.create({
     alignItems: "flex-start", // Puxa o texto para a esquerda
     paddingHorizontal: 5, // Apenas para não encostar literalmente na linha da borda
     paddingTop: 0, // Garante que comece do topo exato
+  },
+
+  passiveSkillButton: {
+    position: "absolute",
+    top: 595, // Mesma altura que a primeira habilidade
+    left: 135,
+    width: 490,
+    height: 125,
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    paddingHorizontal: 5,
+    paddingTop: 0,
   },
 
   // Habilidade Única (Nome e Descrição)
