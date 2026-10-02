@@ -1726,8 +1726,8 @@ const styles = StyleSheet.create({
 
   // Dano da Habilidade (Bold e Grande)
   skillDamageText: {
-    fontFamily: "GillSans-Bold",
-    fontSize: 45,
+    fontFamily: "Futura-Heavy",
+    fontSize: 40,
     color: "#000",
     textAlign: "center",
     textShadowColor: "white",
