@@ -217,8 +217,9 @@ export default function PokemonCard() {
 
   const {
     currentTemplate, pokemonImage, hp, name, description, curiosity,
-    illustration, pokemonNumber, extraInfo, weakness, secondWeakness, weaknessValue, level,
-    resistance, resistanceValue, retreat, movesCount, weaknessesCount, hasPassiveSkill, passiveSkill, firstSkill, firstSkillDamage,
+    illustration, pokemonNumber, extraInfo, weakness, secondWeakness,
+    weaknessValue, level, resistance, resistanceValue, retreat, movesCount,
+    weaknessesCount, hasPassiveSkill, passiveSkill, firstSkill, firstSkillDamage,
     firstSkillEnergy, secondSkill, secondSkillDamage, secondSkillEnergy
   } = currentState;
 
@@ -228,6 +229,7 @@ export default function PokemonCard() {
     return historyIndex > 0;
   };
 
+  // Verifica se o usuário já fez alguma modificação e pergunta se ele quer descartar essas modificações
   const handleBack = () => {
     if (hasChanges()) {
       setDiscardModalVisible(true);
@@ -243,6 +245,7 @@ export default function PokemonCard() {
     return () => backHandler.remove();
   }, [historyIndex]);
 
+  // Abre a galeria do usuário pra selecionar a imagem da carta
   const pickImage = async () => {
     // Pede permissão para acessar a galeria
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -263,6 +266,7 @@ export default function PokemonCard() {
     }
   };
 
+  // Salva a carta no dispositivo do usuário
   const handleSaveCard = async () => {
     try {
       setIsPreviewMode(true);
@@ -299,20 +303,24 @@ export default function PokemonCard() {
       <SafeAreaView style={styles.safeArea}>
         <Back href="/pokemon" onPress={handleBack} />
 
-        {/* Esse é o wrapper que reserva o espaço reduzido na tela para não quebrar o layout */}
+        {/* Wrapper que reserva o espaço reduzido na tela para não quebrar o layout */}
         <View style={styles.scaledWrapper}>
-          {/* ESSA é a carta real! Ela tem 744x1045. É dela que vamos tirar o print depois! */}
+
+          {/* Carta real proporção de 744x1045 */}
           <View ref={cardRef} style={styles.realSizeCard}>
             <Image source={currentTemplate} style={styles.cardImage} />
 
-            {/* Botão para trocar o Tipo (Símbolo no canto superior direito) */}
+            {/* ========= BEGIN:: Nome ========= */}
             <TouchableOpacity
-              style={[styles.typeButton, isPreviewMode && styles.previewMode]}
-              onPress={() => setTypeModalVisible(true)}
+              style={[styles.nameButton, isPreviewMode && styles.previewMode]}
+              onPress={() => setNameModalVisible(true)}
               disabled={isPreviewMode}
-            />
+            >
+              {name ? <Text style={styles.nameText}>{name}</Text> : null }
+            </TouchableOpacity>
+            {/* ========= END:: Nome ========= */}
 
-            {/* Novo Botão para Level (Específico das versões japonesas) */}
+            {/* ========= BEGIN:: Level ========= */}
             <TouchableOpacity
               style={[
                 styles.levelButton,
@@ -324,8 +332,9 @@ export default function PokemonCard() {
             >
               {level ? <Text style={styles.levelText}>Nv.{level}</Text> : null}
             </TouchableOpacity>
+            {/* ========= END:: Level ========= */}
 
-            {/* Segundo Botão Redondo (Para o HP) */}
+            {/* ========= BEGIN:: HP ========= */}
             <TouchableOpacity
               style={[
                 styles.hpButton,
@@ -338,34 +347,34 @@ export default function PokemonCard() {
             >
               {hp ? <Text style={styles.hpText}>{hp} HP</Text> : null}
             </TouchableOpacity>
+            {/* ========= END:: HP ========= */}
 
-            {/* Terceiro Botão Retangular (Para o Nome ou outro campo) */}
+            {/* ========= BEGIN:: Tipo ========= */}
             <TouchableOpacity
-              style={[styles.nameButton, isPreviewMode && styles.previewMode]}
-              onPress={() => setNameModalVisible(true)}
+              style={[styles.typeButton, isPreviewMode && styles.previewMode]}
+              onPress={() => setTypeModalVisible(true)}
               disabled={isPreviewMode}
-            >
-              {name ? <Text style={styles.nameText}>{name}</Text> : null}
-            </TouchableOpacity>
+            />
+            {/* ========= END:: Tipo ========= */}
 
-            {/* Sexto Botão Retangular (Para a Imagem do Pokémon) */}
+            {/* ========= BEGIN:: Imagem ========= */}
             <TouchableOpacity
               style={[styles.imageButton, isPreviewMode && styles.previewMode]}
               onPress={pickImage}
               disabled={isPreviewMode}
             >
-              {pokemonImage ? (
-                <Image source={{ uri: pokemonImage }} style={styles.pokemonImage} />
-              ) : (
-                !isPreviewMode && (
+              {pokemonImage
+                ? <Image source={{ uri: pokemonImage }} style={styles.pokemonImage} />
+                : !isPreviewMode && (
                   <Text style={styles.imageButtonText}>
                     Clique aqui para{"\n"}adicionar uma imagem
                   </Text>
                 )
-              )}
+              }
             </TouchableOpacity>
+            {/* ========= END:: Imagem ========= */}
 
-            {/* Quarto Botão Retangular (Para algo extra, do lado do nome) */}
+            {/* ========= BEGIN: Descrição ========= */}
             <TouchableOpacity
               style={[
                 styles.descriptionButton,
@@ -378,126 +387,36 @@ export default function PokemonCard() {
                 <Text style={styles.descriptionText}>{description}</Text>
               ) : null}
             </TouchableOpacity>
-            {/* Segunda Fraqueza (Opcional, exibida à esquerda da fraqueza principal) */}
-            {weaknessesCount === 2 && (
+            {/* ========= END: Descrição ========= */}
+
+            {/* ========= BEGIN:: Movimento 1 */}
+            {/* ========= BEGIN:: Custo ========= */}
+            {movesCount === 2 && (
               <TouchableOpacity
                 style={[
-                  styles.secondWeaknessButton,
+                  styles.firstSkillEnergyButton,
                   isPreviewMode && styles.previewMode,
-                  isPreviewMode && {
-                    width: 40,
-                    height: 40,
-                    top: 865,
-                    left: 135,
-                  },
+                  isPreviewMode && firstSkillEnergy && firstSkillEnergy.count >= 3 && { top: 605 },
                 ]}
-                onPress={() => setSecondWeaknessModalVisible(true)}
+                onPress={() => setFirstSkillEnergyModalVisible(true)}
                 disabled={isPreviewMode}
               >
-                {secondWeakness ? (
-                  <Image source={TYPE_ICONS[secondWeakness]} style={styles.weaknessIcon} />
+                {firstSkillEnergy ? (
+                  <View style={styles.skillEnergyContainer}>
+                    {Array.from({ length: firstSkillEnergy.count }).map((_, index) => (
+                      <Image
+                        key={index}
+                        source={TYPE_ICONS[firstSkillEnergy.symbol]}
+                        style={styles.skillEnergyIcon}
+                      />
+                    ))}
+                  </View>
                 ) : null}
               </TouchableOpacity>
             )}
+            {/* ========= END:: Custo ========= */}
 
-            {/* Décimo Botão Retangular (Para fraqueza, abaixo da descrição) */}
-            <TouchableOpacity
-              style={[
-                styles.weaknessButton,
-                weaknessesCount === 2 && { left: 89 },
-                isPreviewMode && styles.previewMode,
-                isPreviewMode && {
-                  width: 40,
-                  height: 40,
-                  top: 865, // Posição perfeita que você encontrou para o preview
-                  left: weaknessesCount === 2 ? 90 : 110 // Mantém a lógica de preview também ajustada
-                },
-              ]}
-              onPress={() => setWeaknessModalVisible(true)}
-              disabled={isPreviewMode}
-            >
-              {weakness ? (
-                <Image source={TYPE_ICONS[weakness]} style={styles.weaknessIcon} />
-              ) : null}
-            </TouchableOpacity>
-
-            {/* Botão de Valor da Fraqueza (Ao lado direito da fraqueza) */}
-            <TouchableOpacity
-              style={[
-                styles.weaknessValueButton,
-                weaknessesCount === 2 && { left: 185 },
-                isPreviewMode && styles.previewMode,
-                isPreviewMode && { left: weaknessesCount === 2 ? 180 : 150 }, // Ajuste para modo preview
-              ]}
-              onPress={() => setWeaknessValueModalVisible(true)}
-              disabled={isPreviewMode}
-            >
-              {weaknessValue ? (
-                <Text style={styles.weaknessValueText}>{weaknessValue}</Text>
-              ) : null}
-            </TouchableOpacity>
-
-            {/* Décimo Primeiro Botão (Ao lado da fraqueza) */}
-            <TouchableOpacity
-              style={[
-                styles.resistanceButton,
-                isPreviewMode && styles.previewMode,
-                isPreviewMode && {
-                  width: 40,
-                  height: 40,
-                  top: 865, // Ajuste para o preview
-                  left: 340.5 // Ajuste calculado (-2.5px da diferença)
-                },
-              ]}
-              onPress={() => setResistanceModalVisible(true)}
-              disabled={isPreviewMode}
-            >
-              {resistance ? (
-                <Image source={TYPE_ICONS[resistance]} style={styles.resistanceIcon} />
-              ) : null}
-            </TouchableOpacity>
-
-            {/* Botão de Valor da Resistência (Ao lado direito da resistência) */}
-            <TouchableOpacity
-              style={[
-                styles.resistanceValueButton,
-                isPreviewMode && styles.previewMode,
-              ]}
-              onPress={() => setResistanceValueModalVisible(true)}
-              disabled={isPreviewMode}
-            >
-              {resistanceValue ? (
-                <Text style={styles.resistanceValueText}>{resistanceValue}</Text>
-              ) : null}
-            </TouchableOpacity>
-
-            {/* --- BLOCO DE 2 HABILIDADES --- */}
-            {movesCount === 2 && (
-              <>
-                {/* Custo de Energia da Primeira Habilidade (À esquerda da habilidade) */}
-                <TouchableOpacity
-              style={[
-                styles.firstSkillEnergyButton,
-                isPreviewMode && styles.previewMode,
-                isPreviewMode && firstSkillEnergy && firstSkillEnergy.count >= 3 && { top: 605 },
-              ]}
-              onPress={() => setFirstSkillEnergyModalVisible(true)}
-              disabled={isPreviewMode}
-            >
-              {firstSkillEnergy ? (
-                <View style={styles.skillEnergyContainer}>
-                  {Array.from({ length: firstSkillEnergy.count }).map((_, index) => (
-                    <Image
-                      key={index}
-                      source={TYPE_ICONS[firstSkillEnergy.symbol]}
-                      style={styles.skillEnergyIcon}
-                    />
-                  ))}
-                </View>
-              ) : null}
-            </TouchableOpacity>
-
-            {/* Primeira Habilidade (Abaixo da descrição) */}
+            {/* ========= BEGIN:: Nome e descrição ========= */}
             <TouchableOpacity
               style={[
                 styles.firstSkillButton,
@@ -514,25 +433,157 @@ export default function PokemonCard() {
                 </Text>
               ) : null}
             </TouchableOpacity>
+            {/* ========= END:: Nome e descrição */}
 
-            {/* Dano da Primeira Habilidade (Ao lado direito da primeira habilidade) */}
-            <TouchableOpacity
-              style={[
-                styles.firstSkillDamageButton,
-                isPreviewMode && styles.previewMode,
-              ]}
-              onPress={() => setFirstSkillDamageModalVisible(true)}
-              disabled={isPreviewMode}
-            >
-              {firstSkillDamage ? (
-                <Text style={styles.skillDamageText}>{firstSkillDamage}</Text>
-              ) : null}
-            </TouchableOpacity>
+            {/* ========= BEGIN:: Qtd. de Dano ========= */}
+            {movesCount === 2 && (
+              <TouchableOpacity
+                style={[
+                  styles.firstSkillDamageButton,
+                  isPreviewMode && styles.previewMode,
+                ]}
+                onPress={() => setFirstSkillDamageModalVisible(true)}
+                disabled={isPreviewMode}
+              >
+                {firstSkillDamage ? (
+                  <Text style={styles.skillDamageText}>{firstSkillDamage}</Text>
+                ) : null}
+              </TouchableOpacity>
+            )}
+            {/* ========= END:: Qtd. de Dano ========= */}
+            {/* ========= END:: Movimento 1 */}
 
+            {/* ========= BEGIN:: Movimento 2 */}
+            {(movesCount === 2 || (movesCount === 1 && hasPassiveSkill)) && (
+              <>
+                {/* ========= BEGIN:: Custo ========= */}
+                <TouchableOpacity
+                  style={[
+                    styles.secondSkillEnergyButton,
+                    isPreviewMode && styles.previewMode,
+                    isPreviewMode && secondSkillEnergy && secondSkillEnergy.count >= 3 && { top: 725 },
+                  ]}
+                  onPress={() => setSecondSkillEnergyModalVisible(true)}
+                  disabled={isPreviewMode}
+                >
+                  {secondSkillEnergy ? (
+                    <View style={styles.skillEnergyContainer}>
+                      {Array.from({ length: secondSkillEnergy.count }).map((_, index) => (
+                        <Image
+                          key={index}
+                          source={TYPE_ICONS[secondSkillEnergy.symbol]}
+                          style={styles.skillEnergyIcon}
+                        />
+                      ))}
+                    </View>
+                  ) : null}
+                </TouchableOpacity>
+                {/* ========= END:: Custo ========= */}
+
+                {/* ========= BEGIN:: Nome e descrição ========= */}
+                <TouchableOpacity
+                  style={[
+                    styles.secondSkillButton,
+                    isPreviewMode && styles.previewMode,
+                    (!secondSkill?.description) && { justifyContent: 'center' },
+                  ]}
+                  onPress={() => setSecondSkillModalVisible(true)}
+                  disabled={isPreviewMode}
+                >
+                  {secondSkill ? (
+                    <Text style={styles.skillDescriptionText}>
+                      <Text style={styles.skillNameText}>{secondSkill.name} </Text>
+                      {secondSkill.description}
+                    </Text>
+                  ) : null}
+                </TouchableOpacity>
+                {/* ========= END:: Nome e descrição ========= */}
+
+                {/* ========= BEGIN:: Qtd. de Dano ========= */}
+                <TouchableOpacity
+                  style={[
+                    styles.secondSkillDamageButton,
+                    isPreviewMode && styles.previewMode,
+                  ]}
+                  onPress={() => setSecondSkillDamageModalVisible(true)}
+                  disabled={isPreviewMode}
+                >
+                  {secondSkillDamage ? (
+                    <Text style={styles.skillDamageText}>{secondSkillDamage}</Text>
+                  ) : null}
+                </TouchableOpacity>
+                {/* ========= END:: Qtd. de Dano ========= */}
               </>
             )}
+            {/* ========= END:: Movimento 2 */}
 
-            {/* --- HABILIDADE PASSIVA --- */}
+            {/* ========= END:: Movimento unico */}
+            {movesCount === 1 && !hasPassiveSkill && (
+              <>
+                {/* ========= BEGIN:: Custo ========= */}
+                <TouchableOpacity
+                  style={[
+                    styles.firstSkillEnergyButton,
+                    isPreviewMode && styles.previewMode,
+                    { top: 670, height: 100 }
+                  ]}
+                  onPress={() => setFirstSkillEnergyModalVisible(true)}
+                  disabled={isPreviewMode}
+                >
+                  {firstSkillEnergy ? (
+                    <View style={styles.skillEnergyContainer}>
+                      {Array.from({ length: firstSkillEnergy.count }).map((_, index) => (
+                        <Image
+                          key={index}
+                          source={TYPE_ICONS[firstSkillEnergy.symbol]}
+                          style={styles.skillEnergyIcon}
+                        />
+                      ))}
+                    </View>
+                  ) : null}
+                </TouchableOpacity>
+                {/* ========= BEGIN:: Custo ========= */}
+
+                {/* ========= BEGIN:: Nome e descrição ========= */}
+                <TouchableOpacity
+                  style={[
+                    styles.singleSkillButton,
+                    isPreviewMode && styles.previewMode,
+                  ]}
+                  onPress={() => setFirstSkillModalVisible(true)}
+                  disabled={isPreviewMode}
+                >
+                  {firstSkill ? (
+                    <>
+                      <Text style={[styles.skillNameText, { textAlign: 'center' }]}>{firstSkill.name} </Text>
+                      {firstSkill.description ? (
+                        <Text style={[styles.skillDescriptionText, { textAlign: 'left', marginTop: 5 }]}>{firstSkill.description}</Text>
+                      ) : null}
+                    </>
+                  ) : null}
+                </TouchableOpacity>
+                {/* ========= END:: Nome e descrição ========= */}
+
+                {/* ========= BEGIN:: Qtd. de Dano ========= */}
+                <TouchableOpacity
+                  style={[
+                    styles.firstSkillDamageButton,
+                    isPreviewMode && styles.previewMode,
+                    { top: 670, height: 100 } // Valores provisórios centralizados
+                  ]}
+                  onPress={() => setFirstSkillDamageModalVisible(true)}
+                  disabled={isPreviewMode}
+                >
+                  {firstSkillDamage ? (
+                    <Text style={styles.skillDamageText}>{firstSkillDamage}</Text>
+                  ) : null}
+                </TouchableOpacity>
+                {/* ========= END:: Qtd. de Dano ========= */}
+              </>
+            )}
+            {/* ========= END:: Movimento unico */}
+
+            {/* ========= BEGIN:: Habilidade */}
             {hasPassiveSkill && (
               <TouchableOpacity
                 style={[
@@ -553,130 +604,114 @@ export default function PokemonCard() {
                 ) : null}
               </TouchableOpacity>
             )}
+            {/* ========= END:: Habilidade */}
 
-            {/* --- SEGUNDA HABILIDADE --- */}
-            {(movesCount === 2 || (movesCount === 1 && hasPassiveSkill)) && (
-              <>
-                {/* Custo de Energia da Segunda Habilidade */}
+            {/* ========= BEGIN:: Fraquezas ========= */}
+            {/* ========= BEGIN:: Fraqueza 1 ========= */}
             <TouchableOpacity
               style={[
-                styles.secondSkillEnergyButton,
+                styles.weaknessButton,
+                weaknessesCount === 2 && { left: 89 },
                 isPreviewMode && styles.previewMode,
-                isPreviewMode && secondSkillEnergy && secondSkillEnergy.count >= 3 && { top: 725 }, // Ajuste igual ao da primeira
+                isPreviewMode && {
+                  width: 40,
+                  height: 40,
+                  top: 865, // Posição perfeita que você encontrou para o preview
+                  left: weaknessesCount === 2 ? 90 : 110 // Mantém a lógica de preview também ajustada
+                },
               ]}
-              onPress={() => setSecondSkillEnergyModalVisible(true)}
+              onPress={() => setWeaknessModalVisible(true)}
               disabled={isPreviewMode}
             >
-              {secondSkillEnergy ? (
-                <View style={styles.skillEnergyContainer}>
-                  {Array.from({ length: secondSkillEnergy.count }).map((_, index) => (
-                    <Image
-                      key={index}
-                      source={TYPE_ICONS[secondSkillEnergy.symbol]}
-                      style={styles.skillEnergyIcon}
-                    />
-                  ))}
-                </View>
+              {weakness ? (
+                <Image source={TYPE_ICONS[weakness]} style={styles.weaknessIcon} />
               ) : null}
             </TouchableOpacity>
+            {/* ========= END:: Fraqueza 1 ========= */}
 
-            {/* Segunda Habilidade */}
-            <TouchableOpacity
-              style={[
-                styles.secondSkillButton,
-                isPreviewMode && styles.previewMode,
-                (!secondSkill?.description) && { justifyContent: 'center' },
-              ]}
-              onPress={() => setSecondSkillModalVisible(true)}
-              disabled={isPreviewMode}
-            >
-              {secondSkill ? (
-                <Text style={styles.skillDescriptionText}>
-                  <Text style={styles.skillNameText}>{secondSkill.name} </Text>
-                  {secondSkill.description}
-                </Text>
-              ) : null}
-            </TouchableOpacity>
-
-            {/* Dano da Segunda Habilidade */}
-            <TouchableOpacity
-              style={[
-                styles.secondSkillDamageButton,
-                isPreviewMode && styles.previewMode,
-              ]}
-              onPress={() => setSecondSkillDamageModalVisible(true)}
-              disabled={isPreviewMode}
-            >
-              {secondSkillDamage ? (
-                <Text style={styles.skillDamageText}>{secondSkillDamage}</Text>
-              ) : null}
-            </TouchableOpacity>
-              </>
+            {/* ========= BEGIN:: Fraqueza 2 ========= */}
+            {weaknessesCount === 2 && (
+              <TouchableOpacity
+                style={[
+                  styles.secondWeaknessButton,
+                  isPreviewMode && styles.previewMode,
+                  isPreviewMode && {
+                    width: 40,
+                    height: 40,
+                    top: 865,
+                    left: 135,
+                  },
+                ]}
+                onPress={() => setSecondWeaknessModalVisible(true)}
+                disabled={isPreviewMode}
+              >
+                {secondWeakness ? (
+                  <Image source={TYPE_ICONS[secondWeakness]} style={styles.weaknessIcon} />
+                ) : null}
+              </TouchableOpacity>
             )}
+            {/* ========= END:: Fraqueza 2 ========= */}
 
-            {/* --- BLOCO DE 1 HABILIDADE ÚNICA --- */}
-            {movesCount === 1 && !hasPassiveSkill && (
-              <>
-                {/* Custo de Energia (Habilidade Única) */}
-                <TouchableOpacity
-                  style={[
-                    styles.firstSkillEnergyButton,
-                    isPreviewMode && styles.previewMode,
-                    { top: 670, height: 100 } // Valores provisórios centralizados
-                  ]}
-                  onPress={() => setFirstSkillEnergyModalVisible(true)}
-                  disabled={isPreviewMode}
-                >
-                  {firstSkillEnergy ? (
-                    <View style={styles.skillEnergyContainer}>
-                      {Array.from({ length: firstSkillEnergy.count }).map((_, index) => (
-                        <Image
-                          key={index}
-                          source={TYPE_ICONS[firstSkillEnergy.symbol]}
-                          style={styles.skillEnergyIcon}
-                        />
-                      ))}
-                    </View>
-                  ) : null}
-                </TouchableOpacity>
+            {/* ========= BEGIN:: Valor das fraquezas ========= */}
+            <TouchableOpacity
+              style={[
+                styles.weaknessValueButton,
+                weaknessesCount === 2 && { left: 185 },
+                isPreviewMode && styles.previewMode,
+                isPreviewMode && { left: weaknessesCount === 2 ? 180 : 150 }, // Ajuste para modo preview
+              ]}
+              onPress={() => setWeaknessValueModalVisible(true)}
+              disabled={isPreviewMode}
+            >
+              {weaknessValue ? (
+                <Text style={styles.weaknessValueText}>{weaknessValue}</Text>
+              ) : null}
+            </TouchableOpacity>
+            {/* ========= END:: Valor das fraquezas ========= */}
+            {/* ========= END:: Fraquezas ========= */}
 
-                {/* Habilidade Única (Nome e Descrição) */}
-                <TouchableOpacity
-                  style={[
-                    styles.singleSkillButton,
-                    isPreviewMode && styles.previewMode,
-                  ]}
-                  onPress={() => setFirstSkillModalVisible(true)}
-                  disabled={isPreviewMode}
-                >
-                  {firstSkill ? (
-                    <>
-                      <Text style={[styles.skillNameText, { textAlign: 'center' }]}>{firstSkill.name} </Text>
-                      {firstSkill.description ? (
-                        <Text style={[styles.skillDescriptionText, { textAlign: 'left', marginTop: 5 }]}>{firstSkill.description}</Text>
-                      ) : null}
-                    </>
-                  ) : null}
-                </TouchableOpacity>
+            {/* ========= BEGIN:: Resistências ========= */}
+            {/* ========= BEGIN:: Resistência 1 ========= */}
+            <TouchableOpacity
+              style={[
+                styles.resistanceButton,
+                isPreviewMode && styles.previewMode,
+                isPreviewMode && {
+                  width: 40,
+                  height: 40,
+                  top: 865,
+                  left: 340.5
+                },
+              ]}
+              onPress={() => setResistanceModalVisible(true)}
+              disabled={isPreviewMode}
+            >
+              {resistance ? (
+                <Image source={TYPE_ICONS[resistance]} style={styles.resistanceIcon} />
+              ) : null}
+            </TouchableOpacity>
+            {/* ========= END:: Resistência 1 ========= */}
 
-                {/* Dano (Habilidade Única) */}
-                <TouchableOpacity
-                  style={[
-                    styles.firstSkillDamageButton,
-                    isPreviewMode && styles.previewMode,
-                    { top: 670, height: 100 } // Valores provisórios centralizados
-                  ]}
-                  onPress={() => setFirstSkillDamageModalVisible(true)}
-                  disabled={isPreviewMode}
-                >
-                  {firstSkillDamage ? (
-                    <Text style={styles.skillDamageText}>{firstSkillDamage}</Text>
-                  ) : null}
-                </TouchableOpacity>
-              </>
-            )}
+            {/* ========= BEGIN:: Resistência 2 ========= */}
+            {/* ========= END:: Resistência 2 ========= */}
 
-            {/* Décimo Segundo Botão (Custo de Recuo, ao lado da Resistência) */}
+            {/* ========= BEGIN:: Valor das resistências ========= */}
+            <TouchableOpacity
+              style={[
+                styles.resistanceValueButton,
+                isPreviewMode && styles.previewMode,
+              ]}
+              onPress={() => setResistanceValueModalVisible(true)}
+              disabled={isPreviewMode}
+            >
+              {resistanceValue ? (
+                <Text style={styles.resistanceValueText}>{resistanceValue}</Text>
+              ) : null}
+            </TouchableOpacity>
+            {/* ========= END:: Valor das resistências ========= */}
+            {/* ========= END:: Resistências ========= */}
+
+            {/* BEGIN:: Custo de retirada */}
             <TouchableOpacity
               style={[
                 styles.retreatButton,
@@ -693,8 +728,9 @@ export default function PokemonCard() {
                 </View>
               ) : null}
             </TouchableOpacity>
+            {/* END:: Custo de retirada */}
 
-            {/* Quinto Botão Retangular (Para a curiosidade do Pokémon) */}
+            {/* BEGIN:: Curiosidade */}
             <TouchableOpacity
               style={[
                 styles.curiosityButton,
@@ -707,8 +743,9 @@ export default function PokemonCard() {
                 <Text style={styles.curiosityText}>{curiosity}</Text>
               ) : null}
             </TouchableOpacity>
+            {/* END:: Curiosidade */}
 
-            {/* Sétimo Botão Retangular (Para o nome do Ilustrador) */}
+            {/* BEGIN:: Illustrador */}
             <TouchableOpacity
               style={[
                 styles.illustrationButton,
@@ -724,22 +761,9 @@ export default function PokemonCard() {
                 </Text>
               ) : null}
             </TouchableOpacity>
+            {/* BEGIN:: Illustrador */}
 
-            {/* Oitavo Botão Retangular (Para o número do Pokémon) */}
-            <TouchableOpacity
-              style={[
-                styles.pokemonNumberButton,
-                isPreviewMode && styles.previewMode,
-              ]}
-              onPress={() => setPokemonNumberModalVisible(true)}
-              disabled={isPreviewMode}
-            >
-              {pokemonNumber ? (
-                <Text style={styles.pokemonNumberText}>{pokemonNumber}</Text>
-              ) : null}
-            </TouchableOpacity>
-
-            {/* Nono Botão Retangular (Extra, centralizado horizontalmente) */}
+            {/* BEGIN:: Licença */}
             <TouchableOpacity
               style={[
                 styles.extraInfoButton,
@@ -753,8 +777,22 @@ export default function PokemonCard() {
                 <Text style={styles.extraInfoText}>{extraInfo}</Text>
               ) : null}
             </TouchableOpacity>
+            {/* END:: Licença */}
 
-            {/* Aqui dentro vão entrar os TextInputs flutuantes logo logo! */}
+            {/* BEGIN:: Número da coleção */}
+            <TouchableOpacity
+              style={[
+                styles.pokemonNumberButton,
+                isPreviewMode && styles.previewMode,
+              ]}
+              onPress={() => setPokemonNumberModalVisible(true)}
+              disabled={isPreviewMode}
+            >
+              {pokemonNumber ? (
+                <Text style={styles.pokemonNumberText}>{pokemonNumber}</Text>
+              ) : null}
+            </TouchableOpacity>
+            {/* BEGIN:: Número da coleção */}
           </View>
         </View>
 
@@ -1016,9 +1054,9 @@ export default function PokemonCard() {
           }}
         />
 
-        {/* Bottom Bar / Footer */}
+        {/* BEGIN:: Bottom bar */}
         <View style={styles.footerBar}>
-          {/* Arrow Left -> UNDO */}
+          {/* Undo */}
           <TouchableOpacity
             onPress={undo}
             disabled={isPreviewMode || !canUndo}
@@ -1030,6 +1068,7 @@ export default function PokemonCard() {
             />
           </TouchableOpacity>
 
+          {/* Save */}
           <TouchableOpacity
             onPress={handleSaveCard}
             style={{ opacity: 1 }}
@@ -1040,6 +1079,7 @@ export default function PokemonCard() {
             />
           </TouchableOpacity>
 
+          {/* Preview */}
           <TouchableOpacity onPress={() => setIsPreviewMode(!isPreviewMode)}>
             <Image
               source={require("../../../assets/images/icons/eye.png")}
@@ -1047,7 +1087,7 @@ export default function PokemonCard() {
             />
           </TouchableOpacity>
 
-          {/* Arrow Right -> REDO */}
+          {/* Redo */}
           <TouchableOpacity
             onPress={redo}
             disabled={isPreviewMode || !canRedo}
@@ -1059,7 +1099,7 @@ export default function PokemonCard() {
             />
           </TouchableOpacity>
 
-          {/* Menu Button */}
+          {/* Menu */}
           <TouchableOpacity onPress={() => setMenuModalVisible(true)}>
             <Image
               source={require("../../../assets/images/icons/menu.png")}
@@ -1067,6 +1107,7 @@ export default function PokemonCard() {
             />
           </TouchableOpacity>
         </View>
+        {/* END:: Bottom bar */}
       </SafeAreaView>
     </ThemedView>
   );
