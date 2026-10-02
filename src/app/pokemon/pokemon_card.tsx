@@ -399,8 +399,7 @@ export default function PokemonCard() {
               <TouchableOpacity
                 style={[
                   styles.passiveSkillButton,
-                  isPreviewMode && styles.previewMode,
-                  (!passiveSkill?.description) && { justifyContent: 'center' },
+                  isPreviewMode && styles.previewMode
                 ]}
                 onPress={() => setPassiveSkillModalVisible(true)}
                 disabled={isPreviewMode}
@@ -448,8 +447,7 @@ export default function PokemonCard() {
                 <TouchableOpacity
                   style={[
                     styles.firstSkillButton,
-                    isPreviewMode && styles.previewMode,
-                    (!firstSkill?.description) && { justifyContent: 'center' },
+                    isPreviewMode && styles.previewMode
                   ]}
                   onPress={() => setFirstSkillModalVisible(true)}
                   disabled={isPreviewMode}
@@ -518,8 +516,7 @@ export default function PokemonCard() {
                 <TouchableOpacity
                   style={[
                     styles.secondSkillButton,
-                    isPreviewMode && styles.previewMode,
-                    (!secondSkill?.description) && { justifyContent: 'center' },
+                    isPreviewMode && styles.previewMode
                   ]}
                   onPress={() => setSecondSkillModalVisible(true)}
                   disabled={isPreviewMode}
@@ -1384,7 +1381,7 @@ const styles = StyleSheet.create({
     borderColor: "white",
     borderRadius: 8,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
-    justifyContent: "flex-start", // Puxa o texto para o topo removendo o espaço vazio
+    justifyContent: 'center',
     alignItems: "flex-start", // Puxa o texto para a esquerda
     paddingHorizontal: 5, // Apenas para não encostar literalmente na linha da borda
     paddingTop: 0, // Garante que comece do topo exato
@@ -1400,7 +1397,7 @@ const styles = StyleSheet.create({
     borderColor: "white",
     borderRadius: 8,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
-    justifyContent: "flex-start",
+    justifyContent: 'center',
     alignItems: "flex-start",
     paddingHorizontal: 5,
     paddingTop: 0,
@@ -1474,7 +1471,7 @@ const styles = StyleSheet.create({
     borderColor: "white",
     borderRadius: 8,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
-    justifyContent: "flex-start",
+    justifyContent: 'center',
     alignItems: "flex-start",
     paddingHorizontal: 5,
     paddingTop: 0,
