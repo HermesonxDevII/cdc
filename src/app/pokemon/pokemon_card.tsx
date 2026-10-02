@@ -794,8 +794,7 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.extraInfoButton,
-                isPreviewMode && styles.previewMode,
-                isPreviewMode && { left: 200 }
+                isPreviewMode && styles.previewMode
               ]}
               onPress={() => setExtraInfoModalVisible(true)}
               disabled={isPreviewMode}
@@ -1646,8 +1645,8 @@ const styles = StyleSheet.create({
   extraInfoButton: {
     position: "absolute",
     top: 980, // Mesmo alinhamento vertical
-    left: 197, // MÁGICA: Isso centraliza automaticamente, não importa a largura!
-    width: 450, // Pode mudar a largura à vontade agora
+    left: 193, // MÁGICA: Isso centraliza automaticamente, não importa a largura!
+    width: 458, // Pode mudar a largura à vontade agora
     height: 25, // Mesma altura do ilustrador
     borderWidth: 3,
     borderColor: "white",
