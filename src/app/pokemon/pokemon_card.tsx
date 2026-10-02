@@ -76,7 +76,7 @@ type CardState = {
   weaknessesCount: number;
   resistancesCount: number;
   hasPassiveSkill: boolean;
-  passiveSkill: { name: string; description: string } | null;
+  passiveSkill: { name: string; description: string; color?: string } | null;
   firstSkill: { name: string; description: string } | null;
   firstSkillDamage: string;
   firstSkillEnergy: { symbol: string; count: number } | null;
@@ -601,8 +601,8 @@ export default function PokemonCard() {
               >
                 {passiveSkill ? (
                   <Text style={[styles.skillDescriptionText, { width: '100%' }]}>
-                    <Text style={[styles.skillNameText, { color: '#CC0000', fontSize: 25 }]}>
-                      Poder Pokémon: <Text style={{ color: '#000' }}>{passiveSkill.name} </Text>
+                    <Text style={[styles.skillNameText, { color: passiveSkill.color || '#CC0000', fontSize: 25 }]}>
+                      Poder Pokémon: <Text style={{ color: passiveSkill.color }}>{passiveSkill.name} </Text>
                     </Text>
                     {passiveSkill.description}
                   </Text>
@@ -1003,6 +1003,8 @@ export default function PokemonCard() {
             setPassiveSkillModalVisible(false);
           }}
           title="Habilidade Passiva"
+          isPassive={true}
+          initialColor={passiveSkill?.color}
         />
 
         {/* Modal do Dano da Primeira Habilidade */}

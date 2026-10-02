@@ -2,18 +2,24 @@ import React, { useState } from 'react';
 import { Modal, StyleSheet, TouchableOpacity, View, Text, Pressable, TextInput , KeyboardAvoidingView, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { ColorPickerModal } from './color_picker_modal';
+
 interface SkillModalProps {
   visible: boolean;
   onClose: () => void;
-  onSave: (skill: { name: string; description: string }) => void;
+  onSave: (skill: { name: string; description: string; color?: string }) => void;
   title?: string;
+  isPassive?: boolean;
+  initialColor?: string;
 }
 
-export function SkillModal({ visible, onClose, onSave, title = "Habilidade" }: SkillModalProps) {
+export function SkillModal({ visible, onClose, onSave, title = "Habilidade", isPassive = false, initialColor }: SkillModalProps) {
   const insets = useSafeAreaInsets();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
+  const [color, setColor] = useState(initialColor || '#CC0000');
+  const [colorPickerVisible, setColorPickerVisible] = useState(false);
 
   return (
     <Modal
@@ -38,15 +44,23 @@ export function SkillModal({ visible, onClose, onSave, title = "Habilidade" }: S
           )}
 
           <Text style={styles.title}>{title}</Text>
-          
+
           <Text style={styles.label}>Nome da Habilidade</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ex: Stun Spore"
-            placeholderTextColor="#888"
-            value={name}
-            onChangeText={setName}
-          />
+          <View style={styles.nameRow}>
+            <TextInput
+              style={[styles.input, styles.flexInput]}
+              placeholder="Ex: Stun Spore"
+              placeholderTextColor="#888"
+              value={name}
+              onChangeText={setName}
+            />
+            {isPassive && (
+              <TouchableOpacity
+                style={[styles.colorTrigger, { backgroundColor: color }]}
+                onPress={() => setColorPickerVisible(true)}
+              />
+            )}
+          </View>
 
           <Text style={styles.label}>Descrição (Opcional)</Text>
           <TextInput
@@ -70,7 +84,7 @@ export function SkillModal({ visible, onClose, onSave, title = "Habilidade" }: S
                   setTimeout(() => setToastVisible(false), 3000);
                   return;
                 }
-                onSave({ name, description });
+                onSave({ name, description, color: isPassive ? color : undefined });
                 onClose();
               }}
             >
@@ -85,6 +99,12 @@ export function SkillModal({ visible, onClose, onSave, title = "Habilidade" }: S
         </View>
       </Pressable>
     </KeyboardAvoidingView>
+    <ColorPickerModal
+      visible={colorPickerVisible}
+      onClose={() => setColorPickerVisible(false)}
+      onSelectColor={setColor}
+      currentColor={color}
+    />
     </Modal>
   );
 }
@@ -145,6 +165,21 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 20,
   },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  flexInput: {
+    flex: 1,
+    marginBottom: 0,
+  },
+  colorTrigger: {
+    width: 25,
+    height: 25,
+    borderRadius: 3,
+    marginLeft: 10,
+  },
   textArea: {
     height: 100,
   },
@@ -185,3 +220,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   }
 });
+
+
