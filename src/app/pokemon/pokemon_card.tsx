@@ -394,6 +394,29 @@ export default function PokemonCard() {
             </TouchableOpacity>
             {/* ========= END: Descrição ========= */}
 
+            {/* ========= BEGIN:: Habilidade */}
+            {hasPassiveSkill && (
+              <TouchableOpacity
+                style={[
+                  styles.passiveSkillButton,
+                  isPreviewMode && styles.previewMode,
+                  (!passiveSkill?.description) && { justifyContent: 'center' },
+                ]}
+                onPress={() => setPassiveSkillModalVisible(true)}
+                disabled={isPreviewMode}
+              >
+                {passiveSkill ? (
+                  <Text style={[styles.skillDescriptionText, { width: '100%' }]}>
+                    <Text style={[styles.skillNameText, { color: passiveSkill.color || '#CC0000', fontSize: 25 }]}>
+                      Poder Pokémon: <Text style={{ color: passiveSkill.color }}>{passiveSkill.name} </Text>
+                    </Text>
+                    {passiveSkill.description}
+                  </Text>
+                ) : null}
+              </TouchableOpacity>
+            )}
+            {/* ========= END:: Habilidade */}
+
             {/* ========= BEGIN:: Movimento 1 */}
             {movesCount === 2 && (
               <>
@@ -457,6 +480,12 @@ export default function PokemonCard() {
               </>
             )}
             {/* ========= END:: Movimento 1 */}
+
+            {/* BEGIN:: Separador */}
+            {(movesCount === 2 || (movesCount === 1 && hasPassiveSkill)) && (
+              <View style={[styles.movesSeparatorLine, currentTemplate === TEMPLATES.dark && { backgroundColor: 'white' }]} />
+            )}
+            {/* END:: Separador */}
 
             {/* ========= BEGIN:: Movimento 2 */}
             {(movesCount === 2 || (movesCount === 1 && hasPassiveSkill)) && (
@@ -587,29 +616,6 @@ export default function PokemonCard() {
               </>
             )}
             {/* ========= END:: Movimento unico */}
-
-            {/* ========= BEGIN:: Habilidade */}
-            {hasPassiveSkill && (
-              <TouchableOpacity
-                style={[
-                  styles.passiveSkillButton,
-                  isPreviewMode && styles.previewMode,
-                  (!passiveSkill?.description) && { justifyContent: 'center' },
-                ]}
-                onPress={() => setPassiveSkillModalVisible(true)}
-                disabled={isPreviewMode}
-              >
-                {passiveSkill ? (
-                  <Text style={[styles.skillDescriptionText, { width: '100%' }]}>
-                    <Text style={[styles.skillNameText, { color: passiveSkill.color || '#CC0000', fontSize: 25 }]}>
-                      Poder Pokémon: <Text style={{ color: passiveSkill.color }}>{passiveSkill.name} </Text>
-                    </Text>
-                    {passiveSkill.description}
-                  </Text>
-                ) : null}
-              </TouchableOpacity>
-            )}
-            {/* ========= END:: Habilidade */}
 
             {/* ========= BEGIN:: Fraquezas ========= */}
             {/* ========= BEGIN:: Fraqueza 1 ========= */}
@@ -1142,7 +1148,11 @@ export default function PokemonCard() {
           </TouchableOpacity>
 
           {/* Menu */}
-          <TouchableOpacity onPress={() => setMenuModalVisible(true)}>
+          <TouchableOpacity
+            onPress={() => setMenuModalVisible(true)}
+            disabled={isPreviewMode}
+            style={{ opacity: isPreviewMode ? 0.3 : 1 }}
+          >
             <Image
               source={require("../../../assets/images/icons/menu.png")}
               style={styles.footerIcon}
@@ -1382,10 +1392,10 @@ const styles = StyleSheet.create({
 
   passiveSkillButton: {
     position: "absolute",
-    top: 595, // Mesma altura que a primeira habilidade
+    top: 590, // Mesma altura que a primeira habilidade
     left: 135,
     width: 490,
-    height: 125,
+    height: 120,
     borderWidth: 3,
     borderColor: "white",
     borderRadius: 8,
@@ -1445,6 +1455,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
+  movesSeparatorLine: {
+    position: 'absolute',
+    top: 720,
+    left: 60,
+    width: 615,
+    height: 2,
+    backgroundColor: 'black',
+  },
   // Segunda Habilidade
   secondSkillButton: {
     position: "absolute",
