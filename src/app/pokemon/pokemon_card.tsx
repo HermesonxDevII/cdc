@@ -390,67 +390,67 @@ export default function PokemonCard() {
             {/* ========= END: Descrição ========= */}
 
             {/* ========= BEGIN:: Movimento 1 */}
-            {/* ========= BEGIN:: Custo ========= */}
             {movesCount === 2 && (
-              <TouchableOpacity
-                style={[
-                  styles.firstSkillEnergyButton,
-                  isPreviewMode && styles.previewMode,
-                  isPreviewMode && firstSkillEnergy && firstSkillEnergy.count >= 3 && { top: 605 },
-                ]}
-                onPress={() => setFirstSkillEnergyModalVisible(true)}
-                disabled={isPreviewMode}
-              >
-                {firstSkillEnergy ? (
-                  <View style={styles.skillEnergyContainer}>
-                    {Array.from({ length: firstSkillEnergy.count }).map((_, index) => (
-                      <Image
-                        key={index}
-                        source={TYPE_ICONS[firstSkillEnergy.symbol]}
-                        style={styles.skillEnergyIcon}
-                      />
-                    ))}
-                  </View>
-                ) : null}
-              </TouchableOpacity>
-            )}
-            {/* ========= END:: Custo ========= */}
+              <>
+                {/* ========= BEGIN:: Custo ========= */}
+                <TouchableOpacity
+                  style={[
+                    styles.firstSkillEnergyButton,
+                    isPreviewMode && styles.previewMode,
+                    isPreviewMode && firstSkillEnergy && firstSkillEnergy.count >= 3 && { top: 605 },
+                  ]}
+                  onPress={() => setFirstSkillEnergyModalVisible(true)}
+                  disabled={isPreviewMode}
+                >
+                  {firstSkillEnergy ? (
+                    <View style={styles.skillEnergyContainer}>
+                      {Array.from({ length: firstSkillEnergy.count }).map((_, index) => (
+                        <Image
+                          key={index}
+                          source={TYPE_ICONS[firstSkillEnergy.symbol]}
+                          style={styles.skillEnergyIcon}
+                        />
+                      ))}
+                    </View>
+                  ) : null}
+                </TouchableOpacity>
+                {/* ========= END:: Custo ========= */}
 
-            {/* ========= BEGIN:: Nome e descrição ========= */}
-            <TouchableOpacity
-              style={[
-                styles.firstSkillButton,
-                isPreviewMode && styles.previewMode,
-                (!firstSkill?.description) && { justifyContent: 'center' },
-              ]}
-              onPress={() => setFirstSkillModalVisible(true)}
-              disabled={isPreviewMode}
-            >
-              {firstSkill ? (
-                <Text style={styles.skillDescriptionText}>
-                  <Text style={styles.skillNameText}>{firstSkill.name} </Text>
-                  {firstSkill.description}
-                </Text>
-              ) : null}
-            </TouchableOpacity>
-            {/* ========= END:: Nome e descrição */}
+                {/* ========= BEGIN:: Nome e descrição ========= */}
+                <TouchableOpacity
+                  style={[
+                    styles.firstSkillButton,
+                    isPreviewMode && styles.previewMode,
+                    (!firstSkill?.description) && { justifyContent: 'center' },
+                  ]}
+                  onPress={() => setFirstSkillModalVisible(true)}
+                  disabled={isPreviewMode}
+                >
+                  {firstSkill ? (
+                    <Text style={styles.skillDescriptionText}>
+                      <Text style={styles.skillNameText}>{firstSkill.name} </Text>
+                      {firstSkill.description}
+                    </Text>
+                  ) : null}
+                </TouchableOpacity>
+                {/* ========= END:: Nome e descrição */}
 
-            {/* ========= BEGIN:: Qtd. de Dano ========= */}
-            {movesCount === 2 && (
-              <TouchableOpacity
-                style={[
-                  styles.firstSkillDamageButton,
-                  isPreviewMode && styles.previewMode,
-                ]}
-                onPress={() => setFirstSkillDamageModalVisible(true)}
-                disabled={isPreviewMode}
-              >
-                {firstSkillDamage ? (
-                  <Text style={styles.skillDamageText}>{firstSkillDamage}</Text>
-                ) : null}
-              </TouchableOpacity>
+                {/* ========= BEGIN:: Qtd. de Dano ========= */}
+                <TouchableOpacity
+                  style={[
+                    styles.firstSkillDamageButton,
+                    isPreviewMode && styles.previewMode,
+                  ]}
+                  onPress={() => setFirstSkillDamageModalVisible(true)}
+                  disabled={isPreviewMode}
+                >
+                  {firstSkillDamage ? (
+                    <Text style={styles.skillDamageText}>{firstSkillDamage}</Text>
+                  ) : null}
+                </TouchableOpacity>
+                {/* ========= END:: Qtd. de Dano ========= */}
+              </>
             )}
-            {/* ========= END:: Qtd. de Dano ========= */}
             {/* ========= END:: Movimento 1 */}
 
             {/* ========= BEGIN:: Movimento 2 */}
