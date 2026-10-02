@@ -9,15 +9,26 @@ interface SkillModalProps {
   onClose: () => void;
   onSave: (skill: { name: string; description: string; color?: string }) => void;
   title?: string;
+  inputPlaceholder?: string;
+  inputPlaceholder2?: string;
   isPassive?: boolean;
   initialColor?: string;
 }
 
-export function SkillModal({ visible, onClose, onSave, title = "Habilidade", isPassive = false, initialColor }: SkillModalProps) {
+export function SkillModal({
+  visible,
+  onClose,
+  onSave,
+  title = "Movimento",
+  inputPlaceholder = "Ex: Esporo Atordoante",
+  inputPlaceholder2 = "Ex: Jogue uma moeda. Se sair cara, o Pokémon defensor fica Paralisado.",
+  isPassive = false,
+  initialColor
+}: SkillModalProps) {
   const insets = useSafeAreaInsets();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [toastVisible, setToastVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [color, setColor] = useState(initialColor || '#CC0000');
   const [colorPickerVisible, setColorPickerVisible] = useState(false);
 
@@ -36,20 +47,13 @@ export function SkillModal({ visible, onClose, onSave, title = "Habilidade", isP
             <Text style={styles.closeText}>X</Text>
           </TouchableOpacity>
 
-          {/* Toast de Erro (Canto superior direito) */}
-          {toastVisible && (
-            <View style={styles.toast}>
-              <Text style={styles.toastText}>Preencha o nome da habilidade!</Text>
-            </View>
-          )}
-
           <Text style={styles.title}>{title}</Text>
 
-          <Text style={styles.label}>Nome da Habilidade</Text>
+          <Text style={styles.label}>Nome</Text>
           <View style={styles.nameRow}>
             <TextInput
               style={[styles.input, styles.flexInput]}
-              placeholder="Ex: Stun Spore"
+              placeholder={inputPlaceholder}
               placeholderTextColor="#888"
               value={name}
               onChangeText={setName}
@@ -62,10 +66,10 @@ export function SkillModal({ visible, onClose, onSave, title = "Habilidade", isP
             )}
           </View>
 
-          <Text style={styles.label}>Descrição (Opcional)</Text>
+          <Text style={styles.label}>Descrição {isPassive ? '' : '(Opcional)'}</Text>
           <TextInput
             style={[styles.input, styles.textArea]}
-            placeholder="Ex: Flip a coin. If heads, the Defending Pokémon is now Paralyzed."
+            placeholder={inputPlaceholder2}
             placeholderTextColor="#888"
             value={description}
             onChangeText={setDescription}
@@ -80,8 +84,13 @@ export function SkillModal({ visible, onClose, onSave, title = "Habilidade", isP
               style={[styles.actionButton, { backgroundColor: '#7C3AED' }]}
               onPress={() => {
                 if (!name.trim()) {
-                  setToastVisible(true);
-                  setTimeout(() => setToastVisible(false), 3000);
+                  setErrorMessage('Preencha o nome da habilidade!');
+                  setTimeout(() => setErrorMessage(''), 3000);
+                  return;
+                }
+                if (isPassive && !description.trim()) {
+                  setErrorMessage('A descrição é obrigatória para passivas!');
+                  setTimeout(() => setErrorMessage(''), 3000);
                   return;
                 }
                 onSave({ name, description, color: isPassive ? color : undefined });

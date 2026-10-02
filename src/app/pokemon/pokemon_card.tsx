@@ -983,7 +983,7 @@ export default function PokemonCard() {
           }}
         />
 
-        {/* Modal da Primeira Habilidade */}
+        {/* Modal do primeiro movimento */}
         <SkillModal
           visible={isFirstSkillModalVisible}
           onClose={() => setFirstSkillModalVisible(false)}
@@ -991,7 +991,18 @@ export default function PokemonCard() {
             updateCard({ firstSkill: skill });
             setFirstSkillModalVisible(false);
           }}
-          title="Primeira Habilidade"
+          title="1º Movimento"
+        />
+
+        {/* Modal da Segunda Habilidade */}
+        <SkillModal
+          visible={isSecondSkillModalVisible}
+          onClose={() => setSecondSkillModalVisible(false)}
+          onSave={(skill) => {
+            updateCard({ secondSkill: skill });
+            setSecondSkillModalVisible(false);
+          }}
+          title="2º Movimento"
         />
 
         {/* Modal de Habilidade Passiva */}
@@ -1003,6 +1014,8 @@ export default function PokemonCard() {
             setPassiveSkillModalVisible(false);
           }}
           title="Habilidade Passiva"
+          inputPlaceholder="Ex: Troca de Dano"
+          inputPlaceholder2="Ex: No seu turno e o quanto desejar, você pode mover 1 marcador de dano de um dos seus Pokémons para um outro (também seu)..."
           isPassive={true}
           initialColor={passiveSkill?.color}
         />
@@ -1025,17 +1038,6 @@ export default function PokemonCard() {
             updateCard({ firstSkillEnergy: { symbol, count } });
             setFirstSkillEnergyModalVisible(false);
           }}
-        />
-
-        {/* Modal da Segunda Habilidade */}
-        <SkillModal
-          visible={isSecondSkillModalVisible}
-          onClose={() => setSecondSkillModalVisible(false)}
-          onSave={(skill) => {
-            updateCard({ secondSkill: skill });
-            setSecondSkillModalVisible(false);
-          }}
-          title="Segunda Habilidade"
         />
 
         {/* Modal do Dano da Segunda Habilidade */}
