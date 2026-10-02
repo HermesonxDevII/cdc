@@ -11,14 +11,17 @@ interface MenuModalProps {
   onSelectPassiveSkill: (hasPassive: boolean) => void;
   weaknessesCount: number;
   onSelectWeaknessesCount: (count: number) => void;
+  resistancesCount: number;
+  onSelectResistancesCount: (count: number) => void;
 }
 
-export function MenuModal({ visible, onClose, movesCount, onSelectMovesCount, hasPassiveSkill, onSelectPassiveSkill, weaknessesCount, onSelectWeaknessesCount }: MenuModalProps) {
+export function MenuModal({ visible, onClose, movesCount, onSelectMovesCount, hasPassiveSkill, onSelectPassiveSkill, weaknessesCount, onSelectWeaknessesCount, resistancesCount, onSelectResistancesCount }: MenuModalProps) {
   const insets = useSafeAreaInsets();
 
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [isPassiveSelectOpen, setIsPassiveSelectOpen] = useState(false);
   const [isWeaknessesSelectOpen, setIsWeaknessesSelectOpen] = useState(false);
+  const [isResistancesSelectOpen, setIsResistancesSelectOpen] = useState(false);
 
   const handleSelect = (value: number) => {
     onSelectMovesCount(value);
@@ -33,6 +36,11 @@ export function MenuModal({ visible, onClose, movesCount, onSelectMovesCount, ha
   const handleWeaknessesSelect = (value: number) => {
     onSelectWeaknessesCount(value);
     setIsWeaknessesSelectOpen(false);
+  };
+
+  const handleResistancesSelect = (value: number) => {
+    onSelectResistancesCount(value);
+    setIsResistancesSelectOpen(false);
   };
 
   return (
@@ -147,6 +155,40 @@ export function MenuModal({ visible, onClose, movesCount, onSelectMovesCount, ha
                       onPress={() => handleWeaknessesSelect(2)}
                     >
                       <Text style={[styles.dropdownOptionText, weaknessesCount === 2 && styles.selectedOptionText]}>2</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            </View>
+
+            <View style={[styles.optionContainer, { zIndex: -1 }]}>
+              <Text style={styles.label}>Resistências:</Text>
+
+              {/* Custom Select Box */}
+              <View style={styles.selectWrapper}>
+                <TouchableOpacity
+                  style={styles.selectBox}
+                  onPress={() => setIsResistancesSelectOpen(!isResistancesSelectOpen)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.selectValue}>{resistancesCount}</Text>
+                  <Text style={styles.selectArrow}>{isResistancesSelectOpen ? '▲' : '▼'}</Text>
+                </TouchableOpacity>
+
+                {/* Dropdown Options */}
+                {isResistancesSelectOpen && (
+                  <View style={styles.dropdownMenu}>
+                    <TouchableOpacity
+                      style={styles.dropdownOption}
+                      onPress={() => handleResistancesSelect(1)}
+                    >
+                      <Text style={[styles.dropdownOptionText, resistancesCount === 1 && styles.selectedOptionText]}>1</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.dropdownOption}
+                      onPress={() => handleResistancesSelect(2)}
+                    >
+                      <Text style={[styles.dropdownOptionText, resistancesCount === 2 && styles.selectedOptionText]}>2</Text>
                     </TouchableOpacity>
                   </View>
                 )}

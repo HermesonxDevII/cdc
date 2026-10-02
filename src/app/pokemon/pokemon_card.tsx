@@ -69,10 +69,12 @@ type CardState = {
   secondWeakness: string | null;
   weaknessValue: string;
   resistance: string;
+  secondResistance: string | null;
   resistanceValue: string;
   retreat: { symbol: string; count: number } | null;
   movesCount: number;
   weaknessesCount: number;
+  resistancesCount: number;
   hasPassiveSkill: boolean;
   passiveSkill: { name: string; description: string } | null;
   firstSkill: { name: string; description: string } | null;
@@ -98,10 +100,12 @@ const initialState: CardState = {
   secondWeakness: null,
   weaknessValue: "",
   resistance: "",
+  secondResistance: null,
   resistanceValue: "",
   retreat: null,
   movesCount: 2,
   weaknessesCount: 1,
+  resistancesCount: 1,
   hasPassiveSkill: false,
   passiveSkill: null,
   firstSkill: null,
@@ -160,39 +164,40 @@ const screenWidth = Dimensions.get("window").width;
 const cardScale = (screenWidth * 0.9) / CARD_REAL_WIDTH;
 
 export default function PokemonCard() {
-  const [isTypeModalVisible, setTypeModalVisible] = useState(false);
-  const [isHpModalVisible, setHpModalVisible] = useState(false);
-  const [isNameModalVisible, setNameModalVisible] = useState(false);
+  const [isTypeModalVisible, setTypeModalVisible] = useState<boolean>(false);
+  const [isHpModalVisible, setHpModalVisible] = useState<boolean>(false);
+  const [isNameModalVisible, setNameModalVisible] = useState<boolean>(false);
   const [isDescriptionModalVisible, setDescriptionModalVisible] =
-    useState(false);
-  const [isCuriosityModalVisible, setCuriosityModalVisible] = useState(false);
+    useState<boolean>(false);
+  const [isCuriosityModalVisible, setCuriosityModalVisible] = useState<boolean>(false);
   const [isIllustrationModalVisible, setIllustrationModalVisible] =
-    useState(false);
+    useState<boolean>(false);
   const [isPokemonNumberModalVisible, setPokemonNumberModalVisible] =
-    useState(false);
-  const [isLevelModalVisible, setLevelModalVisible] = useState(false);
-  const [isExtraInfoModalVisible, setExtraInfoModalVisible] = useState(false);
-  const [isWeaknessModalVisible, setWeaknessModalVisible] = useState(false);
-  const [isSecondWeaknessModalVisible, setSecondWeaknessModalVisible] = useState(false);
-  const [isResistanceModalVisible, setResistanceModalVisible] = useState(false);
-  const [isRetreatModalVisible, setRetreatModalVisible] = useState(false);
-  const [isWeaknessValueModalVisible, setWeaknessValueModalVisible] = useState(false);
-  const [isResistanceValueModalVisible, setResistanceValueModalVisible] = useState(false);
-  const [isFirstSkillModalVisible, setFirstSkillModalVisible] = useState(false);
-  const [isFirstSkillDamageModalVisible, setFirstSkillDamageModalVisible] = useState(false);
-  const [isFirstSkillEnergyModalVisible, setFirstSkillEnergyModalVisible] = useState(false);
-  const [isSecondSkillModalVisible, setSecondSkillModalVisible] = useState(false);
-  const [isSecondSkillDamageModalVisible, setSecondSkillDamageModalVisible] = useState(false);
-  const [isSecondSkillEnergyModalVisible, setSecondSkillEnergyModalVisible] = useState(false);
-  const [isDiscardModalVisible, setDiscardModalVisible] = useState(false);
-  const [isMenuModalVisible, setMenuModalVisible] = useState(false);
-  const [isPassiveSkillModalVisible, setPassiveSkillModalVisible] = useState(false);
-  const [isPreviewMode, setIsPreviewMode] = useState(false);
+    useState<boolean>(false);
+  const [isLevelModalVisible, setLevelModalVisible] = useState<boolean>(false);
+  const [isExtraInfoModalVisible, setExtraInfoModalVisible] = useState<boolean>(false);
+  const [isWeaknessModalVisible, setWeaknessModalVisible] = useState<boolean>(false);
+  const [isSecondWeaknessModalVisible, setSecondWeaknessModalVisible] = useState<boolean>(false);
+  const [isResistanceModalVisible, setResistanceModalVisible] = useState<boolean>(false);
+  const [isSecondResistanceModalVisible, setSecondResistanceModalVisible] = useState<boolean>(false);
+  const [isRetreatModalVisible, setRetreatModalVisible] = useState<boolean>(false);
+  const [isWeaknessValueModalVisible, setWeaknessValueModalVisible] = useState<boolean>(false);
+  const [isResistanceValueModalVisible, setResistanceValueModalVisible] = useState<boolean>(false);
+  const [isFirstSkillModalVisible, setFirstSkillModalVisible] = useState<boolean>(false);
+  const [isFirstSkillDamageModalVisible, setFirstSkillDamageModalVisible] = useState<boolean>(false);
+  const [isFirstSkillEnergyModalVisible, setFirstSkillEnergyModalVisible] = useState<boolean>(false);
+  const [isSecondSkillModalVisible, setSecondSkillModalVisible] = useState<boolean>(false);
+  const [isSecondSkillDamageModalVisible, setSecondSkillDamageModalVisible] = useState<boolean>(false);
+  const [isSecondSkillEnergyModalVisible, setSecondSkillEnergyModalVisible] = useState<boolean>(false);
+  const [isDiscardModalVisible, setDiscardModalVisible] = useState<boolean>(false);
+  const [isMenuModalVisible, setMenuModalVisible] = useState<boolean>(false);
+  const [isPassiveSkillModalVisible, setPassiveSkillModalVisible] = useState<boolean>(false);
+  const [isPreviewMode, setIsPreviewMode] = useState<boolean>(false);
 
   const cardRef = useRef<View>(null);
 
   const [history, setHistory] = useState<CardState[]>([initialState]);
-  const [historyIndex, setHistoryIndex] = useState(0);
+  const [historyIndex, setHistoryIndex] = useState<number>(0);
 
   const currentState = history[historyIndex];
 
@@ -218,8 +223,8 @@ export default function PokemonCard() {
   const {
     currentTemplate, pokemonImage, hp, name, description, curiosity,
     illustration, pokemonNumber, extraInfo, weakness, secondWeakness,
-    weaknessValue, level, resistance, resistanceValue, retreat, movesCount,
-    weaknessesCount, hasPassiveSkill, passiveSkill, firstSkill, firstSkillDamage,
+    weaknessValue, level, resistance, secondResistance, resistanceValue, retreat, movesCount,
+    weaknessesCount, resistancesCount, hasPassiveSkill, passiveSkill, firstSkill, firstSkillDamage,
     firstSkillEnergy, secondSkill, secondSkillDamage, secondSkillEnergy
   } = currentState;
 
@@ -675,12 +680,13 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.resistanceButton,
+                resistancesCount === 2 && { left: 316 },
                 isPreviewMode && styles.previewMode,
                 isPreviewMode && {
                   width: 40,
                   height: 40,
                   top: 865,
-                  left: 340.5
+                  left: resistancesCount === 2 ? 317 : 338
                 },
               ]}
               onPress={() => setResistanceModalVisible(true)}
@@ -693,12 +699,33 @@ export default function PokemonCard() {
             {/* ========= END:: Resistência 1 ========= */}
 
             {/* ========= BEGIN:: Resistência 2 ========= */}
+            {resistancesCount === 2 && (
+              <TouchableOpacity
+                style={[
+                  styles.secondResistanceButton,
+                  isPreviewMode && styles.previewMode,
+                  isPreviewMode && {
+                    width: 40,
+                    height: 40,
+                    top: 865,
+                    left: 365
+                  },
+                ]}
+                onPress={() => setSecondResistanceModalVisible(true)}
+                disabled={isPreviewMode}
+              >
+                {secondResistance ? (
+                  <Image source={TYPE_ICONS[secondResistance]} style={styles.resistanceIcon} />
+                ) : null}
+              </TouchableOpacity>
+            )}
             {/* ========= END:: Resistência 2 ========= */}
 
             {/* ========= BEGIN:: Valor das resistências ========= */}
             <TouchableOpacity
               style={[
                 styles.resistanceValueButton,
+                resistancesCount === 2 && { left: 412 },
                 isPreviewMode && styles.previewMode,
               ]}
               onPress={() => setResistanceValueModalVisible(true)}
@@ -917,6 +944,16 @@ export default function PokemonCard() {
           }}
         />
 
+        {/* Modal de Segunda Resistência */}
+        <ResistanceModal
+          visible={isSecondResistanceModalVisible}
+          onClose={() => setSecondResistanceModalVisible(false)}
+          onSelectResistance={(id) => {
+            updateCard({ secondResistance: id });
+            setSecondResistanceModalVisible(false);
+          }}
+        />
+
         {/* Modal de Custo de Recuo */}
         <RetreatModal
           visible={isRetreatModalVisible}
@@ -1042,6 +1079,8 @@ export default function PokemonCard() {
           }}
           weaknessesCount={weaknessesCount}
           onSelectWeaknessesCount={(count) => updateCard({ weaknessesCount: count })}
+          resistancesCount={resistancesCount}
+          onSelectResistancesCount={(count) => updateCard({ resistancesCount: count })}
         />
 
         {/* Modal de Descarte de Alterações */}
@@ -1485,6 +1524,21 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 862.5, // Mesmo alinhamento vertical
     left: 338, // Valor provisório (à direita da fraqueza)
+    width: 45,
+    height: 45,
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  // Segunda Resistência (Esquerda da principal)
+  secondResistanceButton: {
+    position: "absolute",
+    top: 862.5,
+    left: 364,
     width: 45,
     height: 45,
     borderWidth: 3,
