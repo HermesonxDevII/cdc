@@ -600,7 +600,7 @@ export default function PokemonCard() {
                 disabled={isPreviewMode}
               >
                 {passiveSkill ? (
-                  <Text style={styles.skillDescriptionText}>
+                  <Text style={[styles.skillDescriptionText, { width: '100%' }]}>
                     <Text style={[styles.skillNameText, { color: '#CC0000', fontSize: 25 }]}>
                       Poder Pokémon: <Text style={{ color: '#000' }}>{passiveSkill.name} </Text>
                     </Text>
