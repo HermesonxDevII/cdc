@@ -622,9 +622,6 @@ export default function PokemonCard() {
                 weaknessesCount === 2 && { left: 89 },
                 isPreviewMode && styles.previewMode,
                 isPreviewMode && {
-                  width: 40,
-                  height: 40,
-                  top: 865, // Posição perfeita que você encontrou para o preview
                   left: weaknessesCount === 2 ? 90 : 110 // Mantém a lógica de preview também ajustada
                 },
               ]}
@@ -644,9 +641,6 @@ export default function PokemonCard() {
                   styles.secondWeaknessButton,
                   isPreviewMode && styles.previewMode,
                   isPreviewMode && {
-                    width: 40,
-                    height: 40,
-                    top: 865,
                     left: 135,
                   },
                 ]}
@@ -664,9 +658,9 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.weaknessValueButton,
-                weaknessesCount === 2 && { left: 185 },
+                weaknessesCount === 2 && { left: 184 },
                 isPreviewMode && styles.previewMode,
-                isPreviewMode && { left: weaknessesCount === 2 ? 180 : 150 }, // Ajuste para modo preview
+                isPreviewMode && { left: weaknessesCount === 2 ? 180 : 155 }, // Ajuste para modo preview
               ]}
               onPress={() => setWeaknessValueModalVisible(true)}
               disabled={isPreviewMode}
@@ -686,10 +680,7 @@ export default function PokemonCard() {
                 resistancesCount === 2 && { left: 316 },
                 isPreviewMode && styles.previewMode,
                 isPreviewMode && {
-                  width: 40,
-                  height: 40,
-                  top: 865,
-                  left: resistancesCount === 2 ? 317 : 338
+                  left: resistancesCount === 2 ? 318 : 338
                 },
               ]}
               onPress={() => setResistanceModalVisible(true)}
@@ -708,10 +699,7 @@ export default function PokemonCard() {
                   styles.secondResistanceButton,
                   isPreviewMode && styles.previewMode,
                   isPreviewMode && {
-                    width: 40,
-                    height: 40,
-                    top: 865,
-                    left: 365
+                    left: 363
                   },
                 ]}
                 onPress={() => setSecondResistanceModalVisible(true)}
@@ -730,6 +718,9 @@ export default function PokemonCard() {
                 styles.resistanceValueButton,
                 resistancesCount === 2 && { left: 412 },
                 isPreviewMode && styles.previewMode,
+                isPreviewMode && {
+                  left: resistancesCount === 2 ? 405 : 380
+                },
               ]}
               onPress={() => setResistanceValueModalVisible(true)}
               disabled={isPreviewMode}
@@ -1189,7 +1180,6 @@ const styles = StyleSheet.create({
 
   // Estilo adicionado no previewMode para sumir com bordas e fundos
   previewMode: {
-    borderWidth: 0,
     backgroundColor: "transparent",
     borderColor: "transparent",
   },
@@ -1498,7 +1488,7 @@ const styles = StyleSheet.create({
   weaknessButton: {
     position: "absolute",
     top: 862.5, // Ajustei -2.5px para o centro do botão continuar no mesmo lugar!
-    left: 107.5,
+    left: 110,
     width: 45, // Tamanho que você queria no modo edição
     height: 45,
     borderWidth: 3,
@@ -1528,7 +1518,7 @@ const styles = StyleSheet.create({
   weaknessValueButton: {
     position: "absolute",
     top: 862.5,
-    left: 155,
+    left: 157,
     width: 40,
     height: 40,
     borderWidth: 3,
@@ -1600,14 +1590,14 @@ const styles = StyleSheet.create({
   },
 
   weaknessIcon: {
-    width: "100%",
-    height: "100%",
+    width: 40,
+    height: 40,
     resizeMode: "contain",
   },
 
   resistanceIcon: {
-    width: "100%",
-    height: "100%",
+    width: 40,
+    height: 40,
     resizeMode: "contain",
   },
 
@@ -1626,6 +1616,8 @@ const styles = StyleSheet.create({
     height: 64, // Valor provisório
     borderWidth: 3,
     borderColor: "white",
+    paddingLeft: 1,
+    paddingRight: 1,
     borderRadius: 8,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     justifyContent: "center",
@@ -1715,7 +1707,7 @@ const styles = StyleSheet.create({
   // Nome da Habilidade (Bold)
   skillNameText: {
     fontFamily: "GillSans-Bold",
-    fontSize: 35,
+    fontSize: 32,
     color: "#000",
     textShadowColor: "white",
     textShadowOffset: { width: 1, height: 1 },
@@ -1738,7 +1730,7 @@ const styles = StyleSheet.create({
   // Descrição da Habilidade (Regular)
   skillDescriptionText: {
     fontFamily: "GillSans",
-    fontSize: 23,
+    fontSize: 20,
     color: "#000",
     textAlign: "left", // Geralmente o texto das habilidades começa alinhado à esquerda
     textShadowColor: "white",
@@ -1749,8 +1741,8 @@ const styles = StyleSheet.create({
 
   // Texto da Curiosidade (Mesma fonte e tamanho da descrição)
   curiosityText: {
-    fontFamily: "GillSans",
-    fontSize: 23,
+    fontFamily: "GillSans-Bold-Italic",
+    fontSize: 17,
     color: "#000",
     textAlign: "center",
     textShadowColor: "white",
