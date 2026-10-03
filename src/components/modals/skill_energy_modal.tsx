@@ -3,7 +3,6 @@ import { Modal, StyleSheet, TouchableOpacity, View, Text, Image, Pressable , Key
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const BASE_URL = '../../../assets/images/icons/pokemon_types';
-const ICONS_DIR = '../../../assets/images/icons';
 
 const TYPES_CURRENT = [
   { id: 'dark', source: require(`${BASE_URL}/dark.png`) },
@@ -44,24 +43,20 @@ const TYPES_OLD_2 = [
 interface SkillEnergyModalProps {
   visible: boolean;
   onClose: () => void;
-  onSave: (id: string, count: number) => void;
+  onSave: (energies: string[]) => void;
+  initialEnergies?: string[];
 }
 
-export function SkillEnergyModal({ visible, onClose, onSave }: SkillEnergyModalProps) {
+export function SkillEnergyModal({ visible, onClose, onSave, initialEnergies }: SkillEnergyModalProps) {
   const insets = useSafeAreaInsets();
-  const [step, setStep] = useState<1 | 2>(1);
   const [activeTab, setActiveTab] = useState<'current' | 'old' | 'old_2'>('current');
-  const [selectedSymbol, setSelectedSymbol] = useState('');
-  const [count, setCount] = useState(1);
+  const [selectedEnergies, setSelectedEnergies] = useState<string[]>([]);
 
-  // Reseta o estado sempre que o modal abre
   useEffect(() => {
     if (visible) {
-      setStep(1);
-      setCount(1);
-      setSelectedSymbol('');
+      setSelectedEnergies(initialEnergies || []);
     }
-  }, [visible]);
+  }, [visible, initialEnergies]);
 
   const getActiveList = () => {
     if (activeTab === 'old') return TYPES_OLD;
@@ -70,25 +65,52 @@ export function SkillEnergyModal({ visible, onClose, onSave }: SkillEnergyModalP
   };
 
   const handleSelectSymbol = (id: string) => {
-    setSelectedSymbol(id);
-    setStep(2);
+    if (selectedEnergies.length < 4) {
+      setSelectedEnergies([...selectedEnergies, id]);
+    }
   };
 
-  const handleIncrease = () => {
-    // Para energia da habilidade o máximo é 4
-    if (count < 4) setCount(count + 1);
-  };
-
-  const handleDecrease = () => {
-    if (count > 1) setCount(count - 1);
+  const handleRemoveSymbol = (indexToRemove: number) => {
+    setSelectedEnergies(selectedEnergies.filter((_, index) => index !== indexToRemove));
   };
 
   const handleSave = () => {
-    onSave(selectedSymbol, count);
+    onSave(selectedEnergies);
   };
 
   const handleCancel = () => {
-    setStep(1); // Volta para o primeiro passo
+    setSelectedEnergies([]);
+  };
+
+  const renderPreviewSlots = () => {
+    return (
+      <View style={styles.previewContainer}>
+        {[0, 1, 2, 3].map((index) => {
+
+          const energyId = selectedEnergies[index];
+          let typeObj = null;
+
+          if (energyId) {
+            typeObj = TYPES_CURRENT.find(t => t.id === energyId)
+              || TYPES_OLD.find(t => t.id === energyId)
+              || TYPES_OLD_2.find(t => t.id === energyId);
+          }
+
+          return (
+            <TouchableOpacity
+              key={index}
+              style={styles.previewSlot}
+              onPress={() => energyId && handleRemoveSymbol(index)}
+              disabled={!energyId}
+            >
+              {energyId && typeObj ? (
+                <Image source={typeObj.source} style={styles.previewIcon} />
+              ) : null}
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    );
   };
 
   return (
@@ -98,81 +120,94 @@ export function SkillEnergyModal({ visible, onClose, onSave }: SkillEnergyModalP
       visible={visible}
       onRequestClose={onClose}
     >
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
       <Pressable style={styles.overlay} onPress={onClose}>
-        <View style={[styles.modalContent, { paddingBottom: insets.bottom + 20 }]} onStartShouldSetResponder={() => true}>
+        <View
+          style={[styles.modalContent, { paddingBottom: insets.bottom + 20 }]}
+          onStartShouldSetResponder={() => true}
+        >
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <Text style={styles.closeText}>X</Text>
           </TouchableOpacity>
 
-          {step === 1 ? (
-            <>
-              <Text style={styles.title}>Custo de Energia da Habilidade</Text>
-              <View style={styles.tabContainer}>
-                <TouchableOpacity
-                  style={[styles.tabButton, activeTab === 'current' && styles.tabButtonActive]}
-                  onPress={() => setActiveTab('current')}
-                >
-                  <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.tabText, activeTab === 'current' && styles.tabTextActive]}>Atual</Text>
-                </TouchableOpacity>
+          <Text style={styles.title}>Custo de Energia do Movimento</Text>
 
-                <TouchableOpacity
-                  style={[styles.tabButton, activeTab === 'old' && styles.tabButtonActive]}
-                  onPress={() => setActiveTab('old')}
-                >
-                  <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.tabText, activeTab === 'old' && styles.tabTextActive]}>Clássico</Text>
-                </TouchableOpacity>
+          {renderPreviewSlots()}
 
-                <TouchableOpacity
-                  style={[styles.tabButton, activeTab === 'old_2' && styles.tabButtonActive]}
-                  onPress={() => setActiveTab('old_2')}
-                >
-                  <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.tabText, activeTab === 'old_2' && styles.tabTextActive]}>Retrô</Text>
-                </TouchableOpacity>
-              </View>
+          <View style={styles.tabContainer}>
+            <TouchableOpacity
+              style={[styles.tabButton, activeTab === 'current' && styles.tabButtonActive]}
+              onPress={() => setActiveTab('current')}
+            >
+              <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                style={[
+                  styles.tabText,
+                  activeTab === 'current' && styles.tabTextActive
+                ]}
+              >Atual</Text>
+            </TouchableOpacity>
 
-              <View style={styles.grid}>
-                {getActiveList().map((type) => (
-                  <TouchableOpacity key={type.id} style={styles.iconButton} onPress={() => handleSelectSymbol(type.id)}>
-                    <Image source={type.source} style={styles.typeIcon} />
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </>
-          ) : (
-            <>
-              <Text style={[styles.title, { marginBottom: 70 }]}>Quantidade de Energias</Text>
+            <TouchableOpacity
+              style={[styles.tabButton, activeTab === 'old' && styles.tabButtonActive]}
+              onPress={() => setActiveTab('old')}
+            >
+              <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                style={[
+                  styles.tabText,
+                  activeTab === 'old' && styles.tabTextActive
+                ]}
+              >Clássico</Text>
+            </TouchableOpacity>
 
-              <View style={styles.counterContainer}>
-                <TouchableOpacity onPress={handleDecrease} style={styles.circleBtn}>
-                  <Text style={styles.circleBtnText}>-</Text>
-                </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.tabButton, activeTab === 'old_2' && styles.tabButtonActive]}
+              onPress={() => setActiveTab('old_2')}
+            >
+              <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                style={[
+                  styles.tabText,
+                  activeTab === 'old_2' && styles.tabTextActive
+                ]}
+              >Retrô</Text>
+            </TouchableOpacity>
+          </View>
 
-                <Text style={styles.countText}>{count}</Text>
+          <View style={styles.grid}>
+            {getActiveList().map((type) => (
+              <TouchableOpacity
+                key={type.id}
+                style={styles.iconButton}
+                onPress={() => handleSelectSymbol(type.id)}
+              >
+                <Image source={type.source} style={styles.typeIcon} />
+              </TouchableOpacity>
+            ))}
+          </View>
 
-                <TouchableOpacity onPress={handleIncrease} style={styles.circleBtn}>
-                  <Text style={styles.circleBtnText}>+</Text>
-                </TouchableOpacity>
-              </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[styles.actionButton, { backgroundColor: '#7C3AED' }]}
+              onPress={handleSave}
+            >
+              <Text style={styles.buttonText}>Salvar</Text>
+            </TouchableOpacity>
 
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  style={[styles.actionButton, { backgroundColor: '#7C3AED' }]}
-                  onPress={handleSave}
-                >
-                  <Text style={styles.buttonText}>Salvar</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={[styles.actionButton, { backgroundColor: '#FF6467' }]}
-                  onPress={handleCancel}
-                >
-                  <Text style={styles.buttonText}>Cancelar</Text>
-                </TouchableOpacity>
-              </View>
-            </>
-          )}
-
+            <TouchableOpacity
+              style={[styles.actionButton, { backgroundColor: '#FF6467' }]}
+              onPress={handleCancel}
+            >
+              <Text style={styles.buttonText}>Cancelar</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </Pressable>
     </KeyboardAvoidingView>
@@ -218,8 +253,28 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 10,
+    marginBottom: 15,
     textAlign: 'center',
+  },
+  previewContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 20,
+  },
+  previewSlot: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#D9D9D9',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  previewIcon: {
+    width: '90%',
+    height: '90%',
+    resizeMode: 'contain',
   },
   tabContainer: {
     flexDirection: 'row',
@@ -263,37 +318,11 @@ const styles = StyleSheet.create({
     height: '100%',
     resizeMode: 'contain',
   },
-  // Estilos da etapa 2
-  counterContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 40,
-    marginBottom: 50,
-  },
-  circleBtn: {
-    width: 80,
-    height: 80,
-    borderRadius: 50,
-    backgroundColor: '#D9D9D9',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  circleBtnText: {
-    fontSize: 60,
-    color: '#000',
-    marginTop: -5,
-  },
-  countText: {
-    fontSize: 80,
-    fontWeight: 'bold',
-    color: '#000',
-  },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 10,
-    marginTop: 'auto',
+    marginTop: 30,
   },
   actionButton: {
     borderRadius: 3,

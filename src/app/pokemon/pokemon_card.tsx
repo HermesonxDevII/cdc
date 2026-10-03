@@ -79,10 +79,10 @@ type CardState = {
   passiveSkill: { name: string; description: string; color?: string } | null;
   firstSkill: { name: string; description: string } | null;
   firstSkillDamage: string;
-  firstSkillEnergy: { symbol: string; count: number } | null;
+  firstSkillEnergy: string[] | null;
   secondSkill: { name: string; description: string } | null;
   secondSkillDamage: string;
-  secondSkillEnergy: { symbol: string; count: number } | null;
+  secondSkillEnergy: string[] | null;
 };
 
 const initialState: CardState = {
@@ -424,17 +424,17 @@ export default function PokemonCard() {
                   style={[
                     styles.firstSkillEnergyButton,
                     isPreviewMode && styles.previewMode,
-                    isPreviewMode && firstSkillEnergy && firstSkillEnergy.count >= 3 && { top: 605 },
+                    isPreviewMode && firstSkillEnergy && firstSkillEnergy.length >= 3 && { top: 605 },
                   ]}
                   onPress={() => setFirstSkillEnergyModalVisible(true)}
                   disabled={isPreviewMode}
                 >
-                  {firstSkillEnergy ? (
+                  {firstSkillEnergy && firstSkillEnergy.length > 0 ? (
                     <View style={styles.skillEnergyContainer}>
-                      {Array.from({ length: firstSkillEnergy.count }).map((_, index) => (
+                      {firstSkillEnergy.map((symbol, index) => (
                         <Image
                           key={index}
-                          source={TYPE_ICONS[firstSkillEnergy.symbol]}
+                          source={TYPE_ICONS[symbol]}
                           style={styles.skillEnergyIcon}
                         />
                       ))}
@@ -493,17 +493,17 @@ export default function PokemonCard() {
                   style={[
                     styles.secondSkillEnergyButton,
                     isPreviewMode && styles.previewMode,
-                    isPreviewMode && secondSkillEnergy && secondSkillEnergy.count >= 3 && { top: 725 },
+                    isPreviewMode && secondSkillEnergy && secondSkillEnergy.length >= 3 && { top: 725 },
                   ]}
                   onPress={() => setSecondSkillEnergyModalVisible(true)}
                   disabled={isPreviewMode}
                 >
-                  {secondSkillEnergy ? (
+                  {secondSkillEnergy && secondSkillEnergy.length > 0 ? (
                     <View style={styles.skillEnergyContainer}>
-                      {Array.from({ length: secondSkillEnergy.count }).map((_, index) => (
+                      {secondSkillEnergy.map((symbol, index) => (
                         <Image
                           key={index}
-                          source={TYPE_ICONS[secondSkillEnergy.symbol]}
+                          source={TYPE_ICONS[symbol]}
                           style={styles.skillEnergyIcon}
                         />
                       ))}
@@ -561,12 +561,12 @@ export default function PokemonCard() {
                   onPress={() => setFirstSkillEnergyModalVisible(true)}
                   disabled={isPreviewMode}
                 >
-                  {firstSkillEnergy ? (
+                  {firstSkillEnergy && firstSkillEnergy.length > 0 ? (
                     <View style={styles.skillEnergyContainer}>
-                      {Array.from({ length: firstSkillEnergy.count }).map((_, index) => (
+                      {firstSkillEnergy.map((symbol, index) => (
                         <Image
                           key={index}
-                          source={TYPE_ICONS[firstSkillEnergy.symbol]}
+                          source={TYPE_ICONS[symbol]}
                           style={styles.skillEnergyIcon}
                         />
                       ))}
@@ -1037,8 +1037,9 @@ export default function PokemonCard() {
         <SkillEnergyModal
           visible={isFirstSkillEnergyModalVisible}
           onClose={() => setFirstSkillEnergyModalVisible(false)}
-          onSave={(symbol, count) => {
-            updateCard({ firstSkillEnergy: { symbol, count } });
+          initialEnergies={firstSkillEnergy || []}
+          onSave={(energies) => {
+            updateCard({ firstSkillEnergy: energies.length > 0 ? energies : null });
             setFirstSkillEnergyModalVisible(false);
           }}
         />
@@ -1057,8 +1058,9 @@ export default function PokemonCard() {
         <SkillEnergyModal
           visible={isSecondSkillEnergyModalVisible}
           onClose={() => setSecondSkillEnergyModalVisible(false)}
-          onSave={(symbol, count) => {
-            updateCard({ secondSkillEnergy: { symbol, count } });
+          initialEnergies={secondSkillEnergy || []}
+          onSave={(energies) => {
+            updateCard({ secondSkillEnergy: energies.length > 0 ? energies : null });
             setSecondSkillEnergyModalVisible(false);
           }}
         />
@@ -1810,3 +1812,4 @@ const styles = StyleSheet.create({
     includeFontPadding: false, // Remove padding nativo da fonte no Android
   },
 });
+
