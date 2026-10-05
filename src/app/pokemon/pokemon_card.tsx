@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+﻿import React, { useState, useEffect, useRef } from "react";
 import {
   Image,
   StyleSheet,
@@ -812,7 +812,18 @@ export default function PokemonCard() {
                 <Text style={styles.pokemonNumberText}>{pokemonNumber}</Text>
               ) : null}
             </TouchableOpacity>
-            {/* ========= BEGIN:: Número da coleção ========= */}
+            {/* ========= END:: Número da coleção ========= */}
+
+            {/* ========= BEGIN:: Raridade ========= */}
+            <TouchableOpacity
+              style={[
+                styles.rarityButton,
+                isPreviewMode && styles.previewMode,
+              ]}
+              disabled={isPreviewMode}
+            >
+            </TouchableOpacity>
+            {/* ========= END:: Raridade ========= */}
           </View>
         </View>
 
@@ -1179,11 +1190,6 @@ const styles = StyleSheet.create({
   },
   // ========= END:: Main Content =========
 
-  previewMode: {
-    backgroundColor: "transparent",
-    borderColor: "transparent",
-  },
-
   // ========= BEGIN:: Footer bar =========
   footerBar: {
     width: "100%",
@@ -1202,19 +1208,21 @@ const styles = StyleSheet.create({
   },
   // ========= END:: Footer bar =========
 
+  previewMode: {
+    backgroundColor: "transparent",
+    borderColor: "transparent",
+  },
   realSizeCard: {
     width: CARD_REAL_WIDTH,
     height: CARD_REAL_HEIGHT,
     transform: [{ scale: cardScale }],
     position: "absolute", // Fundamental para a carta gigante não empurrar os botões da tela
   },
-
   cardImage: {
     width: "100%",
     height: "100%",
     resizeMode: "contain",
   },
-
   movesSeparatorLine: {
     position: 'absolute',
     top: 720,
@@ -1649,7 +1657,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 980, // Valor provisório
     left: 40, // Valor provisório
-    width: 150, // Valor provisório
+    width: 135, // Valor provisório
     height: 25, // Valor provisório
     borderWidth: 3,
     borderColor: "white",
@@ -1660,7 +1668,7 @@ const styles = StyleSheet.create({
   },
   illustrationText: {
     fontFamily: "GillSans-Bold",
-    fontSize: 16,
+    fontSize: 14,
     color: "#000",
     textAlign: "left",
     textShadowOffset: { width: 1, height: 1 },
@@ -1672,8 +1680,8 @@ const styles = StyleSheet.create({
   extraInfoButton: {
     position: "absolute",
     top: 980, // Mesmo alinhamento vertical
-    left: 193, // MÁGICA: Isso centraliza automaticamente, não importa a largura!
-    width: 458, // Pode mudar a largura à vontade agora
+    left: 178, // MÁGICA: Isso centraliza automaticamente, não importa a largura!
+    width: 435, // Pode mudar a largura à vontade agora
     height: 25, // Mesma altura do ilustrador
     borderWidth: 3,
     borderColor: "white",
@@ -1685,7 +1693,7 @@ const styles = StyleSheet.create({
   },
   extraInfoText: {
     fontFamily: "GillSans",
-    fontSize: 16,
+    fontSize: 14,
     color: "#000",
     textAlign: "center",
     textShadowOffset: { width: 1, height: 1 },
@@ -1698,8 +1706,8 @@ const styles = StyleSheet.create({
   pokemonNumberButton: {
     position: "absolute",
     top: 980, // Mesmo alinhamento vertical do ilustrador
-    right: 40, // Provisório (jogando um pouco mais pra direita)
-    width: 50, // Mesma largura
+    right: 73, // Provisório (jogando um pouco mais pra direita)
+    width: 55, // Mesma largura
     height: 25, // Mesma altura
     borderWidth: 3,
     borderColor: "white",
@@ -1717,6 +1725,22 @@ const styles = StyleSheet.create({
     textShadowRadius: 2,
   },
   // ========= END:: Número da coleção =========
+
+  // ========= BEGIN:: Raridade =========
+  rarityButton: {
+    position: "absolute",
+    top: 980,
+    right: 40, // Ao lado direito do pokemon number
+    width: 30,
+    height: 25,
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  // ========= END:: Raridade =========
 
   // ========= BEGIN:: Utilitários =========
   skillEnergyContainer: {
@@ -1761,4 +1785,5 @@ const styles = StyleSheet.create({
   },
   // ========= END:: Utilitários =========
 });
+
 
