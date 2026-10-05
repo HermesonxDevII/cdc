@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Image,
   StyleSheet,
@@ -96,7 +96,7 @@ const initialState: CardState = {
   curiosity: "",
   illustration: "",
   pokemonNumber: "",
-    rarity: null,
+  rarity: null,
   level: "",
   extraInfo: "",
   weakness: "",
@@ -355,8 +355,7 @@ export default function PokemonCard() {
               style={[
                 styles.hpButton,
                 isPreviewMode && styles.previewMode,
-                { width: hp.length > 2 ? 150 : 125 },
-                isPreviewMode && { right: 115 }
+                { width: hp.length > 2 ? 150 : 125 }
               ]}
               onPress={() => setHpModalVisible(true)}
               disabled={isPreviewMode}
@@ -567,7 +566,7 @@ export default function PokemonCard() {
                   style={[
                     styles.firstSkillEnergyButton,
                     isPreviewMode && styles.previewMode,
-                    { top: 670, height: 100 }
+                    { top: 650, height: 100 }
                   ]}
                   onPress={() => setFirstSkillEnergyModalVisible(true)}
                   disabled={isPreviewMode}
@@ -597,9 +596,20 @@ export default function PokemonCard() {
                 >
                   {firstSkill ? (
                     <>
-                      <Text style={[styles.skillNameText, { textAlign: 'center' }]}>{firstSkill.name} </Text>
+                      <Text
+                        style={[
+                          styles.skillNameText,
+                          { fontSize: 35, textAlign: 'center' }
+                        ]}
+                      >{firstSkill.name}</Text>
+
                       {firstSkill.description ? (
-                        <Text style={[styles.skillDescriptionText, { textAlign: 'left', marginTop: 5 }]}>{firstSkill.description}</Text>
+                        <Text
+                          style={[
+                            styles.skillDescriptionText,
+                            { fontSize: 23, textAlign: 'left', marginTop: 5 }
+                          ]}
+                        >{firstSkill.description}</Text>
                       ) : null}
                     </>
                   ) : null}
@@ -611,7 +621,7 @@ export default function PokemonCard() {
                   style={[
                     styles.firstSkillDamageButton,
                     isPreviewMode && styles.previewMode,
-                    { top: 670, height: 100 } // Valores provisórios centralizados
+                    { top: 650, height: 100 } // Valores provisórios centralizados
                   ]}
                   onPress={() => setFirstSkillDamageModalVisible(true)}
                   disabled={isPreviewMode}
@@ -730,7 +740,7 @@ export default function PokemonCard() {
                 resistancesCount === 2 && { left: 412 },
                 isPreviewMode && styles.previewMode,
                 isPreviewMode && {
-                  left: resistancesCount === 2 ? 405 : 380
+                  left: resistancesCount === 2 ? 405 : 385
                 },
               ]}
               onPress={() => setResistanceValueModalVisible(true)}
@@ -1290,7 +1300,7 @@ const styles = StyleSheet.create({
   // ========= BEGIN:: Level =========
   levelButton: {
     position: "absolute",
-    top: 90,
+    top: 85,
     right: 285, // Provisório (à esquerda da box de HP)
     width: 80, // Menor que o HP
     height: 30, // Menor que o HP
@@ -1328,8 +1338,8 @@ const styles = StyleSheet.create({
     alignItems: "flex-start", // Centraliza o texto horizontalmente
   },
   hpText: {
-    fontFamily: "GillSans-Bold",
-    fontSize: 45,
+    fontFamily: "Futura-Heavy",
+    fontSize: 41,
     color: "#000", // HP geralmente é preto ou bem escuro
     textAlign: "left",
   },
@@ -1512,7 +1522,7 @@ const styles = StyleSheet.create({
   // ========= BEGIN:: Movimento único =========
   singleSkillButton: {
     position: "absolute",
-    top: 650, // Meio do caminho
+    top: 630, // Meio do caminho
     left: 135,
     width: 490,
     height: 145,
