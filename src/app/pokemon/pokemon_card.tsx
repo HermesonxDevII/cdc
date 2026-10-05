@@ -25,6 +25,7 @@ import { DescriptionModal } from "@/components/modals/description_modal";
 import { CuriosityModal } from "@/components/modals/curiosity_modal";
 import { IllustrationModal } from "@/components/modals/illustration_modal";
 import { PokemonNumberModal } from "@/components/modals/pokemon_number_modal";
+import { RarityModal } from "@/components/modals/rarity_modal";
 import { LevelModal } from "@/components/modals/level_modal";
 import { ExtraInfoModal } from "@/components/modals/extra_info_modal";
 import { WeaknessModal } from "@/components/modals/weakness_modal";
@@ -63,6 +64,7 @@ type CardState = {
   curiosity: string;
   illustration: string;
   pokemonNumber: string;
+  rarity: string | null;
   level: string;
   extraInfo: string;
   weakness: string;
@@ -94,6 +96,7 @@ const initialState: CardState = {
   curiosity: "",
   illustration: "",
   pokemonNumber: "",
+    rarity: null,
   level: "",
   extraInfo: "",
   weakness: "",
@@ -118,6 +121,13 @@ const initialState: CardState = {
 
 // Mapeamento dos símbolos (usado pela fraqueza e afins)
 const ICONS_URL = "../../../assets/images/icons/pokemon_types";
+const RARITY_ICONS: Record<string, any> = {
+  common: require('../../../assets/images/icons/rarities/common.png'),
+  uncommon: require('../../../assets/images/icons/rarities/uncommon.png'),
+  rare: require('../../../assets/images/icons/rarities/rare.png'),
+  promo: require('../../../assets/images/icons/rarities/promo.png'),
+};
+
 const TYPE_ICONS: Record<string, any> = {
   // Atuais
   dark: require(`${ICONS_URL}/dark.png`),
@@ -172,7 +182,8 @@ export default function PokemonCard() {
   const [isCuriosityModalVisible, setCuriosityModalVisible] = useState<boolean>(false);
   const [isIllustrationModalVisible, setIllustrationModalVisible] =
     useState<boolean>(false);
-  const [isPokemonNumberModalVisible, setPokemonNumberModalVisible] =
+  const [isRarityModalVisible, setRarityModalVisible] = useState<boolean>(false);
+    const [isPokemonNumberModalVisible, setPokemonNumberModalVisible] =
     useState<boolean>(false);
   const [isLevelModalVisible, setLevelModalVisible] = useState<boolean>(false);
   const [isExtraInfoModalVisible, setExtraInfoModalVisible] = useState<boolean>(false);
@@ -222,7 +233,7 @@ export default function PokemonCard() {
 
   const {
     currentTemplate, pokemonImage, hp, name, description, curiosity,
-    illustration, pokemonNumber, extraInfo, weakness, secondWeakness,
+    illustration, pokemonNumber, rarity, extraInfo, weakness, secondWeakness,
     weaknessValue, level, resistance, secondResistance, resistanceValue, retreat, movesCount,
     weaknessesCount, resistancesCount, hasPassiveSkill, passiveSkill, firstSkill, firstSkillDamage,
     firstSkillEnergy, secondSkill, secondSkillDamage, secondSkillEnergy
@@ -803,7 +814,7 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.pokemonNumberButton,
-                isPreviewMode && styles.previewMode,
+                isPreviewMode && styles.previewMode
               ]}
               onPress={() => setPokemonNumberModalVisible(true)}
               disabled={isPreviewMode}
@@ -816,13 +827,24 @@ export default function PokemonCard() {
 
             {/* ========= BEGIN:: Raridade ========= */}
             <TouchableOpacity
-              style={[
-                styles.rarityButton,
-                isPreviewMode && styles.previewMode,
-              ]}
-              disabled={isPreviewMode}
-            >
-            </TouchableOpacity>
+                style={[
+                  styles.rarityButton,
+                  isPreviewMode && styles.previewMode
+                ]}
+                onPress={() => setRarityModalVisible(true)}
+                disabled={isPreviewMode}
+              >
+                {rarity ? (
+                  <Image
+                    source={RARITY_ICONS[rarity]}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      resizeMode: 'contain'
+                    }}
+                  />
+                ) : null}
+              </TouchableOpacity>
             {/* ========= END:: Raridade ========= */}
           </View>
         </View>
@@ -905,6 +927,16 @@ export default function PokemonCard() {
           onSave={(valor) => {
             updateCard({ pokemonNumber: valor });
             setPokemonNumberModalVisible(false);
+          }}
+        />
+
+        {/* Modal de Raridade */}
+        <RarityModal
+          visible={isRarityModalVisible}
+          onClose={() => setRarityModalVisible(false)}
+          onSelectRarity={(id) => {
+            updateCard({ rarity: id });
+            setRarityModalVisible(false);
           }}
         />
 
@@ -1706,7 +1738,7 @@ const styles = StyleSheet.create({
   pokemonNumberButton: {
     position: "absolute",
     top: 980, // Mesmo alinhamento vertical do ilustrador
-    right: 73, // Provisório (jogando um pouco mais pra direita)
+    right: 70, // Provisório (jogando um pouco mais pra direita)
     width: 55, // Mesma largura
     height: 25, // Mesma altura
     borderWidth: 3,
@@ -1785,5 +1817,6 @@ const styles = StyleSheet.create({
   },
   // ========= END:: Utilitários =========
 });
+
 
 
