@@ -739,9 +739,6 @@ export default function PokemonCard() {
                 styles.resistanceValueButton,
                 resistancesCount === 2 && { left: 412 },
                 isPreviewMode && styles.previewMode,
-                isPreviewMode && {
-                  left: resistancesCount === 2 ? 405 : 385
-                },
               ]}
               onPress={() => setResistanceValueModalVisible(true)}
               disabled={isPreviewMode}
@@ -1417,8 +1414,8 @@ const styles = StyleSheet.create({
   passiveSkillButton: {
     position: "absolute",
     top: 590, // Mesma altura que a primeira habilidade
-    left: 135,
-    width: 490,
+    left: 105,
+    width: 535,
     height: 120,
     borderWidth: 3,
     borderColor: "white",
