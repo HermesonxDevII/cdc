@@ -394,7 +394,7 @@ export default function PokemonCard() {
             </TouchableOpacity>
             {/* ========= END: Descrição ========= */}
 
-            {/* ========= BEGIN:: Habilidade */}
+            {/* ========= BEGIN:: Habilidade ========= */}
             {hasPassiveSkill && (
               <TouchableOpacity
                 style={[
@@ -414,9 +414,9 @@ export default function PokemonCard() {
                 ) : null}
               </TouchableOpacity>
             )}
-            {/* ========= END:: Habilidade */}
+            {/* ========= END:: Habilidade ========= */}
 
-            {/* ========= BEGIN:: Movimento 1 */}
+            {/* ========= BEGIN:: Movimento 1 ========= */}
             {movesCount === 2 && (
               <>
                 {/* ========= BEGIN:: Custo ========= */}
@@ -477,15 +477,15 @@ export default function PokemonCard() {
                 {/* ========= END:: Qtd. de Dano ========= */}
               </>
             )}
-            {/* ========= END:: Movimento 1 */}
+            {/* ========= END:: Movimento 1 ========= */}
 
-            {/* BEGIN:: Separador */}
+            {/* ========= BEGIN:: Separador ========= */}
             {(movesCount === 2 || (movesCount === 1 && hasPassiveSkill)) && (
               <View style={[styles.movesSeparatorLine, currentTemplate === TEMPLATES.dark && { backgroundColor: 'white' }]} />
             )}
-            {/* END:: Separador */}
+            {/* ========= END:: Separador ========= */}
 
-            {/* ========= BEGIN:: Movimento 2 */}
+            {/* ========= BEGIN:: Movimento 2 ========= */}
             {(movesCount === 2 || (movesCount === 1 && hasPassiveSkill)) && (
               <>
                 {/* ========= BEGIN:: Custo ========= */}
@@ -546,9 +546,9 @@ export default function PokemonCard() {
                 {/* ========= END:: Qtd. de Dano ========= */}
               </>
             )}
-            {/* ========= END:: Movimento 2 */}
+            {/* ========= END:: Movimento 2 ========= */}
 
-            {/* ========= END:: Movimento unico */}
+            {/* ========= END:: Movimento unico ========= */}
             {movesCount === 1 && !hasPassiveSkill && (
               <>
                 {/* ========= BEGIN:: Custo ========= */}
@@ -612,7 +612,7 @@ export default function PokemonCard() {
                 {/* ========= END:: Qtd. de Dano ========= */}
               </>
             )}
-            {/* ========= END:: Movimento unico */}
+            {/* ========= END:: Movimento unico ========= */}
 
             {/* ========= BEGIN:: Fraquezas ========= */}
             {/* ========= BEGIN:: Fraqueza 1 ========= */}
@@ -732,7 +732,7 @@ export default function PokemonCard() {
             {/* ========= END:: Valor das resistências ========= */}
             {/* ========= END:: Resistências ========= */}
 
-            {/* BEGIN:: Custo de retirada */}
+            {/* ========= BEGIN:: Custo de retirada ========= */}
             <TouchableOpacity
               style={[
                 styles.retreatButton,
@@ -749,9 +749,9 @@ export default function PokemonCard() {
                 </View>
               ) : null}
             </TouchableOpacity>
-            {/* END:: Custo de retirada */}
+            {/* ========= END:: Custo de retirada ========= */}
 
-            {/* BEGIN:: Curiosidade */}
+            {/* ========= BEGIN:: Curiosidade ========= */}
             <TouchableOpacity
               style={[
                 styles.curiosityButton,
@@ -764,9 +764,9 @@ export default function PokemonCard() {
                 <Text style={styles.curiosityText}>{curiosity}</Text>
               ) : null}
             </TouchableOpacity>
-            {/* END:: Curiosidade */}
+            {/* ========= END:: Curiosidade ========= */}
 
-            {/* BEGIN:: Illustrador */}
+            {/* ========= BEGIN:: Illustrador ========= */}
             <TouchableOpacity
               style={[
                 styles.illustrationButton,
@@ -782,9 +782,9 @@ export default function PokemonCard() {
                 </Text>
               ) : null}
             </TouchableOpacity>
-            {/* BEGIN:: Illustrador */}
+            {/* ========= BEGIN:: Illustrador ========= */}
 
-            {/* BEGIN:: Licença */}
+            {/* ========= BEGIN:: Licença ========= */}
             <TouchableOpacity
               style={[
                 styles.extraInfoButton,
@@ -797,9 +797,9 @@ export default function PokemonCard() {
                 <Text style={styles.extraInfoText}>{extraInfo}</Text>
               ) : null}
             </TouchableOpacity>
-            {/* END:: Licença */}
+            {/* ========= END:: Licença ========= */}
 
-            {/* BEGIN:: Número da coleção */}
+            {/* ========= BEGIN:: Número da coleção ========= */}
             <TouchableOpacity
               style={[
                 styles.pokemonNumberButton,
@@ -812,7 +812,7 @@ export default function PokemonCard() {
                 <Text style={styles.pokemonNumberText}>{pokemonNumber}</Text>
               ) : null}
             </TouchableOpacity>
-            {/* BEGIN:: Número da coleção */}
+            {/* ========= BEGIN:: Número da coleção ========= */}
           </View>
         </View>
 
@@ -1092,7 +1092,7 @@ export default function PokemonCard() {
           }}
         />
 
-        {/* BEGIN:: Bottom bar */}
+        {/* ========= BEGIN:: Footer bar ========= */}
         <View style={styles.footerBar}>
           {/* Undo */}
           <TouchableOpacity
@@ -1149,13 +1149,14 @@ export default function PokemonCard() {
             />
           </TouchableOpacity>
         </View>
-        {/* END:: Bottom bar */}
+        {/* ========= END:: Footer bar ========= */}
       </SafeAreaView>
     </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
+  // ========= BEGIN:: Main Content =========
   container: {
     flex: 1,
     justifyContent: "center",
@@ -1169,7 +1170,6 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.three, // Removido o BottomTabInset para descer a barra
     maxWidth: MaxContentWidth,
   },
-  // O wrapper invisível com o tamanho já reduzido matematicamente
   scaledWrapper: {
     width: CARD_REAL_WIDTH * cardScale,
     height: CARD_REAL_HEIGHT * cardScale,
@@ -1177,14 +1177,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 20,
   },
+  // ========= END:: Main Content =========
 
-  // Estilo adicionado no previewMode para sumir com bordas e fundos
   previewMode: {
     backgroundColor: "transparent",
     borderColor: "transparent",
   },
 
-  // Bottom Bar / Footer
+  // ========= BEGIN:: Footer bar =========
   footerBar: {
     width: "100%",
     height: 50,
@@ -1195,15 +1195,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-around", // Prepara para receber múltiplos itens distribuídos
   },
-
-  // Ícones do Footer
   footerIcon: {
     width: 30,
     height: 30,
     resizeMode: "contain",
   },
+  // ========= END:: Footer bar =========
 
-  // A carta gigante que sofre o zoom-out visualmente
   realSizeCard: {
     width: CARD_REAL_WIDTH,
     height: CARD_REAL_HEIGHT,
@@ -1217,58 +1215,16 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
 
-  typeButton: {
-    position: "absolute",
-    top: 59, // Alinhamento vertical
-    right: 68, // Alinhamento horizontal
-    width: 60, // Largura
-    height: 60, // Altura
-    borderWidth: 3,
-    borderColor: "white",
-    borderRadius: 8,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
+  movesSeparatorLine: {
+    position: 'absolute',
+    top: 720,
+    left: 60,
+    width: 615,
+    height: 2,
+    backgroundColor: 'black',
   },
 
-  levelText: {
-    fontFamily: "Revue",
-    fontSize: 25,
-    color: "#000",
-    textAlign: "center",
-    fontWeight: 'bold',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-    includeFontPadding: false,
-  },
-
-  levelButton: {
-    position: "absolute",
-    top: 90,
-    right: 285, // Provisório (à esquerda da box de HP)
-    width: 80, // Menor que o HP
-    height: 30, // Menor que o HP
-    borderWidth: 3,
-    borderColor: "white",
-    borderRadius: 8,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  hpButton: {
-    position: "absolute",
-    top: 70, // Mesmo alinhamento vertical da bolinha
-    right: 130,
-    width: 150,
-    height: 50, // Mesma altura
-    borderWidth: 3,
-    borderColor: "white",
-    borderRadius: 8,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    justifyContent: "flex-start", // Centraliza o texto verticalmente
-    alignItems: "flex-start", // Centraliza o texto horizontalmente
-  },
-
-  // Terceiro botão (Para o Nome do Pokémon, etc)
+  // ========= BEGIN:: Nome =========
   nameButton: {
     position: "absolute",
     top: 70, // Mesmo alinhamento vertical da bolinha
@@ -1282,8 +1238,78 @@ const styles = StyleSheet.create({
     justifyContent: "center", // Centraliza verticalmente
     alignItems: "flex-start", // Alinha o nome pela esquerda
   },
+  nameText: {
+    fontFamily: "GillSans-Bold",
+    fontSize: 45,
+    color: "#000",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  // ========= END:: Nome =========
 
-  // Sexto botão (Imagem, acima da descrição que você vai posicionar)
+  // ========= BEGIN:: Level =========
+  levelButton: {
+    position: "absolute",
+    top: 90,
+    right: 285, // Provisório (à esquerda da box de HP)
+    width: 80, // Menor que o HP
+    height: 30, // Menor que o HP
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  levelText: {
+    fontFamily: "Revue",
+    fontSize: 25,
+    color: "#000",
+    textAlign: "center",
+    fontWeight: 'bold',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+    includeFontPadding: false,
+  },
+  // ========= END:: Level =========
+
+  // ========= BEGIN:: HP =========
+  hpButton: {
+    position: "absolute",
+    top: 70, // Mesmo alinhamento vertical da bolinha
+    right: 130,
+    width: 150,
+    height: 50, // Mesma altura
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "flex-start", // Centraliza o texto verticalmente
+    alignItems: "flex-start", // Centraliza o texto horizontalmente
+  },
+  hpText: {
+    fontFamily: "GillSans-Bold",
+    fontSize: 45,
+    color: "#000", // HP geralmente é preto ou bem escuro
+    textAlign: "left",
+  },
+  // ========= END:: HP =========
+
+  // ========= BEGIN:: Tipo =========
+  typeButton: {
+    position: "absolute",
+    top: 59, // Alinhamento vertical
+    right: 68, // Alinhamento horizontal
+    width: 60, // Largura
+    height: 60, // Altura
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+  },
+  // ========= END:: Tipo =========
+
+  // ========= BEGIN:: Imagem =========
   imageButton: {
     position: "absolute",
     top: 134, // Valor provisório
@@ -1298,13 +1324,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     overflow: "hidden", // Para a imagem não vazar das bordas redondas
   },
-
   pokemonImage: {
     width: "100%",
     height: "100%",
     resizeMode: "cover",
   },
-
   imageButtonText: {
     fontSize: 22,
     fontWeight: "bold",
@@ -1313,8 +1337,9 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
   },
+  // ========= END:: Imagem =========
 
-  // Quarto botão (Extra, do lado do Nome)
+  // ========= BEGIN: Descrição =========
   descriptionButton: {
     position: "absolute",
     top: 549,
@@ -1328,55 +1353,17 @@ const styles = StyleSheet.create({
     justifyContent: "center", // Para o texto da descrição ficar centralizado verticalmente
     alignItems: "center", // E horizontalmente
   },
-
-  // Custo de Energia da Primeira Habilidade
-  firstSkillEnergyButton: {
-    position: "absolute",
-    top: 610, // Mesma altura da habilidade (provisório)
-    left: 45, // Provisório (à esquerda da habilidade que está em 135)
-    width: 85, // Provisório
-    height: 100, // Mesma altura inicial (provisório)
-    borderWidth: 3,
-    borderColor: "white",
-    borderRadius: 8,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    justifyContent: "center",
-    alignItems: "center",
+  descriptionText: {
+    fontFamily: "GillSans-Bold-Italic",
+    fontSize: 23,
+    color: "#000",
+    textAlign: "center",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
+  // ========= END: Descrição =========
 
-  skillEnergyContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    alignItems: "center",
-    alignContent: "center",
-    gap: 2,
-    width: "100%",
-  },
-
-  skillEnergyIcon: {
-    width: 37,
-    height: 37,
-    resizeMode: "contain",
-  },
-
-  // Primeira Habilidade (Abaixo da descrição)
-  firstSkillButton: {
-    position: "absolute",
-    top: 610, // Valor provisório (abaixo da descrição)
-    left: 135, // Mesmo alinhamento da descrição
-    width: 490, // Mesma largura da descrição
-    height: 100, // Mesma altura da descrição
-    borderWidth: 3,
-    borderColor: "white",
-    borderRadius: 8,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    justifyContent: 'center',
-    alignItems: "flex-start", // Puxa o texto para a esquerda
-    paddingHorizontal: 5, // Apenas para não encostar literalmente na linha da borda
-    paddingTop: 0, // Garante que comece do topo exato
-  },
-
+  // ========= BEGIN:: Habilidade =========
   passiveSkillButton: {
     position: "absolute",
     top: 590, // Mesma altura que a primeira habilidade
@@ -1392,25 +1379,37 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingTop: 0,
   },
+  // ========= END:: Habilidade =========
 
-  // Habilidade Única (Nome e Descrição)
-  singleSkillButton: {
+  // ========= BEGIN:: Movimento 1 =========
+  firstSkillEnergyButton: {
     position: "absolute",
-    top: 650, // Meio do caminho
-    left: 135,
-    width: 490,
-    height: 145,
+    top: 610, // Mesma altura da habilidade (provisório)
+    left: 45, // Provisório (à esquerda da habilidade que está em 135)
+    width: 85, // Provisório
+    height: 100, // Mesma altura inicial (provisório)
     borderWidth: 3,
     borderColor: "white",
     borderRadius: 8,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
-    flexDirection: "column",
     justifyContent: "center",
-    alignItems: "flex-start",
-    paddingHorizontal: 5,
+    alignItems: "center",
   },
-
-  // Dano da Primeira Habilidade (Ao lado direito)
+  firstSkillButton: {
+    position: "absolute",
+    top: 610, // Valor provisório (abaixo da descrição)
+    left: 135, // Mesmo alinhamento da descrição
+    width: 490, // Mesma largura da descrição
+    height: 100, // Mesma altura da descrição
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: 'center',
+    alignItems: "flex-start", // Puxa o texto para a esquerda
+    paddingHorizontal: 5, // Apenas para não encostar literalmente na linha da borda
+    paddingTop: 0, // Garante que comece do topo exato
+  },
   firstSkillDamageButton: {
     position: "absolute",
     top: 610, // Mesma altura da habilidade
@@ -1424,10 +1423,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  // ========= END:: Movimento 1 =========
 
-  // --- SEGUNDA HABILIDADE ---
-
-  // Custo de Energia da Segunda Habilidade
+  // ========= BEGIN:: Movimento 2 =========
   secondSkillEnergyButton: {
     position: "absolute",
     top: 730, // Provisório (logo abaixo da primeira habilidade)
@@ -1441,16 +1439,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
-  movesSeparatorLine: {
-    position: 'absolute',
-    top: 720,
-    left: 60,
-    width: 615,
-    height: 2,
-    backgroundColor: 'black',
-  },
-  // Segunda Habilidade
   secondSkillButton: {
     position: "absolute",
     top: 730, // Provisório
@@ -1466,8 +1454,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingTop: 0,
   },
-
-  // Dano da Segunda Habilidade
   secondSkillDamageButton: {
     position: "absolute",
     top: 730, // Provisório
@@ -1481,8 +1467,27 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  // ========= END:: Movimento 2 =========
 
-  // Décimo botão (Fraqueza, Abaixo da descrição)
+  // ========= BEGIN:: Movimento único =========
+  singleSkillButton: {
+    position: "absolute",
+    top: 650, // Meio do caminho
+    left: 135,
+    width: 490,
+    height: 145,
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    paddingHorizontal: 5,
+  },
+  // ========= END:: Movimento único =========
+
+  // ========= BEGIN:: Fraquezas =========
   weaknessButton: {
     position: "absolute",
     top: 862.5, // Ajustei -2.5px para o centro do botão continuar no mesmo lugar!
@@ -1496,8 +1501,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
-  // Segunda Fraqueza (Esquerda da principal)
   secondWeaknessButton: {
     position: "absolute",
     top: 862.5,
@@ -1511,8 +1514,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
-  // Botão de Valor da Fraqueza (Ao lado da fraqueza)
   weaknessValueButton: {
     position: "absolute",
     top: 862.5,
@@ -1526,8 +1527,22 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  weaknessValueText: {
+    fontFamily: "GillSans",
+    fontSize: 25,
+    color: "#000",
+    textAlign: "center",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  weaknessIcon: {
+    width: 40,
+    height: 40,
+    resizeMode: "contain",
+  },
+  // ========= END:: Fraquezas =========
 
-  // Décimo primeiro botão (Ao lado da fraqueza)
+  // ========= BEGIN:: Resistências =========
   resistanceButton: {
     position: "absolute",
     top: 862.5, // Mesmo alinhamento vertical
@@ -1541,8 +1556,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
-  // Segunda Resistência (Esquerda da principal)
   secondResistanceButton: {
     position: "absolute",
     top: 862.5,
@@ -1556,8 +1569,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
-  // Botão de Valor da Resistência
   resistanceValueButton: {
     position: "absolute",
     top: 862.5,
@@ -1571,8 +1582,22 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  resistanceValueText: {
+    fontFamily: "GillSans",
+    fontSize: 25,
+    color: "#000",
+    textAlign: "center",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  resistanceIcon: {
+    width: 40,
+    height: 40,
+    resizeMode: "contain",
+  },
+  // ========= END:: Resistências =========
 
-  // Décimo segundo botão (Custo de Recuo)
+  // ========= BEGIN:: Custo de retirada =========
   retreatButton: {
     position: "absolute",
     top: 862.5, // Mesmo alinhamento vertical
@@ -1586,26 +1611,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
-  weaknessIcon: {
-    width: 40,
-    height: 40,
-    resizeMode: "contain",
-  },
-
-  resistanceIcon: {
-    width: 40,
-    height: 40,
-    resizeMode: "contain",
-  },
-
   retreatIcon: {
     width: 40,
     height: 40,
     resizeMode: "contain",
   },
+  // ========= END:: Custo de retirada =========
 
-  // Quinto botão (Curiosidade, que você vai posicionar depois)
+  // ========= BEGIN:: Curiosidade =========
   curiosityButton: {
     position: "absolute",
     top: 912, // Valor provisório
@@ -1621,8 +1634,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  curiosityText: {
+    fontFamily: "GillSans-Bold-Italic",
+    fontSize: 17,
+    color: "#000",
+    textAlign: "center",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  // ========= END:: Curiosidade =========
 
-  // Sétimo botão (Ilustrador, abaixo da curiosidade que você vai posicionar)
+  // ========= BEGIN:: Illustrador =========
   illustrationButton: {
     position: "absolute",
     top: 980, // Valor provisório
@@ -1636,23 +1658,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "flex-start",
   },
-
-  // Oitavo botão (Número do Pokémon, à direita do ilustrador)
-  pokemonNumberButton: {
-    position: "absolute",
-    top: 980, // Mesmo alinhamento vertical do ilustrador
-    right: 40, // Provisório (jogando um pouco mais pra direita)
-    width: 50, // Mesma largura
-    height: 25, // Mesma altura
-    borderWidth: 3,
-    borderColor: "white",
-    borderRadius: 8,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    justifyContent: "center",
-    alignItems: "center",
+  illustrationText: {
+    fontFamily: "GillSans-Bold",
+    fontSize: 16,
+    color: "#000",
+    textAlign: "left",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
+  // ========= END:: Illustrador =========
 
-  // Nono botão (Extra Info, centralizado horizontalmente na carta)
+  // ========= BEGIN:: Licença =========
   extraInfoButton: {
     position: "absolute",
     top: 980, // Mesmo alinhamento vertical
@@ -1667,119 +1683,6 @@ const styles = StyleSheet.create({
     alignItems: "center", // Puxa para a esquerda
     padding: 0, // Sem padding extra, texto encosta nas bordas
   },
-
-  // Texto do HP (Usando a fonte personalizada)
-  hpText: {
-    // fontFamily: "Futura-Heavy",
-    fontFamily: "GillSans-Bold",
-    fontSize: 45,
-    color: "#000", // HP geralmente é preto ou bem escuro
-    textAlign: "left",
-    // Um pouco de sombra para dar leitura melhor
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-  },
-
-  // Texto do Nome
-  nameText: {
-    fontFamily: "GillSans-Bold",
-    fontSize: 45,
-    color: "#000",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-  },
-
-  // Texto da Descrição (Sem itálico ou bold forçado, apenas a fonte normal)
-  descriptionText: {
-    fontFamily: "GillSans-Bold-Italic",
-    fontSize: 23,
-    color: "#000",
-    textAlign: "center",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-  },
-
-  // Nome da Habilidade (Bold)
-  skillNameText: {
-    fontFamily: "GillSans-Bold",
-    fontSize: 32,
-    color: "#000",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-    includeFontPadding: false,
-  },
-
-  // Dano da Habilidade (Bold e Grande)
-  skillDamageText: {
-    fontFamily: "Futura-Heavy",
-    fontSize: 40,
-    color: "#000",
-    textAlign: "center",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-    includeFontPadding: false,
-  },
-
-  // Descrição da Habilidade (Regular)
-  skillDescriptionText: {
-    fontFamily: "GillSans",
-    fontSize: 20,
-    color: "#000",
-    textAlign: "left", // Geralmente o texto das habilidades começa alinhado à esquerda
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-    includeFontPadding: false, // Remove padding extra nativo da fonte no Android
-  },
-
-  // Texto da Curiosidade (Mesma fonte e tamanho da descrição)
-  curiosityText: {
-    fontFamily: "GillSans-Bold-Italic",
-    fontSize: 17,
-    color: "#000",
-    textAlign: "center",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-  },
-
-  weaknessValueText: {
-    fontFamily: "GillSans",
-    fontSize: 25,
-    color: "#000",
-    textAlign: "center",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-  },
-
-  resistanceValueText: {
-    fontFamily: "GillSans",
-    fontSize: 25,
-    color: "#000",
-    textAlign: "center",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-  },
-
-  // Texto do Ilustrador
-  illustrationText: {
-    fontFamily: "GillSans-Bold",
-    fontSize: 16,
-    color: "#000",
-    textAlign: "left",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-  },
-
-  // Texto do Número do Pokémon
-  pokemonNumberText: {
-    fontFamily: "GillSans",
-    fontSize: 16,
-    color: "#000",
-    textAlign: "left",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-  },
-
-  // Texto da Informação Extra
   extraInfoText: {
     fontFamily: "GillSans",
     fontSize: 16,
@@ -1789,5 +1692,73 @@ const styles = StyleSheet.create({
     textShadowRadius: 2,
     includeFontPadding: false, // Remove padding nativo da fonte no Android
   },
+  // ========= END:: Licença =========
+
+  // ========= BEGIN:: Número da coleção =========
+  pokemonNumberButton: {
+    position: "absolute",
+    top: 980, // Mesmo alinhamento vertical do ilustrador
+    right: 40, // Provisório (jogando um pouco mais pra direita)
+    width: 50, // Mesma largura
+    height: 25, // Mesma altura
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  pokemonNumberText: {
+    fontFamily: "GillSans",
+    fontSize: 16,
+    color: "#000",
+    textAlign: "left",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  // ========= END:: Número da coleção =========
+
+  // ========= BEGIN:: Utilitários =========
+  skillEnergyContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
+    alignContent: "center",
+    gap: 2,
+    width: "100%",
+  },
+  skillEnergyIcon: {
+    width: 37,
+    height: 37,
+    resizeMode: "contain",
+  },
+  skillNameText: {
+    fontFamily: "GillSans-Bold",
+    fontSize: 32,
+    color: "#000",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+    includeFontPadding: false,
+  },
+  skillDescriptionText: {
+    fontFamily: "GillSans",
+    fontSize: 20,
+    color: "#000",
+    textAlign: "left", // Geralmente o texto das habilidades começa alinhado à esquerda
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+    includeFontPadding: false, // Remove padding extra nativo da fonte no Android
+  },
+  skillDamageText: {
+    fontFamily: "Futura-Heavy",
+    fontSize: 40,
+    color: "#000",
+    textAlign: "center",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+    includeFontPadding: false,
+  },
+  // ========= END:: Utilitários =========
 });
 
