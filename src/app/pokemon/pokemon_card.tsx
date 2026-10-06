@@ -1402,7 +1402,7 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     fontFamily: "GillSans-Bold-Italic",
-    fontSize: 23,
+    fontSize: 21,
     color: "#000",
     textAlign: "center",
     textShadowOffset: { width: 1, height: 1 },
@@ -1576,7 +1576,7 @@ const styles = StyleSheet.create({
   },
   weaknessValueText: {
     fontFamily: "GillSans",
-    fontSize: 25,
+    fontSize: 23,
     color: "#000",
     textAlign: "center",
     textShadowOffset: { width: 1, height: 1 },
@@ -1631,7 +1631,7 @@ const styles = StyleSheet.create({
   },
   resistanceValueText: {
     fontFamily: "GillSans",
-    fontSize: 25,
+    fontSize: 23,
     color: "#000",
     textAlign: "center",
     textShadowOffset: { width: 1, height: 1 },
@@ -1696,7 +1696,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 980, // Valor provisório
     left: 40, // Valor provisório
-    width: 135, // Valor provisório
+    width: 141, // Valor provisório
     height: 25, // Valor provisório
     borderWidth: 3,
     borderColor: "white",
@@ -1719,8 +1719,8 @@ const styles = StyleSheet.create({
   extraInfoButton: {
     position: "absolute",
     top: 980, // Mesmo alinhamento vertical
-    left: 178, // MÁGICA: Isso centraliza automaticamente, não importa a largura!
-    width: 435, // Pode mudar a largura à vontade agora
+    left: 184, // MÁGICA: Isso centraliza automaticamente, não importa a largura!
+    width: 432, // Pode mudar a largura à vontade agora
     height: 25, // Mesma altura do ilustrador
     borderWidth: 3,
     borderColor: "white",

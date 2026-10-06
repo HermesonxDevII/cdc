@@ -161,7 +161,16 @@ export function MenuModal({ visible, onClose, movesCount, onSelectMovesCount, ha
               </View>
             </View>
 
-            <View style={[styles.optionContainer, { zIndex: -1 }]}>
+            <View
+              style={[
+                styles.optionContainer,
+                {
+                  zIndex: -1,
+                  borderBottomWidth: 0,
+                  marginBottom: 80
+                }
+              ]}
+            >
               <Text style={styles.label}>Resistências:</Text>
 
               {/* Custom Select Box */}
