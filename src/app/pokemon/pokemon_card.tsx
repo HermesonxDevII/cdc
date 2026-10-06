@@ -481,7 +481,7 @@ export default function PokemonCard() {
                   disabled={isPreviewMode}
                 >
                   {firstSkillDamage ? (
-                    <Text style={styles.skillDamageText}>{firstSkillDamage}</Text>
+                    <Text style={[styles.skillDamageText, firstSkillDamage.includes('+') && { fontSize: 30 }]}>{firstSkillDamage}</Text>
                   ) : null}
                 </TouchableOpacity>
                 {/* ========= END:: Qtd. de Dano ========= */}
@@ -550,7 +550,7 @@ export default function PokemonCard() {
                   disabled={isPreviewMode}
                 >
                   {secondSkillDamage ? (
-                    <Text style={styles.skillDamageText}>{secondSkillDamage}</Text>
+                    <Text style={[styles.skillDamageText, secondSkillDamage.includes('+') && { fontSize: 30 }]}>{secondSkillDamage}</Text>
                   ) : null}
                 </TouchableOpacity>
                 {/* ========= END:: Qtd. de Dano ========= */}
@@ -627,7 +627,7 @@ export default function PokemonCard() {
                   disabled={isPreviewMode}
                 >
                   {firstSkillDamage ? (
-                    <Text style={styles.skillDamageText}>{firstSkillDamage}</Text>
+                    <Text style={[styles.skillDamageText, firstSkillDamage.includes('+') && { fontSize: 30 }]}>{firstSkillDamage}</Text>
                   ) : null}
                 </TouchableOpacity>
                 {/* ========= END:: Qtd. de Dano ========= */}
@@ -1815,7 +1815,7 @@ const styles = StyleSheet.create({
   },
   skillDamageText: {
     fontFamily: "Futura-Heavy",
-    fontSize: 40,
+    fontSize: 34,
     color: "#000",
     textAlign: "center",
     textShadowOffset: { width: 1, height: 1 },
