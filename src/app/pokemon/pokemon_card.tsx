@@ -38,6 +38,7 @@ import { SkillDamageModal } from "@/components/modals/skill_damage_modal";
 import { SkillEnergyModal } from "@/components/modals/skill_energy_modal";
 import { DiscardChangesModal } from "@/components/modals/discard_changes_modal";
 import { MenuModal } from "@/components/modals/menu_modal";
+import { ResponsiveText } from "@/components/responsive-text";
 import { useRouter } from "expo-router";
 
 // Mapeamento de todas as texturas de cartas baseadas no tipo
