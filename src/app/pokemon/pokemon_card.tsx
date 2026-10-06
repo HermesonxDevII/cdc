@@ -333,7 +333,7 @@ export default function PokemonCard() {
               onPress={() => setNameModalVisible(true)}
               disabled={isPreviewMode}
             >
-              {name ? <Text style={styles.nameText}>{name}</Text> : null }
+              {name ? <ResponsiveText style={styles.nameText}>{name}</ResponsiveText> : null }
             </TouchableOpacity>
             {/* ========= END:: Nome ========= */}
 
@@ -347,7 +347,7 @@ export default function PokemonCard() {
               onPress={() => setLevelModalVisible(true)}
               disabled={isPreviewMode}
             >
-              {level ? <Text style={styles.levelText}>Nv.{level}</Text> : null}
+              {level ? <ResponsiveText style={styles.levelText}>Nv.{level}</ResponsiveText> : null}
             </TouchableOpacity>
             {/* ========= END:: Level ========= */}
 
@@ -361,7 +361,7 @@ export default function PokemonCard() {
               onPress={() => setHpModalVisible(true)}
               disabled={isPreviewMode}
             >
-              {hp ? <Text style={styles.hpText}>{hp} HP</Text> : null}
+              {hp ? <ResponsiveText style={styles.hpText}>{hp} HP</ResponsiveText> : null}
             </TouchableOpacity>
             {/* ========= END:: HP ========= */}
 
@@ -382,9 +382,9 @@ export default function PokemonCard() {
               {pokemonImage
                 ? <Image source={{ uri: pokemonImage }} style={styles.pokemonImage} />
                 : !isPreviewMode && (
-                  <Text style={styles.imageButtonText}>
+                  <ResponsiveText style={styles.imageButtonText}>
                     Clique aqui para{"\n"}adicionar uma imagem
-                  </Text>
+                  </ResponsiveText>
                 )
               }
             </TouchableOpacity>
@@ -400,7 +400,7 @@ export default function PokemonCard() {
               disabled={isPreviewMode}
             >
               {description ? (
-                <Text style={styles.descriptionText}>{description}</Text>
+                <ResponsiveText style={styles.descriptionText}>{description}</ResponsiveText>
               ) : null}
             </TouchableOpacity>
             {/* ========= END: Descrição ========= */}
@@ -416,12 +416,12 @@ export default function PokemonCard() {
                 disabled={isPreviewMode}
               >
                 {passiveSkill ? (
-                  <Text style={[styles.skillDescriptionText, { width: '100%' }]}>
-                    <Text style={[styles.skillNameText, { color: passiveSkill.color || '#CC0000', fontSize: 25 }]}>
-                      Poder Pokémon: <Text style={{ color: passiveSkill.color }}>{passiveSkill.name} </Text>
-                    </Text>
+                  <ResponsiveText style={[styles.skillDescriptionText, { width: '100%' }]}>
+                    <ResponsiveText style={[styles.skillNameText, { color: passiveSkill.color || '#CC0000', fontSize: 25 }]}>
+                      Poder Pokémon: <ResponsiveText style={{ color: passiveSkill.color }}>{passiveSkill.name} </ResponsiveText>
+                    </ResponsiveText>
                     {passiveSkill.description}
-                  </Text>
+                  </ResponsiveText>
                 ) : null}
               </TouchableOpacity>
             )}
@@ -464,10 +464,10 @@ export default function PokemonCard() {
                   disabled={isPreviewMode}
                 >
                   {firstSkill ? (
-                    <Text style={styles.skillDescriptionText}>
-                      <Text style={styles.skillNameText}>{firstSkill.name} </Text>
+                    <ResponsiveText style={styles.skillDescriptionText}>
+                      <ResponsiveText style={styles.skillNameText}>{firstSkill.name} </ResponsiveText>
                       {firstSkill.description}
-                    </Text>
+                    </ResponsiveText>
                   ) : null}
                 </TouchableOpacity>
                 {/* ========= END:: Nome e descrição */}
@@ -482,7 +482,7 @@ export default function PokemonCard() {
                   disabled={isPreviewMode}
                 >
                   {firstSkillDamage ? (
-                    <Text style={[styles.skillDamageText, firstSkillDamage.includes('+') && { fontSize: 30 }]}>{firstSkillDamage}</Text>
+                    <ResponsiveText style={[styles.skillDamageText, firstSkillDamage.includes('+') && { fontSize: 30 }]}>{firstSkillDamage}</ResponsiveText>
                   ) : null}
                 </TouchableOpacity>
                 {/* ========= END:: Qtd. de Dano ========= */}
@@ -533,10 +533,10 @@ export default function PokemonCard() {
                   disabled={isPreviewMode}
                 >
                   {secondSkill ? (
-                    <Text style={styles.skillDescriptionText}>
-                      <Text style={styles.skillNameText}>{secondSkill.name} </Text>
+                    <ResponsiveText style={styles.skillDescriptionText}>
+                      <ResponsiveText style={styles.skillNameText}>{secondSkill.name} </ResponsiveText>
                       {secondSkill.description}
-                    </Text>
+                    </ResponsiveText>
                   ) : null}
                 </TouchableOpacity>
                 {/* ========= END:: Nome e descrição ========= */}
@@ -551,7 +551,7 @@ export default function PokemonCard() {
                   disabled={isPreviewMode}
                 >
                   {secondSkillDamage ? (
-                    <Text style={[styles.skillDamageText, secondSkillDamage.includes('+') && { fontSize: 30 }]}>{secondSkillDamage}</Text>
+                    <ResponsiveText style={[styles.skillDamageText, secondSkillDamage.includes('+') && { fontSize: 30 }]}>{secondSkillDamage}</ResponsiveText>
                   ) : null}
                 </TouchableOpacity>
                 {/* ========= END:: Qtd. de Dano ========= */}
@@ -597,20 +597,20 @@ export default function PokemonCard() {
                 >
                   {firstSkill ? (
                     <>
-                      <Text
+                      <ResponsiveText
                         style={[
                           styles.skillNameText,
                           { fontSize: 35, textAlign: 'center' }
                         ]}
-                      >{firstSkill.name}</Text>
+                      >{firstSkill.name}</ResponsiveText>
 
                       {firstSkill.description ? (
-                        <Text
+                        <ResponsiveText
                           style={[
                             styles.skillDescriptionText,
                             { fontSize: 23, textAlign: 'left', marginTop: 5 }
                           ]}
-                        >{firstSkill.description}</Text>
+                        >{firstSkill.description}</ResponsiveText>
                       ) : null}
                     </>
                   ) : null}
@@ -628,7 +628,7 @@ export default function PokemonCard() {
                   disabled={isPreviewMode}
                 >
                   {firstSkillDamage ? (
-                    <Text style={[styles.skillDamageText, firstSkillDamage.includes('+') && { fontSize: 30 }]}>{firstSkillDamage}</Text>
+                    <ResponsiveText style={[styles.skillDamageText, firstSkillDamage.includes('+') && { fontSize: 30 }]}>{firstSkillDamage}</ResponsiveText>
                   ) : null}
                 </TouchableOpacity>
                 {/* ========= END:: Qtd. de Dano ========= */}
@@ -688,7 +688,7 @@ export default function PokemonCard() {
               disabled={isPreviewMode}
             >
               {weaknessValue ? (
-                <Text style={styles.weaknessValueText}>{weaknessValue}</Text>
+                <ResponsiveText style={styles.weaknessValueText}>{weaknessValue}</ResponsiveText>
               ) : null}
             </TouchableOpacity>
             {/* ========= END:: Valor das fraquezas ========= */}
@@ -745,7 +745,7 @@ export default function PokemonCard() {
               disabled={isPreviewMode}
             >
               {resistanceValue ? (
-                <Text style={styles.resistanceValueText}>{resistanceValue}</Text>
+                <ResponsiveText style={styles.resistanceValueText}>{resistanceValue}</ResponsiveText>
               ) : null}
             </TouchableOpacity>
             {/* ========= END:: Valor das resistências ========= */}
@@ -780,7 +780,7 @@ export default function PokemonCard() {
               disabled={isPreviewMode}
             >
               {curiosity ? (
-                <Text style={styles.curiosityText}>{curiosity}</Text>
+                <ResponsiveText style={styles.curiosityText}>{curiosity}</ResponsiveText>
               ) : null}
             </TouchableOpacity>
             {/* ========= END:: Curiosidade ========= */}
@@ -796,9 +796,9 @@ export default function PokemonCard() {
               disabled={isPreviewMode}
             >
               {illustration ? (
-                <Text style={styles.illustrationText}>
+                <ResponsiveText style={styles.illustrationText}>
                   Illus. {illustration}
-                </Text>
+                </ResponsiveText>
               ) : null}
             </TouchableOpacity>
             {/* ========= BEGIN:: Illustrador ========= */}
@@ -813,7 +813,7 @@ export default function PokemonCard() {
               disabled={isPreviewMode}
             >
               {extraInfo ? (
-                <Text style={styles.extraInfoText}>{extraInfo}</Text>
+                <ResponsiveText style={styles.extraInfoText}>{extraInfo}</ResponsiveText>
               ) : null}
             </TouchableOpacity>
             {/* ========= END:: Licença ========= */}
@@ -828,7 +828,7 @@ export default function PokemonCard() {
               disabled={isPreviewMode}
             >
               {pokemonNumber ? (
-                <Text style={styles.pokemonNumberText}>{pokemonNumber}</Text>
+                <ResponsiveText style={styles.pokemonNumberText}>{pokemonNumber}</ResponsiveText>
               ) : null}
             </TouchableOpacity>
             {/* ========= END:: Número da coleção ========= */}
