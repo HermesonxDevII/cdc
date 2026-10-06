@@ -35,8 +35,8 @@ export function NameModal({ visible, onClose, onSave }: NameModalProps) {
             </View>
           )}
 
-          <Text style={styles.title}>Definir Nome</Text>
-          
+          <Text style={styles.title}>Nome</Text>
+
           {/* Input de Valor */}
           <TextInput
             style={styles.input}
@@ -49,8 +49,8 @@ export function NameModal({ visible, onClose, onSave }: NameModalProps) {
 
           {/* Botões na base */}
           <View style={styles.buttonContainer}>
-            <TouchableOpacity 
-              style={[styles.actionButton, { backgroundColor: '#7C3AED' }]} 
+            <TouchableOpacity
+              style={[styles.actionButton, { backgroundColor: '#7C3AED' }]}
               onPress={() => {
                 if (!inputValue.trim()) {
                   setToastVisible(true);
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     marginTop: 'auto',
   },
   actionButton: {
-    borderRadius: 3, 
+    borderRadius: 3,
     paddingVertical: 10,
     paddingHorizontal: 50,
     minWidth: 100,

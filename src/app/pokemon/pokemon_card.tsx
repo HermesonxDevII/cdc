@@ -1310,7 +1310,7 @@ const styles = StyleSheet.create({
   },
   levelText: {
     fontFamily: "Revue",
-    fontSize: 25,
+    fontSize: 23,
     color: "#000",
     textAlign: "center",
     fontWeight: 'bold',

@@ -35,7 +35,7 @@ export function CuriosityModal({ visible, onClose, onSave }: CuriosityModalProps
             </View>
           )}
 
-          <Text style={styles.title}>Definir Curiosidade</Text>
+          <Text style={styles.title}>Curiosidade</Text>
 
           {/* Input de Valor */}
           <TextInput

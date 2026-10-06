@@ -35,8 +35,8 @@ export function LevelModal({ visible, onClose, onSave }: LevelModalProps) {
             </View>
           )}
 
-          <Text style={styles.title}>Definir Número</Text>
-          
+          <Text style={styles.title}>Número</Text>
+
           {/* Input de Valor */}
           <TextInput
             style={styles.input}
@@ -44,6 +44,7 @@ export function LevelModal({ visible, onClose, onSave }: LevelModalProps) {
             placeholderTextColor="#888"
             value={inputValue}
             onChangeText={setInputValue}
+            keyboardType="numeric"
           />
 
           {/* Botões na base */}

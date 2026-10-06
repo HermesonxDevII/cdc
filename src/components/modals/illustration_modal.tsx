@@ -35,7 +35,7 @@ export function IllustrationModal({ visible, onClose, onSave }: IllustrationModa
             </View>
           )}
 
-          <Text style={styles.title}>Definir Ilustrador</Text>
+          <Text style={styles.title}>Ilustrador</Text>
 
           {/* Input de Valor */}
           <TextInput

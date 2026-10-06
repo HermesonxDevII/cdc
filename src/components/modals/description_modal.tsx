@@ -35,7 +35,7 @@ export function DescriptionModal({ visible, onClose, onSave }: DescriptionModalP
             </View>
           )}
 
-          <Text style={styles.title}>Definir Descrição</Text>
+          <Text style={styles.title}>Descrição</Text>
 
           {/* Input de Valor */}
           <TextInput

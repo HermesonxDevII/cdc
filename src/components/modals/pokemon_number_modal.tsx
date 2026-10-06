@@ -35,8 +35,8 @@ export function PokemonNumberModal({ visible, onClose, onSave }: PokemonNumberMo
             </View>
           )}
 
-          <Text style={styles.title}>Definir Número</Text>
-          
+          <Text style={styles.title}>Número</Text>
+
           {/* Input de Valor */}
           <TextInput
             style={styles.input}

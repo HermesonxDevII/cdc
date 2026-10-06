@@ -36,7 +36,7 @@ export function HpModal({ visible, onClose, onSave }: HpModalProps) {
             </View>
           )}
 
-          <Text style={styles.title}>Definir HP</Text>
+          <Text style={styles.title}>HP</Text>
 
           {/* Input de Valor */}
           <TextInput
