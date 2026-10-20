@@ -217,10 +217,11 @@ export default function PokemonCard() {
 
   const templateSource = CARD_TEMPLATES[currentStage][currentTemplate];
   const templateWidth = Image.resolveAssetSource(templateSource).width;
+  const isStageCard = currentStage !== "basic";
 
   // Nas cartas de estágio a estrela invade a janela da foto: a foto e a box são desenhadas em SVG
   // seguindo o contorno do layout do template (identificado pela largura da imagem)
-  const stageImageOutline: OutlinePoint[] | undefined = currentStage !== "basic"
+  const stageImageOutline: OutlinePoint[] | undefined = isStageCard
     ? STAGE_IMAGE_OUTLINES[templateWidth]
     : undefined;
 
@@ -316,6 +317,8 @@ export default function PokemonCard() {
               style={[
                 styles.nameButton,
                 buttonCheckTemplate() && styles.nameButtonCustom,
+                isStageCard && { left: 180, width: 210 },
+                buttonCheckTemplate() && isStageCard && { left: 170, width: 230 },
                 isPreviewMode && styles.previewMode
               ]}
               onPress={() => setNameModalVisible(true)}
