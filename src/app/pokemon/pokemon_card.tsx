@@ -10,6 +10,7 @@ import {
   Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Svg, { ClipPath, Defs, Image as SvgImage, Path } from "react-native-svg";
 
 import { ThemedView } from "@/components/themed-view";
 import * as ImagePicker from 'expo-image-picker';
@@ -18,6 +19,7 @@ import { captureRef } from 'react-native-view-shot';
 import { BottomTabInset, MaxContentWidth, Spacing } from "@/constants/theme";
 import { TYPE_ICONS } from "@/constants/type_icons";
 import { CARD_TEMPLATES, CardStage } from "@/constants/card_templates";
+import { STAGE_IMAGE_OUTLINES, OutlinePoint, outlineToPath, outlineBox } from "@/constants/stage_image_outlines";
 
 import { Back } from "@/components/back";
 import { TypeModal } from "@/components/modals/type_modal";
@@ -213,6 +215,14 @@ export default function PokemonCard() {
     firstSkillEnergy, secondSkill, secondSkillDamage, secondSkillEnergy
   } = currentState;
 
+  const templateSource = CARD_TEMPLATES[currentStage][currentTemplate];
+
+  // Nas cartas de estágio a estrela invade a janela da foto: a foto e a box são desenhadas em SVG
+  // seguindo o contorno do layout do template (identificado pela largura da imagem)
+  const stageImageOutline: OutlinePoint[] | undefined = currentStage !== "basic"
+    ? STAGE_IMAGE_OUTLINES[Image.resolveAssetSource(templateSource).width]
+    : undefined;
+
   const router = useRouter();
 
   const hasChanges = () => {
@@ -298,7 +308,7 @@ export default function PokemonCard() {
 
           {/* Carta real proporção de 744x1045 */}
           <View ref={cardRef} style={styles.realSizeCard}>
-            <Image source={CARD_TEMPLATES[currentStage][currentTemplate]} style={styles.cardImage} />
+            <Image source={templateSource} style={styles.cardImage} />
 
             {/* ========= BEGIN:: Nome ========= */}
             <TouchableOpacity
@@ -379,17 +389,52 @@ export default function PokemonCard() {
             {/* ========= END:: Tipo ========= */}
 
             {/* ========= BEGIN:: Imagem ========= */}
+            {/* Cartas de estágio: foto recortada e box desenhada no contorno da estrela (o toque fica na box abaixo) */}
+            {stageImageOutline && (
+              <Svg
+                style={StyleSheet.absoluteFill}
+                viewBox={`0 0 ${CARD_REAL_WIDTH} ${CARD_REAL_HEIGHT}`}
+                pointerEvents="none"
+              >
+                <Defs>
+                  <ClipPath id="stageImageClip">
+                    <Path d={outlineToPath(stageImageOutline)} />
+                  </ClipPath>
+                </Defs>
+                {!isPreviewMode && (
+                  <Path d={outlineToPath(stageImageOutline)} fill="rgba(255, 255, 255, 0.2)" />
+                )}
+                {pokemonImage && (
+                  <SvgImage
+                    href={{ uri: pokemonImage }}
+                    {...outlineBox(stageImageOutline)}
+                    preserveAspectRatio="xMidYMid slice"
+                    clipPath="url(#stageImageClip)"
+                  />
+                )}
+                {!isPreviewMode && (
+                  <Path
+                    d={outlineToPath(stageImageOutline)}
+                    fill="none"
+                    stroke={buttonCheckTemplate() ? "black" : "white"}
+                    strokeWidth={3}
+                    strokeLinejoin="round"
+                  />
+                )}
+              </Svg>
+            )}
             <TouchableOpacity
               style={[
                 styles.imageButton,
                 buttonCheckTemplate() && styles.imageButtonCustom,
+                stageImageOutline && styles.imageButtonStage,
                 isPreviewMode && styles.previewMode
               ]}
               onPress={() => pickImage((uri) => updateCard({ pokemonImage: uri }))}
               disabled={isPreviewMode}
             >
               {pokemonImage
-                ? <Image source={{ uri: pokemonImage }} style={styles.pokemonImage} />
+                ? !stageImageOutline && <Image source={{ uri: pokemonImage }} style={styles.pokemonImage} />
                 : !isPreviewMode && (
                   <ResponsiveText style={[styles.imageButtonText, buttonCheckTemplate() && styles.imageButtonTextCustom]}>
                     Clique aqui para{"\n"}adicionar uma imagem
@@ -1532,6 +1577,11 @@ const styles = StyleSheet.create({
     width: 581,
     height: 406,
     borderColor: "black",
+  },
+  // Nas cartas de estágio a box só recebe o toque: borda, fundo e foto são desenhados pelo SVG
+  imageButtonStage: {
+    borderColor: "transparent",
+    backgroundColor: "transparent",
   },
   pokemonImage: {
     width: "100%",
