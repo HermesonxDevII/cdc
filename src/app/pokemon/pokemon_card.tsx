@@ -116,7 +116,7 @@ const RARITY_ICONS: Record<string, any> = {
 };
 
 // Templates que recebem o estilo único hpButtonCustom (definido em styles)
-const HP_BUTTON_CUSTOM_TEMPLATES = [
+const BUTTON_CUSTOM_TEMPLATES = [
   "bug", "dragon", "earth", "fairy", "flying", "ghost", "ice", "poison", "rock"
 ];
 
@@ -287,7 +287,7 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.nameButton,
-                HP_BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.nameButtonCustom,
+                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.nameButtonCustom,
                 isPreviewMode && styles.previewMode
               ]}
               onPress={() => setNameModalVisible(true)}
@@ -297,7 +297,7 @@ export default function PokemonCard() {
                 <ResponsiveText
                   style={[
                     styles.nameText,
-                    HP_BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.nameTextCustom,
+                    BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.nameTextCustom,
                   ]}
                 >{name}</ResponsiveText>
               : null }
@@ -308,10 +308,10 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.levelButton,
-                HP_BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.levelButtonCustom,
+                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.levelButtonCustom,
                 isPreviewMode && styles.previewMode,
                 {
-                  right: HP_BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate)
+                  right: BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate)
                     ? (hp.length > 2 ? 265 : 240)
                     : (hp.length > 2 ? 285 : 260)
                 }
@@ -327,7 +327,7 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.hpButton,
-                HP_BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.hpButtonCustom,
+                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.hpButtonCustom,
                 isPreviewMode && styles.previewMode,
                 { width: hp.length > 2 ? 150 : 125 }
               ]}
@@ -342,7 +342,7 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.typeButton,
-                HP_BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.typeButtonCustom,
+                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.typeButtonCustom,
                 isPreviewMode && styles.previewMode
               ]}
               onPress={() => setTypeModalVisible(true)}
@@ -354,7 +354,7 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.imageButton,
-                HP_BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.imageButtonCustom,
+                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.imageButtonCustom,
                 isPreviewMode && styles.previewMode
               ]}
               onPress={pickImage}
@@ -365,7 +365,7 @@ export default function PokemonCard() {
                 : !isPreviewMode && (
                   <ResponsiveText style={[
                     styles.imageButtonText,
-                    HP_BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.imageButtonTextCustom
+                    BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.imageButtonTextCustom
                   ]}>
                     Clique aqui para{"\n"}adicionar uma imagem
                   </ResponsiveText>
@@ -378,7 +378,7 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.descriptionButton,
-                HP_BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.descriptionButtonCustom,
+                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.descriptionButtonCustom,
                 isPreviewMode && styles.previewMode,
               ]}
               onPress={() => setDescriptionModalVisible(true)}
@@ -627,6 +627,8 @@ export default function PokemonCard() {
               style={[
                 styles.weaknessButton,
                 weaknessesCount === 2 && { left: 89 },
+                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.weaknessButtonCustom,
+                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && weaknessesCount === 2 && { left: 79 },
                 isPreviewMode && styles.previewMode,
                 isPreviewMode && {
                   left: weaknessesCount === 2 ? 90 : 110 // Mantém a lógica de preview também ajustada
@@ -646,6 +648,7 @@ export default function PokemonCard() {
               <TouchableOpacity
                 style={[
                   styles.secondWeaknessButton,
+                  BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.secondWeaknessButtonCustom,
                   isPreviewMode && styles.previewMode,
                   isPreviewMode && {
                     left: 135,
@@ -666,6 +669,8 @@ export default function PokemonCard() {
               style={[
                 styles.weaknessValueButton,
                 weaknessesCount === 2 && { left: 184 },
+                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.weaknessValueButtonCustom,
+                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && weaknessesCount === 2 && { left: 167 },
                 isPreviewMode && styles.previewMode,
                 isPreviewMode && { left: weaknessesCount === 2 ? 180 : 155 }, // Ajuste para modo preview
               ]}
@@ -685,6 +690,8 @@ export default function PokemonCard() {
               style={[
                 styles.resistanceButton,
                 resistancesCount === 2 && { left: 316 },
+                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.resistanceButtonCustom,
+                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && resistancesCount === 2 && { left: 319 },
                 isPreviewMode && styles.previewMode,
                 isPreviewMode && {
                   left: resistancesCount === 2 ? 318 : 338
@@ -704,6 +711,7 @@ export default function PokemonCard() {
               <TouchableOpacity
                 style={[
                   styles.secondResistanceButton,
+                  BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.secondResistanceButtonCustom,
                   isPreviewMode && styles.previewMode,
                   isPreviewMode && {
                     left: 363
@@ -724,6 +732,8 @@ export default function PokemonCard() {
               style={[
                 styles.resistanceValueButton,
                 resistancesCount === 2 && { left: 412 },
+                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.resistanceValueButtonCustom,
+                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && resistancesCount === 2 && { left: 407 },
                 isPreviewMode && styles.previewMode,
               ]}
               onPress={() => setResistanceValueModalVisible(true)}
@@ -740,6 +750,7 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.retreatButton,
+                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.retreatButtonCustom,
                 isPreviewMode && styles.previewMode,
               ]}
               onPress={() => setRetreatModalVisible(true)}
@@ -759,6 +770,7 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.curiosityButton,
+                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.curiosityButtonCustom,
                 isPreviewMode && styles.previewMode,
               ]}
               onPress={() => setCuriosityModalVisible(true)}
@@ -1329,7 +1341,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start", // Centraliza o texto verticalmente
     alignItems: "flex-start", // Centraliza o texto horizontalmente
   },
-  // Estilo único dos templates listados em HP_BUTTON_CUSTOM_TEMPLATES
+  // Estilo único dos templates listados em BUTTON_CUSTOM_TEMPLATES
   hpButtonCustom: {
     top: 67,
     right: 111,
@@ -1556,9 +1568,9 @@ const styles = StyleSheet.create({
   // ========= BEGIN:: Fraquezas =========
   weaknessButton: {
     position: "absolute",
-    top: 862.5, // Ajustei -2.5px para o centro do botão continuar no mesmo lugar!
+    top: 862.5,
     left: 110,
-    width: 45, // Tamanho que você queria no modo edição
+    width: 45,
     height: 45,
     borderWidth: 3,
     borderColor: "white",
@@ -1566,6 +1578,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     justifyContent: "center",
     alignItems: "center",
+  },
+  weaknessButtonCustom: {
+    top: 873,
+    left: 100,
+    width: 41,
+    height: 41,
   },
   secondWeaknessButton: {
     position: "absolute",
@@ -1580,6 +1598,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  secondWeaknessButtonCustom: {
+    top: 873,
+    left: 123,
+    width: 41,
+    height: 41,
+  },
   weaknessValueButton: {
     position: "absolute",
     top: 862.5,
@@ -1592,6 +1616,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     justifyContent: "center",
     alignItems: "center",
+  },
+  weaknessValueButtonCustom: {
+    top: 873,
+    left: 143,
+    width: 35,
+    height: 35,
   },
   weaknessValueText: {
     fontFamily: "GillSans",
@@ -1611,8 +1641,8 @@ const styles = StyleSheet.create({
   // ========= BEGIN:: Resistências =========
   resistanceButton: {
     position: "absolute",
-    top: 862.5, // Mesmo alinhamento vertical
-    left: 338, // Valor provisório (à direita da fraqueza)
+    top: 862.5,
+    left: 338,
     width: 45,
     height: 45,
     borderWidth: 3,
@@ -1621,6 +1651,11 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     justifyContent: "center",
     alignItems: "center",
+  },
+  resistanceButtonCustom: {
+    top: 873,
+    width: 41,
+    height: 41,
   },
   secondResistanceButton: {
     position: "absolute",
@@ -1635,10 +1670,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  secondResistanceButtonCustom: {
+    top: 873,
+    left: 363,
+    width: 41,
+    height: 41,
+  },
   resistanceValueButton: {
     position: "absolute",
     top: 862.5,
-    left: 385, // Valor provisório
+    left: 385,
     width: 40,
     height: 40,
     borderWidth: 3,
@@ -1647,6 +1688,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     justifyContent: "center",
     alignItems: "center",
+  },
+  resistanceValueButtonCustom: {
+    top: 873,
+    left: 382,
+    width: 35,
+    height: 35,
   },
   resistanceValueText: {
     fontFamily: "GillSans",
@@ -1666,8 +1713,8 @@ const styles = StyleSheet.create({
   // ========= BEGIN:: Custo de retirada =========
   retreatButton: {
     position: "absolute",
-    top: 862.5, // Mesmo alinhamento vertical
-    right: 80, // Valor provisório
+    top: 862.5,
+    right: 80,
     width: 130,
     height: 45,
     borderWidth: 3,
@@ -1676,6 +1723,10 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     justifyContent: "center",
     alignItems: "center",
+  },
+  retreatButtonCustom: {
+    top: 875.5,
+    height: 39,
   },
   retreatIcon: {
     width: 40,
@@ -1687,10 +1738,10 @@ const styles = StyleSheet.create({
   // ========= BEGIN:: Curiosidade =========
   curiosityButton: {
     position: "absolute",
-    top: 912, // Valor provisório
-    left: 81, // Valor provisório
-    width: 581.5, // Valor provisório
-    height: 64, // Valor provisório
+    top: 912,
+    left: 81,
+    width: 581.5,
+    height: 64,
     borderWidth: 3,
     borderColor: "white",
     paddingLeft: 1,
@@ -1699,6 +1750,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     justifyContent: "center",
     alignItems: "center",
+  },
+  curiosityButtonCustom: {
+    top: 917,
+    left: 71,
+    width: 611,
+    height: 57,
   },
   curiosityText: {
     fontFamily: "GillSans-Bold-Italic",
