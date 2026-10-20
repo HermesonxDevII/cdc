@@ -45,7 +45,7 @@ export function RetreatModal({ visible, onClose, onSave }: RetreatModalProps) {
   };
 
   const handleIncrease = () => {
-    if (count < 3) setCount(count + 1);
+    if (count < 4) setCount(count + 1);
   };
 
   const handleDecrease = () => {

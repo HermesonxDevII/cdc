@@ -1757,8 +1757,8 @@ const styles = StyleSheet.create({
   retreatButton: {
     position: "absolute",
     top: 862.5,
-    right: 80,
-    width: 130,
+    right: 58,
+    width: 175,
     height: 45,
     borderWidth: 3,
     borderColor: "white",
@@ -1769,6 +1769,8 @@ const styles = StyleSheet.create({
   },
   retreatButtonCustom: {
     top: 875.5,
+    right: 57,
+    width: 160,
     height: 39,
   },
   // ========= END:: Custo de retirada =========
