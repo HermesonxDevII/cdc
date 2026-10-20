@@ -640,15 +640,21 @@ export default function PokemonCard() {
                 BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.weaknessButtonCustom,
                 BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && weaknessesCount === 2 && { left: 79 },
                 isPreviewMode && styles.previewMode,
-                isPreviewMode && {
-                  left: weaknessesCount === 2 ? 90 : 110 // Mantém a lógica de preview também ajustada
+                !BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && isPreviewMode && {
+                  left: weaknessesCount === 2 ? 90 : 110
                 },
               ]}
               onPress={() => setWeaknessModalVisible(true)}
               disabled={isPreviewMode}
             >
               {weakness ? (
-                <Image source={TYPE_ICONS[weakness]} style={styles.weaknessIcon} />
+                <Image
+                  source={TYPE_ICONS[weakness]}
+                  style={[
+                    styles.icons,
+                    BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.iconsCustom,
+                  ]}
+                />
               ) : null}
             </TouchableOpacity>
             {/* ========= END:: Fraqueza 1 ========= */}
@@ -660,7 +666,7 @@ export default function PokemonCard() {
                   styles.secondWeaknessButton,
                   BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.secondWeaknessButtonCustom,
                   isPreviewMode && styles.previewMode,
-                  isPreviewMode && {
+                  !BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && isPreviewMode && {
                     left: 135,
                   },
                 ]}
@@ -668,7 +674,13 @@ export default function PokemonCard() {
                 disabled={isPreviewMode}
               >
                 {secondWeakness ? (
-                  <Image source={TYPE_ICONS[secondWeakness]} style={styles.weaknessIcon} />
+                  <Image
+                    source={TYPE_ICONS[secondWeakness]}
+                    style={[
+                      styles.icons,
+                      BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.iconsCustom,
+                    ]}
+                  />
                 ) : null}
               </TouchableOpacity>
             )}
@@ -682,13 +694,18 @@ export default function PokemonCard() {
                 BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.weaknessValueButtonCustom,
                 BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && weaknessesCount === 2 && { left: 167 },
                 isPreviewMode && styles.previewMode,
-                isPreviewMode && { left: weaknessesCount === 2 ? 180 : 155 }, // Ajuste para modo preview
+                !BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) &&  isPreviewMode && { left: weaknessesCount === 2 ? 180 : 155 },
               ]}
               onPress={() => setWeaknessValueModalVisible(true)}
               disabled={isPreviewMode}
             >
               {weaknessValue ? (
-                <ResponsiveText style={styles.weaknessValueText}>{weaknessValue}</ResponsiveText>
+                <ResponsiveText
+                  style={[
+                    styles.valuesText,
+                    BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.valuesTextCustom,
+                  ]}
+                >{weaknessValue}</ResponsiveText>
               ) : null}
             </TouchableOpacity>
             {/* ========= END:: Valor das fraquezas ========= */}
@@ -711,7 +728,13 @@ export default function PokemonCard() {
               disabled={isPreviewMode}
             >
               {resistance ? (
-                <Image source={TYPE_ICONS[resistance]} style={styles.resistanceIcon} />
+                <Image
+                  source={TYPE_ICONS[resistance]}
+                  style={[
+                    styles.icons,
+                    BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.iconsCustom,
+                  ]}
+                />
               ) : null}
             </TouchableOpacity>
             {/* ========= END:: Resistência 1 ========= */}
@@ -731,7 +754,13 @@ export default function PokemonCard() {
                 disabled={isPreviewMode}
               >
                 {secondResistance ? (
-                  <Image source={TYPE_ICONS[secondResistance]} style={styles.resistanceIcon} />
+                  <Image
+                    source={TYPE_ICONS[secondResistance]}
+                    style={[
+                      styles.icons,
+                      BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.iconsCustom,
+                    ]}
+                  />
                 ) : null}
               </TouchableOpacity>
             )}
@@ -750,7 +779,12 @@ export default function PokemonCard() {
               disabled={isPreviewMode}
             >
               {resistanceValue ? (
-                <ResponsiveText style={styles.resistanceValueText}>{resistanceValue}</ResponsiveText>
+                <ResponsiveText
+                  style={[
+                    styles.valuesText,
+                    BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.valuesTextCustom,
+                  ]}
+                >{resistanceValue}</ResponsiveText>
               ) : null}
             </TouchableOpacity>
             {/* ========= END:: Valor das resistências ========= */}
@@ -769,7 +803,14 @@ export default function PokemonCard() {
               {retreat ? (
                 <View style={{ flexDirection: 'row', gap: 2 }}>
                   {Array.from({ length: retreat.count }).map((_, i) => (
-                    <Image key={i} source={TYPE_ICONS[retreat.symbol]} style={styles.retreatIcon} />
+                    <Image
+                      key={i}
+                      source={TYPE_ICONS[retreat.symbol]}
+                      style={[
+                        styles.icons,
+                        BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.iconsCustom,
+                      ]}
+                    />
                   ))}
                 </View>
               ) : null}
@@ -798,7 +839,7 @@ export default function PokemonCard() {
                 styles.illustrationButton,
                 BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.illustrationButtonCustom,
                 isPreviewMode && styles.previewMode,
-                isPreviewMode && { left: 45 }
+                !BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && isPreviewMode && { left: 45 }
               ]}
               onPress={() => setIllustrationModalVisible(true)}
               disabled={isPreviewMode}
@@ -1648,21 +1689,8 @@ const styles = StyleSheet.create({
   weaknessValueButtonCustom: {
     top: 873,
     left: 143,
-    width: 35,
-    height: 35,
-  },
-  weaknessValueText: {
-    fontFamily: "GillSans",
-    fontSize: 23,
-    color: "#000",
-    textAlign: "center",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-  },
-  weaknessIcon: {
-    width: 40,
-    height: 40,
-    resizeMode: "contain",
+    width: 36,
+    height: 36,
   },
   // ========= END:: Fraquezas =========
 
@@ -1720,21 +1748,8 @@ const styles = StyleSheet.create({
   resistanceValueButtonCustom: {
     top: 873,
     left: 382,
-    width: 35,
-    height: 35,
-  },
-  resistanceValueText: {
-    fontFamily: "GillSans",
-    fontSize: 23,
-    color: "#000",
-    textAlign: "center",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-  },
-  resistanceIcon: {
-    width: 40,
-    height: 40,
-    resizeMode: "contain",
+    width: 36,
+    height: 36,
   },
   // ========= END:: Resistências =========
 
@@ -1755,11 +1770,6 @@ const styles = StyleSheet.create({
   retreatButtonCustom: {
     top: 875.5,
     height: 39,
-  },
-  retreatIcon: {
-    width: 40,
-    height: 40,
-    resizeMode: "contain",
   },
   // ========= END:: Custo de retirada =========
 
@@ -1940,6 +1950,24 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
     includeFontPadding: false,
+  },
+  icons: {
+    width: 40,
+    height: 40,
+    resizeMode: "contain",
+  },
+  iconsCustom: {
+    width: 36,
+    height: 36,
+  },
+  valuesText: {
+    fontFamily: "GillSans",
+    fontSize: 23,
+    color: "#000",
+    textAlign: "center",
+  },
+  valuesTextCustom: {
+    fontSize: 22,
   },
   // ========= END:: Utilitários =========
 });
