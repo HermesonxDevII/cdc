@@ -3,7 +3,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const BASE_URL = '../../../assets/images/icons/pokemon_types';
 
-const POKEMON_TYPES = [
+const TYPES_CURRENT = [
   { id: 'dark', source: require(`${BASE_URL}/dark.png`) },
   { id: 'eletric', source: require(`${BASE_URL}/eletric.png`) },
   { id: 'fighter', source: require(`${BASE_URL}/fighter.png`) },
@@ -46,7 +46,7 @@ export function TypeModal({ visible, onClose, onSelectType }: TypeModalProps) {
 
           {/* Grid de Ícones */}
           <View style={styles.grid}>
-            {POKEMON_TYPES.map((type) => (
+            {TYPES_CURRENT.map((type) => (
               <TouchableOpacity key={type.id} style={styles.iconButton} onPress={() => onSelectType(type.id)}>
                 <Image source={type.source} style={styles.typeIcon} />
               </TouchableOpacity>
