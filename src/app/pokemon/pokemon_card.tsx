@@ -216,11 +216,12 @@ export default function PokemonCard() {
   } = currentState;
 
   const templateSource = CARD_TEMPLATES[currentStage][currentTemplate];
+  const templateWidth = Image.resolveAssetSource(templateSource).width;
 
   // Nas cartas de estágio a estrela invade a janela da foto: a foto e a box são desenhadas em SVG
   // seguindo o contorno do layout do template (identificado pela largura da imagem)
   const stageImageOutline: OutlinePoint[] | undefined = currentStage !== "basic"
-    ? STAGE_IMAGE_OUTLINES[Image.resolveAssetSource(templateSource).width]
+    ? STAGE_IMAGE_OUTLINES[templateWidth]
     : undefined;
 
   const router = useRouter();
@@ -390,14 +391,17 @@ export default function PokemonCard() {
 
             {/* ========= BEGIN:: Imagem ========= */}
             {/* Cartas de estágio: foto recortada e box desenhada no contorno da estrela (o toque fica na box abaixo) */}
+            {/* A key recria o SVG quando o layout do template muda: o react-native-svg mantém o recorte
+                (ClipPath) e o desenho em cache no nativo e não os atualiza só com a troca das props */}
             {stageImageOutline && (
               <Svg
+                key={`stageImage-${templateWidth}`}
                 style={StyleSheet.absoluteFill}
                 viewBox={`0 0 ${CARD_REAL_WIDTH} ${CARD_REAL_HEIGHT}`}
                 pointerEvents="none"
               >
                 <Defs>
-                  <ClipPath id="stageImageClip">
+                  <ClipPath id={`stageImageClip-${templateWidth}`}>
                     <Path d={outlineToPath(stageImageOutline)} />
                   </ClipPath>
                 </Defs>
@@ -409,7 +413,7 @@ export default function PokemonCard() {
                     href={{ uri: pokemonImage }}
                     {...outlineBox(stageImageOutline)}
                     preserveAspectRatio="xMidYMid slice"
-                    clipPath="url(#stageImageClip)"
+                    clipPath={`url(#stageImageClip-${templateWidth})`}
                   />
                 )}
                 {!isPreviewMode && (
