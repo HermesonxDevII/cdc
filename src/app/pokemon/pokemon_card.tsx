@@ -47,6 +47,7 @@ type CardState = {
   currentTemplate: string; // id do template em CARD_TEMPLATES[currentStage]
   currentStage: CardStage;
   pokemonImage: string | null;
+  collectionSymbol: string | null;
   hp: string;
   name: string;
   description: string;
@@ -80,6 +81,7 @@ const initialState: CardState = {
   currentTemplate: "normal",
   currentStage: "basic",
   pokemonImage: null,
+  collectionSymbol: null,
   hp: "",
   name: "",
   description: "",
@@ -204,7 +206,7 @@ export default function PokemonCard() {
   const canRedo = historyIndex < history.length - 1;
 
   const {
-    currentTemplate, currentStage, pokemonImage, hp, name, description, curiosity,
+    currentTemplate, currentStage, pokemonImage, collectionSymbol, hp, name, description, curiosity,
     illustration, pokemonNumber, rarity, extraInfo, weakness, secondWeakness,
     weaknessValue, level, resistance, secondResistance, resistanceValue, retreat, movesCount,
     weaknessesCount, resistancesCount, hasPassiveSkill, passiveSkill, firstSkill, firstSkillDamage,
@@ -233,8 +235,8 @@ export default function PokemonCard() {
     return () => backHandler.remove();
   }, [historyIndex]);
 
-  // Abre a galeria do usuário pra selecionar a imagem da carta
-  const pickImage = async () => {
+  // Abre a galeria do usuário pra selecionar uma imagem e entrega a uri escolhida pro onPick
+  const pickImage = async (onPick: (uri: string) => void) => {
     // Pede permissão para acessar a galeria
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -250,7 +252,7 @@ export default function PokemonCard() {
     });
 
     if (!result.canceled) {
-      updateCard({ pokemonImage: result.assets[0].uri });
+      onPick(result.assets[0].uri);
     }
   };
 
@@ -383,7 +385,7 @@ export default function PokemonCard() {
                 buttonCheckTemplate() && styles.imageButtonCustom,
                 isPreviewMode && styles.previewMode
               ]}
-              onPress={pickImage}
+              onPress={() => pickImage((uri) => updateCard({ pokemonImage: uri }))}
               disabled={isPreviewMode}
             >
               {pokemonImage
@@ -414,6 +416,25 @@ export default function PokemonCard() {
               : null}
             </TouchableOpacity>
             {/* ========= END: Descrição ========= */}
+
+            {/* ========= BEGIN:: Símbolo da Coleção ========= */}
+            <TouchableOpacity
+              style={[
+                styles.collectionSymbolButton,
+                buttonCheckTemplate() && styles.collectionSymbolButtonCustom,
+                isPreviewMode && styles.previewMode,
+              ]}
+              onPress={() => pickImage((uri) => updateCard({ collectionSymbol: uri }))}
+              disabled={isPreviewMode}
+            >
+              {collectionSymbol ?
+                <Image
+                  source={{ uri: collectionSymbol }}
+                  style={styles.collectionSymbolImage}
+                />
+              : null}
+            </TouchableOpacity>
+            {/* ========= END:: Símbolo da Coleção ========= */}
 
             {/* ========= BEGIN:: Habilidade ========= */}
             {hasPassiveSkill && (
@@ -1558,6 +1579,32 @@ const styles = StyleSheet.create({
     textShadowRadius: 2,
   },
   // ========= END: Descrição =========
+
+  // ========= BEGIN:: Símbolo da Coleção =========
+  collectionSymbolButton: {
+    position: "absolute",
+    top: 544,
+    left: 648,
+    width: 45,
+    height: 45,
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+  },
+  collectionSymbolImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "contain",
+  },
+  collectionSymbolButtonCustom: {
+    top: 551,
+    left: 656,
+  },
+  // ========= END:: Símbolo da Coleção =========
 
   // ========= BEGIN:: Habilidade =========
   passiveSkillButton: {
