@@ -395,6 +395,7 @@ export default function PokemonCard() {
               <TouchableOpacity
                 style={[
                   styles.passiveSkillButton,
+                  BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.passiveSkillButtonCustom,
                   isPreviewMode && styles.previewMode
                 ]}
                 onPress={() => setPassiveSkillModalVisible(true)}
@@ -477,7 +478,13 @@ export default function PokemonCard() {
 
             {/* ========= BEGIN:: Separador ========= */}
             {(movesCount === 2 || (movesCount === 1 && hasPassiveSkill)) && (
-              <View style={[styles.movesSeparatorLine, currentTemplate === "dark" &&{ backgroundColor: 'white' }]} />
+              <View
+                style={[
+                  styles.movesSeparatorLine,
+                  BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && movesCount === 1 && hasPassiveSkill && styles.movesSeparatorLineCustom,
+                  currentTemplate === "dark" &&{ backgroundColor: 'white' }
+                ]}
+              />
             )}
             {/* ========= END:: Separador ========= */}
 
@@ -488,6 +495,7 @@ export default function PokemonCard() {
                 <TouchableOpacity
                   style={[
                     styles.secondSkillEnergyButton,
+                    BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && movesCount === 1 && hasPassiveSkill && styles.secondSkillEnergyButtonCustom,
                     isPreviewMode && styles.previewMode,
                     isPreviewMode && secondSkillEnergy && secondSkillEnergy.length >= 3 && { top: 725 },
                   ]}
@@ -512,6 +520,7 @@ export default function PokemonCard() {
                 <TouchableOpacity
                   style={[
                     styles.secondSkillButton,
+                    BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && movesCount === 1 && hasPassiveSkill && styles.secondSkillButtonCustom,
                     isPreviewMode && styles.previewMode
                   ]}
                   onPress={() => setSecondSkillModalVisible(true)}
@@ -530,6 +539,7 @@ export default function PokemonCard() {
                 <TouchableOpacity
                   style={[
                     styles.secondSkillDamageButton,
+                    BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && movesCount === 1 && hasPassiveSkill && styles.secondSkillDamageButtonCustom,
                     isPreviewMode && styles.previewMode,
                   ]}
                   onPress={() => setSecondSkillDamageModalVisible(true)}
@@ -1271,7 +1281,9 @@ const styles = StyleSheet.create({
     height: 2,
     backgroundColor: 'black',
   },
-
+  movesSeparatorLineCustom: {
+    top: 730,
+  },
   // ========= BEGIN:: Nome =========
   nameButton: {
     position: "absolute",
@@ -1448,7 +1460,7 @@ const styles = StyleSheet.create({
   // ========= BEGIN:: Habilidade =========
   passiveSkillButton: {
     position: "absolute",
-    top: 590, // Mesma altura que a primeira habilidade
+    top: 590,
     left: 105,
     width: 535,
     height: 120,
@@ -1460,6 +1472,9 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     paddingHorizontal: 5,
     paddingTop: 0,
+  },
+  passiveSkillButtonCustom: {
+    top: 600,
   },
   // ========= END:: Habilidade =========
 
@@ -1510,7 +1525,7 @@ const styles = StyleSheet.create({
   // ========= BEGIN:: Movimento 2 =========
   secondSkillEnergyButton: {
     position: "absolute",
-    top: 730, // Provisório (logo abaixo da primeira habilidade)
+    top: 730,
     left: 45,
     width: 85,
     height: 100,
@@ -1521,9 +1536,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  secondSkillEnergyButtonCustom: {
+    top: 740,
+  },
   secondSkillButton: {
     position: "absolute",
-    top: 730, // Provisório
+    top: 730,
     left: 135,
     width: 490,
     height: 100,
@@ -1536,9 +1554,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingTop: 0,
   },
+  secondSkillButtonCustom: {
+    top: 740,
+  },
   secondSkillDamageButton: {
     position: "absolute",
-    top: 730, // Provisório
+    top: 730,
     left: 630,
     width: 70,
     height: 100,
@@ -1548,6 +1569,9 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     justifyContent: "center",
     alignItems: "center",
+  },
+  secondSkillDamageButtonCustom: {
+    top: 740,
   },
   // ========= END:: Movimento 2 =========
 
