@@ -1,44 +1,7 @@
 import React, { useState } from "react";
-import { Modal, StyleSheet, TouchableOpacity, View, Text, Image, Pressable , KeyboardAvoidingView, Platform } from 'react-native';
+import { Modal, StyleSheet, TouchableOpacity, View, Text, Image, Pressable , KeyboardAvoidingView, Platform, ScrollView, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-const BASE_URL = '../../../assets/images/icons/pokemon_types';
-
-const TYPES_CURRENT = [
-  { id: 'dark', source: require(`${BASE_URL}/dark.png`) },
-  { id: 'eletric', source: require(`${BASE_URL}/eletric.png`) },
-  { id: 'fighter', source: require(`${BASE_URL}/fighter.png`) },
-  { id: 'fire', source: require(`${BASE_URL}/fire.png`) },
-  { id: 'grass', source: require(`${BASE_URL}/grass.png`) },
-  { id: 'metal', source: require(`${BASE_URL}/metal.png`) },
-  { id: 'normal', source: require(`${BASE_URL}/normal.png`) },
-  { id: 'psychic', source: require(`${BASE_URL}/psychic.png`) },
-  { id: 'water', source: require(`${BASE_URL}/water.png`) },
-];
-
-const TYPES_OLD = [
-  { id: 'dark_old', source: require(`${BASE_URL}/dark_old.png`) },
-  { id: 'eletric_old', source: require(`${BASE_URL}/eletric_old.png`) },
-  { id: 'fighter_old', source: require(`${BASE_URL}/fighter_old.png`) },
-  { id: 'fire_old', source: require(`${BASE_URL}/fire_old.png`) },
-  { id: 'grass_old', source: require(`${BASE_URL}/grass_old.png`) },
-  { id: 'metal_old', source: require(`${BASE_URL}/metal_old.png`) },
-  { id: 'normal_old', source: require(`${BASE_URL}/normal_old.png`) },
-  { id: 'psychic_old', source: require(`${BASE_URL}/psychic_old.png`) },
-  { id: 'water_old', source: require(`${BASE_URL}/water_old.png`) },
-];
-
-const TYPES_OLD_2 = [
-  { id: 'dark_old_2', source: require(`${BASE_URL}/dark_old_2.png`) },
-  { id: 'eletric_old_2', source: require(`${BASE_URL}/eletric_old_2.png`) },
-  { id: 'fighter_old_2', source: require(`${BASE_URL}/fighter_old_2.png`) },
-  { id: 'fire_old_2', source: require(`${BASE_URL}/fire_old_2.png`) },
-  { id: 'grass_old_2', source: require(`${BASE_URL}/grass_old_2.png`) },
-  { id: 'metal_old_2', source: require(`${BASE_URL}/metal_old_2.png`) },
-  { id: 'normal_old_2', source: require(`${BASE_URL}/normal_old_2.png`) },
-  { id: 'psychic_old_2', source: require(`${BASE_URL}/psychic_old_2.png`) },
-  { id: 'water_old_2', source: require(`${BASE_URL}/water_old_2.png`) },
-];
+import { TYPES_CURRENT, TYPES_OLD, TYPES_OLD_2 } from '@/constants/type_icons';
 
 interface ResistanceModalProps {
   visible: boolean;
@@ -48,7 +11,13 @@ interface ResistanceModalProps {
 
 export function ResistanceModal({ visible, onClose, onSelectResistance }: ResistanceModalProps) {
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const [activeTab, setActiveTab] = useState<'current' | 'old' | 'old_2'>('current');
+
+  // Altura máxima do grid = 3 linhas (largura útil = tela - padding 20 de cada lado; ícone = 28% dela).
+  // Do 10º ícone em diante o grid rola na vertical em vez de aumentar o modal.
+  const iconSize = (width - 40) * 0.28;
+  const gridMaxHeight = Math.ceil(10 + iconSize * 3 + 15 * 2); // marginTop + 3 linhas + 2 gaps
 
   const getActiveList = () => {
     if (activeTab === 'old') return TYPES_OLD;
@@ -97,13 +66,17 @@ export function ResistanceModal({ visible, onClose, onSelectResistance }: Resist
             </TouchableOpacity>
           </View>
 
-          <View style={styles.grid}>
-            {getActiveList().map((type) => (
-              <TouchableOpacity key={type.id} style={styles.iconButton} onPress={() => onSelectResistance(type.id)}>
-                <Image source={type.source} style={styles.typeIcon} />
-              </TouchableOpacity>
-            ))}
-          </View>
+          {/* Grid de Ícones (rola na vertical a partir da 4ª linha) */}
+          <ScrollView style={{ maxHeight: gridMaxHeight }}>
+            {/* Responder aqui dentro para o toque entre os ícones não travar a rolagem no modal */}
+            <View style={styles.grid} onStartShouldSetResponder={() => true}>
+              {getActiveList().map((type) => (
+                <TouchableOpacity key={type.id} style={styles.iconButton} onPress={() => onSelectResistance(type.id)}>
+                  <Image source={type.source} style={styles.typeIcon} />
+                </TouchableOpacity>
+              ))}
+            </View>
+          </ScrollView>
         </View>
       </Pressable>
     </KeyboardAvoidingView>

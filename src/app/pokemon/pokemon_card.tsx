@@ -16,6 +16,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Sharing from 'expo-sharing';
 import { captureRef } from 'react-native-view-shot';
 import { BottomTabInset, MaxContentWidth, Spacing } from "@/constants/theme";
+import { TYPE_ICONS } from "@/constants/type_icons";
 
 import { Back } from "@/components/back";
 import { TypeModal } from "@/components/modals/type_modal";
@@ -120,48 +121,12 @@ const initialState: CardState = {
   secondSkillEnergy: null,
 };
 
-// Mapeamento dos símbolos (usado pela fraqueza e afins)
-const ICONS_URL = "../../../assets/images/icons/pokemon_types";
+// Mapeamento dos símbolos de raridade (os de tipagem vêm de @/constants/type_icons)
 const RARITY_ICONS: Record<string, any> = {
   common: require('../../../assets/images/icons/rarities/common.png'),
   uncommon: require('../../../assets/images/icons/rarities/uncommon.png'),
   rare: require('../../../assets/images/icons/rarities/rare.png'),
   promo: require('../../../assets/images/icons/rarities/promo.png'),
-};
-
-const TYPE_ICONS: Record<string, any> = {
-  // Atuais
-  dark: require(`${ICONS_URL}/dark.png`),
-  eletric: require(`${ICONS_URL}/eletric.png`),
-  fighter: require(`${ICONS_URL}/fighter.png`),
-  fire: require(`${ICONS_URL}/fire.png`),
-  grass: require(`${ICONS_URL}/grass.png`),
-  metal: require(`${ICONS_URL}/metal.png`),
-  normal: require(`${ICONS_URL}/normal.png`),
-  psychic: require(`${ICONS_URL}/psychic.png`),
-  water: require(`${ICONS_URL}/water.png`),
-
-  // Antigos (Clássico)
-  dark_old: require(`${ICONS_URL}/dark_old.png`),
-  eletric_old: require(`${ICONS_URL}/eletric_old.png`),
-  fighter_old: require(`${ICONS_URL}/fighter_old.png`),
-  fire_old: require(`${ICONS_URL}/fire_old.png`),
-  grass_old: require(`${ICONS_URL}/grass_old.png`),
-  metal_old: require(`${ICONS_URL}/metal_old.png`),
-  normal_old: require(`${ICONS_URL}/normal_old.png`),
-  psychic_old: require(`${ICONS_URL}/psychic_old.png`),
-  water_old: require(`${ICONS_URL}/water_old.png`),
-
-  // Antigos 2 (Retrô)
-  dark_old_2: require(`${ICONS_URL}/dark_old_2.png`),
-  eletric_old_2: require(`${ICONS_URL}/eletric_old_2.png`),
-  fighter_old_2: require(`${ICONS_URL}/fighter_old_2.png`),
-  fire_old_2: require(`${ICONS_URL}/fire_old_2.png`),
-  grass_old_2: require(`${ICONS_URL}/grass_old_2.png`),
-  metal_old_2: require(`${ICONS_URL}/metal_old_2.png`),
-  normal_old_2: require(`${ICONS_URL}/normal_old_2.png`),
-  psychic_old_2: require(`${ICONS_URL}/psychic_old_2.png`),
-  water_old_2: require(`${ICONS_URL}/water_old_2.png`),
 };
 
 // 1. Definimos o tamanho REAL e gigante da carta para exportação

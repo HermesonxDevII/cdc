@@ -1,19 +1,7 @@
-import { Modal, StyleSheet, TouchableOpacity, View, Text, Image, Pressable , KeyboardAvoidingView, Platform } from 'react-native';
+import { useState } from 'react';
+import { Modal, StyleSheet, TouchableOpacity, View, Text, Image, Pressable , KeyboardAvoidingView, Platform, ScrollView, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-const BASE_URL = '../../../assets/images/icons/pokemon_types';
-
-const TYPES_CURRENT = [
-  { id: 'dark', source: require(`${BASE_URL}/dark.png`) },
-  { id: 'eletric', source: require(`${BASE_URL}/eletric.png`) },
-  { id: 'fighter', source: require(`${BASE_URL}/fighter.png`) },
-  { id: 'fire', source: require(`${BASE_URL}/fire.png`) },
-  { id: 'grass', source: require(`${BASE_URL}/grass.png`) },
-  { id: 'metal', source: require(`${BASE_URL}/metal.png`) },
-  { id: 'normal', source: require(`${BASE_URL}/normal.png`) },
-  { id: 'psychic', source: require(`${BASE_URL}/psychic.png`) },
-  { id: 'water', source: require(`${BASE_URL}/water.png`) },
-];
+import { TYPES_CURRENT, TYPES_OLD, TYPES_OLD_2 } from '@/constants/type_icons';
 
 interface TypeModalProps {
   visible: boolean;
@@ -23,6 +11,20 @@ interface TypeModalProps {
 
 export function TypeModal({ visible, onClose, onSelectType }: TypeModalProps) {
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const [activeTab, setActiveTab] = useState<'current' | 'old' | 'old_2'>('current');
+
+  const getActiveList = () => {
+    if (activeTab === 'old') return TYPES_OLD;
+    if (activeTab === 'old_2') return TYPES_OLD_2;
+    return TYPES_CURRENT;
+  };
+
+  // Altura máxima do grid = 3 linhas (largura útil = tela - padding 20 de cada lado; ícone = 28% dela).
+  // Do 10º ícone em diante o grid rola na vertical em vez de aumentar o modal.
+  const iconSize = (width - 40) * 0.28;
+  const gridMaxHeight = Math.ceil(10 + iconSize * 3 + 15 * 2); // marginTop + 3 linhas + 2 gaps
+
   return (
     <Modal
       animationType="slide"
@@ -44,14 +46,62 @@ export function TypeModal({ visible, onClose, onSelectType }: TypeModalProps) {
           {/* Título do Modal */}
           <Text style={styles.title}>Selecione o Tipo</Text>
 
-          {/* Grid de Ícones */}
-          <View style={styles.grid}>
-            {TYPES_CURRENT.map((type) => (
-              <TouchableOpacity key={type.id} style={styles.iconButton} onPress={() => onSelectType(type.id)}>
-                <Image source={type.source} style={styles.typeIcon} />
-              </TouchableOpacity>
-            ))}
+          {/* Menu de navegação entre os estilos de ícones */}
+          <View style={styles.tabContainer}>
+            <TouchableOpacity
+              style={[styles.tabButton, activeTab === 'current' && styles.tabButtonActive]}
+              onPress={() => setActiveTab('current')}
+            >
+              <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                style={[
+                  styles.tabText,
+                  activeTab === 'current' && styles.tabTextActive
+                ]}
+              >Atual</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.tabButton, activeTab === 'old' && styles.tabButtonActive]}
+              onPress={() => setActiveTab('old')}
+            >
+              <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                style={[
+                  styles.tabText,
+                  activeTab === 'old' && styles.tabTextActive
+                ]}
+              >Clássico</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.tabButton, activeTab === 'old_2' && styles.tabButtonActive]}
+              onPress={() => setActiveTab('old_2')}
+            >
+              <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                style={[
+                  styles.tabText,
+                  activeTab === 'old_2' && styles.tabTextActive
+                ]}
+              >Retrô</Text>
+            </TouchableOpacity>
           </View>
+
+          {/* Grid de Ícones (rola na vertical a partir da 4ª linha) */}
+          <ScrollView style={{ maxHeight: gridMaxHeight }}>
+            {/* Responder aqui dentro para o toque entre os ícones não travar a rolagem no modal */}
+            <View style={styles.grid} onStartShouldSetResponder={() => true}>
+              {getActiveList().map((type) => (
+                <TouchableOpacity key={type.id} style={styles.iconButton} onPress={() => onSelectType(type.id)}>
+                  <Image source={type.source} style={styles.typeIcon} />
+                </TouchableOpacity>
+              ))}
+            </View>
+          </ScrollView>
         </View>
       </Pressable>
     </KeyboardAvoidingView>
@@ -102,6 +152,30 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 20,
     textAlign: 'center',
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#E0E0E0',
+    borderRadius: 20,
+    padding: 4,
+    marginBottom: 15,
+  },
+  tabButton: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 16,
+    alignItems: 'center',
+  },
+  tabButtonActive: {
+    backgroundColor: '#7C3AED',
+  },
+  tabText: {
+    fontSize: 13,
+    fontWeight: 'bold',
+    color: '#555',
+  },
+  tabTextActive: {
+    color: '#FFF',
   },
   grid: {
     flexDirection: 'row',
