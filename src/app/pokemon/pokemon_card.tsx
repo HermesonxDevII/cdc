@@ -44,7 +44,7 @@ import { ResponsiveText } from "@/components/responsive-text";
 import { useRouter } from "expo-router";
 
 type CardState = {
-  currentTemplate: any;
+  currentTemplate: string; // id do template em CARD_TEMPLATES
   pokemonImage: string | null;
   hp: string;
   name: string;
@@ -76,7 +76,7 @@ type CardState = {
 };
 
 const initialState: CardState = {
-  currentTemplate: CARD_TEMPLATES.normal,
+  currentTemplate: "normal",
   pokemonImage: null,
   hp: "",
   name: "",
@@ -114,6 +114,11 @@ const RARITY_ICONS: Record<string, any> = {
   rare: require('../../../assets/images/icons/rarities/rare.png'),
   promo: require('../../../assets/images/icons/rarities/promo.png'),
 };
+
+// Templates que recebem o estilo único hpButtonCustom (definido em styles)
+const HP_BUTTON_CUSTOM_TEMPLATES = [
+  "bug", "dragon", "earth", "fairy", "flying", "ghost", "ice", "poison", "rock"
+];
 
 // 1. Definimos o tamanho REAL e gigante da carta para exportação
 const CARD_REAL_WIDTH = 744;
@@ -276,15 +281,26 @@ export default function PokemonCard() {
 
           {/* Carta real proporção de 744x1045 */}
           <View ref={cardRef} style={styles.realSizeCard}>
-            <Image source={currentTemplate} style={styles.cardImage} />
+            <Image source={CARD_TEMPLATES[currentTemplate]} style={styles.cardImage} />
 
             {/* ========= BEGIN:: Nome ========= */}
             <TouchableOpacity
-              style={[styles.nameButton, isPreviewMode && styles.previewMode]}
+              style={[
+                styles.nameButton,
+                HP_BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.nameButtonCustom,
+                isPreviewMode && styles.previewMode
+              ]}
               onPress={() => setNameModalVisible(true)}
               disabled={isPreviewMode}
             >
-              {name ? <ResponsiveText style={styles.nameText}>{name}</ResponsiveText> : null }
+              {name ?
+                <ResponsiveText
+                  style={[
+                    styles.nameText,
+                    HP_BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.nameTextCustom,
+                  ]}
+                >{name}</ResponsiveText>
+              : null }
             </TouchableOpacity>
             {/* ========= END:: Nome ========= */}
 
@@ -292,8 +308,13 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.levelButton,
+                HP_BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.levelButtonCustom,
                 isPreviewMode && styles.previewMode,
-                { right: hp.length > 2 ? 285 : 260 }
+                {
+                  right: HP_BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate)
+                    ? (hp.length > 2 ? 265 : 240)
+                    : (hp.length > 2 ? 285 : 260)
+                }
               ]}
               onPress={() => setLevelModalVisible(true)}
               disabled={isPreviewMode}
@@ -306,6 +327,7 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.hpButton,
+                HP_BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.hpButtonCustom,
                 isPreviewMode && styles.previewMode,
                 { width: hp.length > 2 ? 150 : 125 }
               ]}
@@ -318,7 +340,11 @@ export default function PokemonCard() {
 
             {/* ========= BEGIN:: Tipo ========= */}
             <TouchableOpacity
-              style={[styles.typeButton, isPreviewMode && styles.previewMode]}
+              style={[
+                styles.typeButton,
+                HP_BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.typeButtonCustom,
+                isPreviewMode && styles.previewMode
+              ]}
               onPress={() => setTypeModalVisible(true)}
               disabled={isPreviewMode}
             />
@@ -326,14 +352,21 @@ export default function PokemonCard() {
 
             {/* ========= BEGIN:: Imagem ========= */}
             <TouchableOpacity
-              style={[styles.imageButton, isPreviewMode && styles.previewMode]}
+              style={[
+                styles.imageButton,
+                HP_BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.imageButtonCustom,
+                isPreviewMode && styles.previewMode
+              ]}
               onPress={pickImage}
               disabled={isPreviewMode}
             >
               {pokemonImage
                 ? <Image source={{ uri: pokemonImage }} style={styles.pokemonImage} />
                 : !isPreviewMode && (
-                  <ResponsiveText style={styles.imageButtonText}>
+                  <ResponsiveText style={[
+                    styles.imageButtonText,
+                    HP_BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.imageButtonTextCustom
+                  ]}>
                     Clique aqui para{"\n"}adicionar uma imagem
                   </ResponsiveText>
                 )
@@ -345,6 +378,7 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.descriptionButton,
+                HP_BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.descriptionButtonCustom,
                 isPreviewMode && styles.previewMode,
               ]}
               onPress={() => setDescriptionModalVisible(true)}
@@ -443,7 +477,7 @@ export default function PokemonCard() {
 
             {/* ========= BEGIN:: Separador ========= */}
             {(movesCount === 2 || (movesCount === 1 && hasPassiveSkill)) && (
-              <View style={[styles.movesSeparatorLine, currentTemplate === CARD_TEMPLATES.dark &&{ backgroundColor: 'white' }]} />
+              <View style={[styles.movesSeparatorLine, currentTemplate === "dark" &&{ backgroundColor: 'white' }]} />
             )}
             {/* ========= END:: Separador ========= */}
 
@@ -813,8 +847,7 @@ export default function PokemonCard() {
           visible={isTypeModalVisible}
           onClose={() => setTypeModalVisible(false)}
           onSelectType={(id) => {
-            const template = CARD_TEMPLATES[id];
-            updateCard({ currentTemplate: template });
+            updateCard({ currentTemplate: id });
             setTypeModalVisible(false);
           }}
         />
@@ -1226,23 +1259,29 @@ const styles = StyleSheet.create({
   // ========= BEGIN:: Nome =========
   nameButton: {
     position: "absolute",
-    top: 70, // Mesmo alinhamento vertical da bolinha
-    left: 80, // Fica à esquerda do botão de HP (135 da margem do hp + 100 da largura do hp + 10 de espaço)
-    width: 250, // Bem mais largo por ser um retângulo gigante (ajuste se precisar)
-    height: 50, // Mesma altura
+    top: 70,
+    left: 80,
+    width: 250,
+    height: 50,
     borderWidth: 3,
     borderColor: "white",
     borderRadius: 8,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
-    justifyContent: "center", // Centraliza verticalmente
-    alignItems: "flex-start", // Alinha o nome pela esquerda
+    justifyContent: "center",
+    alignItems: "flex-start",
+  },
+  nameButtonCustom: {
+    top: 75,
+    left: 70,
+    height: 41,
   },
   nameText: {
     fontFamily: "GillSans-Bold",
     fontSize: 45,
     color: "#000",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
+  },
+  nameTextCustom: {
+    fontSize: 35,
   },
   // ========= END:: Nome =========
 
@@ -1250,15 +1289,19 @@ const styles = StyleSheet.create({
   levelButton: {
     position: "absolute",
     top: 85,
-    right: 285, // Provisório (à esquerda da box de HP)
-    width: 80, // Menor que o HP
-    height: 30, // Menor que o HP
+    right: 285,
+    width: 80,
+    height: 30,
     borderWidth: 3,
     borderColor: "white",
     borderRadius: 8,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     justifyContent: "center",
     alignItems: "center",
+  },
+  // O right do level é definido no próprio botão (depende do HP); aqui vão os demais ajustes
+  levelButtonCustom: {
+    right: 265,
   },
   levelText: {
     fontFamily: "Revue",
@@ -1275,7 +1318,7 @@ const styles = StyleSheet.create({
   // ========= BEGIN:: HP =========
   hpButton: {
     position: "absolute",
-    top: 70, // Mesmo alinhamento vertical da bolinha
+    top: 69, // Mesmo alinhamento vertical da bolinha
     right: 130,
     width: 150,
     height: 50, // Mesma altura
@@ -1285,6 +1328,11 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     justifyContent: "flex-start", // Centraliza o texto verticalmente
     alignItems: "flex-start", // Centraliza o texto horizontalmente
+  },
+  // Estilo único dos templates listados em HP_BUTTON_CUSTOM_TEMPLATES
+  hpButtonCustom: {
+    top: 67,
+    right: 111,
   },
   hpText: {
     fontFamily: "Futura-Heavy",
@@ -1297,24 +1345,28 @@ const styles = StyleSheet.create({
   // ========= BEGIN:: Tipo =========
   typeButton: {
     position: "absolute",
-    top: 59, // Alinhamento vertical
-    right: 68, // Alinhamento horizontal
-    width: 60, // Largura
-    height: 60, // Altura
+    top: 59,
+    right: 68,
+    width: 60,
+    height: 60,
     borderWidth: 3,
     borderColor: "white",
     borderRadius: 8,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
+  },
+  typeButtonCustom: {
+    top: 57,
+    right: 49,
   },
   // ========= END:: Tipo =========
 
   // ========= BEGIN:: Imagem =========
   imageButton: {
     position: "absolute",
-    top: 134, // Valor provisório
-    left: 92, // Valor provisório
-    width: 560, // Valor provisório
-    height: 387, // Valor provisório (caixa grande para a arte)
+    top: 134,
+    left: 92,
+    width: 560,
+    height: 387,
     borderWidth: 3,
     borderColor: "white",
     borderRadius: 2,
@@ -1322,6 +1374,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     overflow: "hidden", // Para a imagem não vazar das bordas redondas
+  },
+  imageButtonCustom: {
+    top: 131,
+    left: 85,
+    width: 575,
+    height: 400,
+    borderColor: "black",
   },
   pokemonImage: {
     width: "100%",
@@ -1336,21 +1395,29 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
   },
+  imageButtonTextCustom: {
+    color: "#000",
+  },
   // ========= END:: Imagem =========
 
   // ========= BEGIN: Descrição =========
   descriptionButton: {
     position: "absolute",
     top: 549,
-    left: 105, // O nameButton vai de 80 a 330 (80+250). Com 10 de espaço, começamos no 340.
-    width: 535,
+    left: 105,
+    width: 534,
     height: 35,
     borderWidth: 3,
     borderColor: "white",
     borderRadius: 8,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
-    justifyContent: "center", // Para o texto da descrição ficar centralizado verticalmente
-    alignItems: "center", // E horizontalmente
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  descriptionButtonCustom: {
+    top: 557,
+    left: 98,
+    width: 548,
   },
   descriptionText: {
     fontFamily: "GillSans-Bold-Italic",
