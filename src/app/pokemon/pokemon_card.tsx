@@ -117,7 +117,13 @@ const RARITY_ICONS: Record<string, any> = {
 
 // Templates que recebem o estilo único hpButtonCustom (definido em styles)
 const BUTTON_CUSTOM_TEMPLATES = [
-  "bug", "dragon", "earth", "fairy", "flying", "ghost", "ice", "poison", "rock"
+  "bug", "dragon", "earth", "fairy", "flying", "ghost", "ice", "poison", "rock",
+  "dragon_old", "fairy_old",
+  "dark_old_2", "eletric_old_2", "fighter_old_2", "fire_old_2", "grass_old_2", "metal_old_2",
+  "psychic_old_2", "water_old_2"
+];
+const TEXT_CUSTOM_TEMPLATES = [
+  "dark", "dragon_old", "dark_old_2"
 ];
 
 // 1. Definimos o tamanho REAL e gigante da carta para exportação
@@ -168,6 +174,13 @@ export default function PokemonCard() {
   const [historyIndex, setHistoryIndex] = useState<number>(0);
 
   const currentState = history[historyIndex];
+
+  const checkTemplates = (array: string[], condition: string) => {
+    return array.includes(condition);
+  }
+
+  const buttonCheckTemplate = () => checkTemplates(BUTTON_CUSTOM_TEMPLATES, currentTemplate)
+  const textCheckTemplate = () => checkTemplates(TEXT_CUSTOM_TEMPLATES, currentTemplate)
 
   const updateCard = (updates: Partial<CardState>) => {
     const newState = { ...currentState, ...updates };
@@ -287,7 +300,7 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.nameButton,
-                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.nameButtonCustom,
+                buttonCheckTemplate() && styles.nameButtonCustom,
                 isPreviewMode && styles.previewMode
               ]}
               onPress={() => setNameModalVisible(true)}
@@ -297,9 +310,12 @@ export default function PokemonCard() {
                 <ResponsiveText
                   style={[
                     styles.nameText,
-                    BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.nameTextCustom,
+                    buttonCheckTemplate() && styles.nameTextCustom,
+                    textCheckTemplate() && { color: "#fff" },
                   ]}
-                >{name}</ResponsiveText>
+                >
+                  {name}
+                </ResponsiveText>
               : null }
             </TouchableOpacity>
             {/* ========= END:: Nome ========= */}
@@ -308,10 +324,10 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.levelButton,
-                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.levelButtonCustom,
+                buttonCheckTemplate() && styles.levelButtonCustom,
                 isPreviewMode && styles.previewMode,
                 {
-                  right: BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate)
+                  right: buttonCheckTemplate()
                     ? (hp.length > 2 ? 265 : 240)
                     : (hp.length > 2 ? 285 : 260)
                 }
@@ -319,7 +335,11 @@ export default function PokemonCard() {
               onPress={() => setLevelModalVisible(true)}
               disabled={isPreviewMode}
             >
-              {level ? <ResponsiveText style={styles.levelText}>Nv.{level}</ResponsiveText> : null}
+              {level ?
+                <ResponsiveText style={[styles.levelText, textCheckTemplate() && { color: "#fff" }]}>
+                  Nv.{level}
+                </ResponsiveText>
+              : null}
             </TouchableOpacity>
             {/* ========= END:: Level ========= */}
 
@@ -327,14 +347,18 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.hpButton,
-                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.hpButtonCustom,
+                buttonCheckTemplate() && styles.hpButtonCustom,
                 isPreviewMode && styles.previewMode,
                 { width: hp.length > 2 ? 150 : 125 }
               ]}
               onPress={() => setHpModalVisible(true)}
               disabled={isPreviewMode}
             >
-              {hp ? <ResponsiveText style={styles.hpText}>{hp} HP</ResponsiveText> : null}
+              {hp ?
+                <ResponsiveText style={[styles.hpText, textCheckTemplate() && { color: "#fff" }]}>
+                  {hp} HP
+                </ResponsiveText>
+              : null}
             </TouchableOpacity>
             {/* ========= END:: HP ========= */}
 
@@ -342,7 +366,7 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.typeButton,
-                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.typeButtonCustom,
+                buttonCheckTemplate() && styles.typeButtonCustom,
                 isPreviewMode && styles.previewMode
               ]}
               onPress={() => setTypeModalVisible(true)}
@@ -354,7 +378,7 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.imageButton,
-                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.imageButtonCustom,
+                buttonCheckTemplate() && styles.imageButtonCustom,
                 isPreviewMode && styles.previewMode
               ]}
               onPress={pickImage}
@@ -363,10 +387,7 @@ export default function PokemonCard() {
               {pokemonImage
                 ? <Image source={{ uri: pokemonImage }} style={styles.pokemonImage} />
                 : !isPreviewMode && (
-                  <ResponsiveText style={[
-                    styles.imageButtonText,
-                    BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.imageButtonTextCustom
-                  ]}>
+                  <ResponsiveText style={[styles.imageButtonText, buttonCheckTemplate() && styles.imageButtonTextCustom]}>
                     Clique aqui para{"\n"}adicionar uma imagem
                   </ResponsiveText>
                 )
@@ -378,15 +399,17 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.descriptionButton,
-                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.descriptionButtonCustom,
+                buttonCheckTemplate() && styles.descriptionButtonCustom,
                 isPreviewMode && styles.previewMode,
               ]}
               onPress={() => setDescriptionModalVisible(true)}
               disabled={isPreviewMode}
             >
-              {description ? (
-                <ResponsiveText style={styles.descriptionText}>{description}</ResponsiveText>
-              ) : null}
+              {description ?
+                <ResponsiveText style={[styles.descriptionText, textCheckTemplate() && { color: "#fff" }]}>
+                  {description}
+                </ResponsiveText>
+              : null}
             </TouchableOpacity>
             {/* ========= END: Descrição ========= */}
 
@@ -395,14 +418,14 @@ export default function PokemonCard() {
               <TouchableOpacity
                 style={[
                   styles.passiveSkillButton,
-                  BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.passiveSkillButtonCustom,
+                  buttonCheckTemplate() && styles.passiveSkillButtonCustom,
                   isPreviewMode && styles.previewMode
                 ]}
                 onPress={() => setPassiveSkillModalVisible(true)}
                 disabled={isPreviewMode}
               >
                 {passiveSkill ? (
-                  <ResponsiveText style={[styles.skillDescriptionText, { width: '100%' }]}>
+                  <ResponsiveText style={[styles.skillDescriptionText, { width: '100%' }, textCheckTemplate() && { color: "#fff" }]}>
                     <ResponsiveText style={[styles.skillNameText, { color: passiveSkill.color || '#CC0000', fontSize: 25 }]}>
                       Poder Pokémon: <ResponsiveText style={{ color: passiveSkill.color }}>{passiveSkill.name} </ResponsiveText>
                     </ResponsiveText>
@@ -450,8 +473,8 @@ export default function PokemonCard() {
                   disabled={isPreviewMode}
                 >
                   {firstSkill ? (
-                    <ResponsiveText style={styles.skillDescriptionText}>
-                      <ResponsiveText style={styles.skillNameText}>{firstSkill.name} </ResponsiveText>
+                    <ResponsiveText style={[styles.skillDescriptionText, textCheckTemplate() && { color: "#fff" }]}>
+                      <ResponsiveText style={[styles.skillNameText, textCheckTemplate() && { color: "#fff" }]}>{firstSkill.name} </ResponsiveText>
                       {firstSkill.description}
                     </ResponsiveText>
                   ) : null}
@@ -467,9 +490,17 @@ export default function PokemonCard() {
                   onPress={() => setFirstSkillDamageModalVisible(true)}
                   disabled={isPreviewMode}
                 >
-                  {firstSkillDamage ? (
-                    <ResponsiveText style={[styles.skillDamageText, firstSkillDamage.includes('+') && { fontSize: 30 }]}>{firstSkillDamage}</ResponsiveText>
-                  ) : null}
+                  {firstSkillDamage ?
+                    <ResponsiveText
+                      style={[
+                        styles.skillDamageText,
+                        firstSkillDamage.includes('+') && { fontSize: 30 },
+                        textCheckTemplate() && { color: "#fff" },
+                      ]}
+                    >
+                      {firstSkillDamage}
+                    </ResponsiveText>
+                  : null}
                 </TouchableOpacity>
                 {/* ========= END:: Qtd. de Dano ========= */}
               </>
@@ -481,7 +512,7 @@ export default function PokemonCard() {
               <View
                 style={[
                   styles.movesSeparatorLine,
-                  BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && movesCount === 1 && hasPassiveSkill && styles.movesSeparatorLineCustom,
+                  buttonCheckTemplate() && movesCount === 1 && hasPassiveSkill && styles.movesSeparatorLineCustom,
                   currentTemplate === "dark" &&{ backgroundColor: 'white' }
                 ]}
               />
@@ -495,7 +526,7 @@ export default function PokemonCard() {
                 <TouchableOpacity
                   style={[
                     styles.secondSkillEnergyButton,
-                    BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && movesCount === 1 && hasPassiveSkill && styles.secondSkillEnergyButtonCustom,
+                    buttonCheckTemplate() && movesCount === 1 && hasPassiveSkill && styles.secondSkillEnergyButtonCustom,
                     isPreviewMode && styles.previewMode,
                     isPreviewMode && secondSkillEnergy && secondSkillEnergy.length >= 3 && { top: 725 },
                   ]}
@@ -520,15 +551,15 @@ export default function PokemonCard() {
                 <TouchableOpacity
                   style={[
                     styles.secondSkillButton,
-                    BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && movesCount === 1 && hasPassiveSkill && styles.secondSkillButtonCustom,
+                    buttonCheckTemplate() && movesCount === 1 && hasPassiveSkill && styles.secondSkillButtonCustom,
                     isPreviewMode && styles.previewMode
                   ]}
                   onPress={() => setSecondSkillModalVisible(true)}
                   disabled={isPreviewMode}
                 >
                   {secondSkill ? (
-                    <ResponsiveText style={styles.skillDescriptionText}>
-                      <ResponsiveText style={styles.skillNameText}>{secondSkill.name} </ResponsiveText>
+                    <ResponsiveText style={[styles.skillDescriptionText, textCheckTemplate() && { color: "#fff" }]}>
+                      <ResponsiveText style={[styles.skillNameText, textCheckTemplate() && { color: "#fff" }]}>{secondSkill.name} </ResponsiveText>
                       {secondSkill.description}
                     </ResponsiveText>
                   ) : null}
@@ -539,15 +570,23 @@ export default function PokemonCard() {
                 <TouchableOpacity
                   style={[
                     styles.secondSkillDamageButton,
-                    BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && movesCount === 1 && hasPassiveSkill && styles.secondSkillDamageButtonCustom,
+                    buttonCheckTemplate() && movesCount === 1 && hasPassiveSkill && styles.secondSkillDamageButtonCustom,
                     isPreviewMode && styles.previewMode,
                   ]}
                   onPress={() => setSecondSkillDamageModalVisible(true)}
                   disabled={isPreviewMode}
                 >
-                  {secondSkillDamage ? (
-                    <ResponsiveText style={[styles.skillDamageText, secondSkillDamage.includes('+') && { fontSize: 30 }]}>{secondSkillDamage}</ResponsiveText>
-                  ) : null}
+                  {secondSkillDamage ?
+                    <ResponsiveText
+                      style={[
+                        styles.skillDamageText,
+                        secondSkillDamage.includes('+') && { fontSize: 30 },
+                        textCheckTemplate() && { color: "#fff" }
+                      ]}
+                    >
+                      {secondSkillDamage}
+                    </ResponsiveText>
+                  : null}
                 </TouchableOpacity>
                 {/* ========= END:: Qtd. de Dano ========= */}
               </>
@@ -595,17 +634,23 @@ export default function PokemonCard() {
                       <ResponsiveText
                         style={[
                           styles.skillNameText,
-                          { fontSize: 35, textAlign: 'center' }
+                          { fontSize: 35, textAlign: 'center' },
+                          textCheckTemplate() && { color: "#fff" }
                         ]}
-                      >{firstSkill.name}</ResponsiveText>
+                      >
+                        {firstSkill.name}
+                      </ResponsiveText>
 
                       {firstSkill.description ? (
                         <ResponsiveText
                           style={[
                             styles.skillDescriptionText,
-                            { fontSize: 23, textAlign: 'left', marginTop: 5 }
+                            { fontSize: 23, textAlign: 'left', marginTop: 5 },
+                            textCheckTemplate() && { color: "#fff" },
                           ]}
-                        >{firstSkill.description}</ResponsiveText>
+                        >
+                          {firstSkill.description}
+                        </ResponsiveText>
                       ) : null}
                     </>
                   ) : null}
@@ -622,9 +667,17 @@ export default function PokemonCard() {
                   onPress={() => setFirstSkillDamageModalVisible(true)}
                   disabled={isPreviewMode}
                 >
-                  {firstSkillDamage ? (
-                    <ResponsiveText style={[styles.skillDamageText, firstSkillDamage.includes('+') && { fontSize: 30 }]}>{firstSkillDamage}</ResponsiveText>
-                  ) : null}
+                  {firstSkillDamage ?
+                    <ResponsiveText
+                      style={[
+                        styles.skillDamageText,
+                        firstSkillDamage.includes('+') && { fontSize: 30 },
+                        textCheckTemplate() && { color: "#fff" },
+                      ]}
+                    >
+                      {firstSkillDamage}
+                    </ResponsiveText>
+                  : null}
                 </TouchableOpacity>
                 {/* ========= END:: Qtd. de Dano ========= */}
               </>
@@ -637,10 +690,10 @@ export default function PokemonCard() {
               style={[
                 styles.weaknessButton,
                 weaknessesCount === 2 && { left: 89 },
-                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.weaknessButtonCustom,
-                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && weaknessesCount === 2 && { left: 79 },
+                buttonCheckTemplate() && styles.weaknessButtonCustom,
+                buttonCheckTemplate() && weaknessesCount === 2 && { left: 79 },
                 isPreviewMode && styles.previewMode,
-                !BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && isPreviewMode && {
+                !buttonCheckTemplate() && isPreviewMode && {
                   left: weaknessesCount === 2 ? 90 : 110
                 },
               ]}
@@ -650,10 +703,7 @@ export default function PokemonCard() {
               {weakness ? (
                 <Image
                   source={TYPE_ICONS[weakness]}
-                  style={[
-                    styles.icons,
-                    BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.iconsCustom,
-                  ]}
+                  style={[styles.icons, buttonCheckTemplate() && styles.iconsCustom]}
                 />
               ) : null}
             </TouchableOpacity>
@@ -664,9 +714,9 @@ export default function PokemonCard() {
               <TouchableOpacity
                 style={[
                   styles.secondWeaknessButton,
-                  BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.secondWeaknessButtonCustom,
+                  buttonCheckTemplate() && styles.secondWeaknessButtonCustom,
                   isPreviewMode && styles.previewMode,
-                  !BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && isPreviewMode && {
+                  !buttonCheckTemplate() && isPreviewMode && {
                     left: 135,
                   },
                 ]}
@@ -676,10 +726,7 @@ export default function PokemonCard() {
                 {secondWeakness ? (
                   <Image
                     source={TYPE_ICONS[secondWeakness]}
-                    style={[
-                      styles.icons,
-                      BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.iconsCustom,
-                    ]}
+                    style={[styles.icons, buttonCheckTemplate() && styles.iconsCustom]}
                   />
                 ) : null}
               </TouchableOpacity>
@@ -691,22 +738,25 @@ export default function PokemonCard() {
               style={[
                 styles.weaknessValueButton,
                 weaknessesCount === 2 && { left: 184 },
-                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.weaknessValueButtonCustom,
-                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && weaknessesCount === 2 && { left: 167 },
+                buttonCheckTemplate() && styles.weaknessValueButtonCustom,
+                buttonCheckTemplate() && weaknessesCount === 2 && { left: 167 },
                 isPreviewMode && styles.previewMode,
-                !BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) &&  isPreviewMode && { left: weaknessesCount === 2 ? 180 : 155 },
+                !buttonCheckTemplate() &&  isPreviewMode && { left: weaknessesCount === 2 ? 180 : 155 },
               ]}
               onPress={() => setWeaknessValueModalVisible(true)}
               disabled={isPreviewMode}
             >
-              {weaknessValue ? (
+              {weaknessValue ?
                 <ResponsiveText
                   style={[
                     styles.valuesText,
-                    BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.valuesTextCustom,
+                    buttonCheckTemplate() && styles.valuesTextCustom,
+                    textCheckTemplate() && { color: "#fff" }
                   ]}
-                >{weaknessValue}</ResponsiveText>
-              ) : null}
+                >
+                  {weaknessValue}
+                </ResponsiveText>
+              : null}
             </TouchableOpacity>
             {/* ========= END:: Valor das fraquezas ========= */}
             {/* ========= END:: Fraquezas ========= */}
@@ -717,8 +767,8 @@ export default function PokemonCard() {
               style={[
                 styles.resistanceButton,
                 resistancesCount === 2 && { left: 316 },
-                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.resistanceButtonCustom,
-                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && resistancesCount === 2 && { left: 319 },
+                buttonCheckTemplate() && styles.resistanceButtonCustom,
+                buttonCheckTemplate() && resistancesCount === 2 && { left: 319 },
                 isPreviewMode && styles.previewMode,
                 isPreviewMode && {
                   left: resistancesCount === 2 ? 318 : 338
@@ -730,10 +780,7 @@ export default function PokemonCard() {
               {resistance ? (
                 <Image
                   source={TYPE_ICONS[resistance]}
-                  style={[
-                    styles.icons,
-                    BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.iconsCustom,
-                  ]}
+                  style={[styles.icons, buttonCheckTemplate() && styles.iconsCustom]}
                 />
               ) : null}
             </TouchableOpacity>
@@ -744,7 +791,7 @@ export default function PokemonCard() {
               <TouchableOpacity
                 style={[
                   styles.secondResistanceButton,
-                  BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.secondResistanceButtonCustom,
+                  buttonCheckTemplate() && styles.secondResistanceButtonCustom,
                   isPreviewMode && styles.previewMode,
                   isPreviewMode && {
                     left: 363
@@ -756,10 +803,7 @@ export default function PokemonCard() {
                 {secondResistance ? (
                   <Image
                     source={TYPE_ICONS[secondResistance]}
-                    style={[
-                      styles.icons,
-                      BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.iconsCustom,
-                    ]}
+                    style={[styles.icons, buttonCheckTemplate() && styles.iconsCustom]}
                   />
                 ) : null}
               </TouchableOpacity>
@@ -771,21 +815,24 @@ export default function PokemonCard() {
               style={[
                 styles.resistanceValueButton,
                 resistancesCount === 2 && { left: 412 },
-                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.resistanceValueButtonCustom,
-                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && resistancesCount === 2 && { left: 407 },
+                buttonCheckTemplate() && styles.resistanceValueButtonCustom,
+                buttonCheckTemplate() && resistancesCount === 2 && { left: 407 },
                 isPreviewMode && styles.previewMode,
               ]}
               onPress={() => setResistanceValueModalVisible(true)}
               disabled={isPreviewMode}
             >
-              {resistanceValue ? (
+              {resistanceValue ?
                 <ResponsiveText
                   style={[
                     styles.valuesText,
-                    BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.valuesTextCustom,
+                    buttonCheckTemplate() && styles.valuesTextCustom,
+                    textCheckTemplate() && { color: "#fff" }
                   ]}
-                >{resistanceValue}</ResponsiveText>
-              ) : null}
+                >
+                  {resistanceValue}
+                </ResponsiveText>
+              : null}
             </TouchableOpacity>
             {/* ========= END:: Valor das resistências ========= */}
             {/* ========= END:: Resistências ========= */}
@@ -794,7 +841,7 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.retreatButton,
-                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.retreatButtonCustom,
+                buttonCheckTemplate() && styles.retreatButtonCustom,
                 isPreviewMode && styles.previewMode,
               ]}
               onPress={() => setRetreatModalVisible(true)}
@@ -808,7 +855,7 @@ export default function PokemonCard() {
                       source={TYPE_ICONS[retreat.symbol]}
                       style={[
                         styles.icons,
-                        BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.iconsCustom,
+                        buttonCheckTemplate() && styles.iconsCustom,
                       ]}
                     />
                   ))}
@@ -821,15 +868,17 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.curiosityButton,
-                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.curiosityButtonCustom,
+                buttonCheckTemplate() && styles.curiosityButtonCustom,
                 isPreviewMode && styles.previewMode,
               ]}
               onPress={() => setCuriosityModalVisible(true)}
               disabled={isPreviewMode}
             >
-              {curiosity ? (
-                <ResponsiveText style={styles.curiosityText}>{curiosity}</ResponsiveText>
-              ) : null}
+              {curiosity ?
+                <ResponsiveText style={[ styles.curiosityText, textCheckTemplate() && { color: "#fff" }]}>
+                  {curiosity}
+                </ResponsiveText>
+              : null}
             </TouchableOpacity>
             {/* ========= END:: Curiosidade ========= */}
 
@@ -837,15 +886,15 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.illustrationButton,
-                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.illustrationButtonCustom,
+                buttonCheckTemplate() && styles.illustrationButtonCustom,
                 isPreviewMode && styles.previewMode,
-                !BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && isPreviewMode && { left: 45 }
+                !buttonCheckTemplate() && isPreviewMode && { left: 45 }
               ]}
               onPress={() => setIllustrationModalVisible(true)}
               disabled={isPreviewMode}
             >
               {illustration ? (
-                <ResponsiveText style={styles.illustrationText}>
+                <ResponsiveText style={[styles.illustrationText, textCheckTemplate() && { color: "#fff" }]}>
                   Illus. {illustration}
                 </ResponsiveText>
               ) : null}
@@ -856,15 +905,17 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.extraInfoButton,
-                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.extraInfoButtonCustom,
+                buttonCheckTemplate() && styles.extraInfoButtonCustom,
                 isPreviewMode && styles.previewMode
               ]}
               onPress={() => setExtraInfoModalVisible(true)}
               disabled={isPreviewMode}
             >
-              {extraInfo ? (
-                <ResponsiveText style={styles.extraInfoText}>{extraInfo}</ResponsiveText>
-              ) : null}
+              {extraInfo ?
+                <ResponsiveText style={[styles.extraInfoText, textCheckTemplate() && { color: "#fff" }]}>
+                  {extraInfo}
+                </ResponsiveText>
+              : null}
             </TouchableOpacity>
             {/* ========= END:: Licença ========= */}
 
@@ -872,15 +923,17 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.pokemonNumberButton,
-                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.pokemonNumberButtonCustom,
+                buttonCheckTemplate() && styles.pokemonNumberButtonCustom,
                 isPreviewMode && styles.previewMode
               ]}
               onPress={() => setPokemonNumberModalVisible(true)}
               disabled={isPreviewMode}
             >
-              {pokemonNumber ? (
-                <ResponsiveText style={styles.pokemonNumberText}>{pokemonNumber}</ResponsiveText>
-              ) : null}
+              {pokemonNumber ?
+                <ResponsiveText style={[styles.pokemonNumberText, textCheckTemplate() && { color: "#fff" }]}>
+                  {pokemonNumber}
+                </ResponsiveText>
+              : null}
             </TouchableOpacity>
             {/* ========= END:: Número da coleção ========= */}
 
@@ -888,7 +941,7 @@ export default function PokemonCard() {
             <TouchableOpacity
                 style={[
                   styles.rarityButton,
-                  BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.rarityButtonCustom,
+                  buttonCheckTemplate() && styles.rarityButtonCustom,
                   isPreviewMode && styles.previewMode
                 ]}
                 onPress={() => setRarityModalVisible(true)}
