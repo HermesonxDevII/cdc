@@ -17,6 +17,7 @@ import * as Sharing from 'expo-sharing';
 import { captureRef } from 'react-native-view-shot';
 import { BottomTabInset, MaxContentWidth, Spacing } from "@/constants/theme";
 import { TYPE_ICONS } from "@/constants/type_icons";
+import { CARD_TEMPLATES } from "@/constants/card_templates";
 
 import { Back } from "@/components/back";
 import { TypeModal } from "@/components/modals/type_modal";
@@ -41,21 +42,6 @@ import { DiscardChangesModal } from "@/components/modals/discard_changes_modal";
 import { MenuModal } from "@/components/modals/menu_modal";
 import { ResponsiveText } from "@/components/responsive-text";
 import { useRouter } from "expo-router";
-
-// Mapeamento de todas as texturas de cartas baseadas no tipo
-const BASE_URL = "../../../assets/images/templates/pokemon/basic";
-
-const TEMPLATES: Record<string, any> = {
-  dark: require(`${BASE_URL}/dark.png`),
-  eletric: require(`${BASE_URL}/eletric.png`),
-  fighter: require(`${BASE_URL}/fighter.png`),
-  fire: require(`${BASE_URL}/fire.png`),
-  grass: require(`${BASE_URL}/grass.png`),
-  metal: require(`${BASE_URL}/metal.png`),
-  normal: require(`${BASE_URL}/normal.png`),
-  psychic: require(`${BASE_URL}/psychic.png`),
-  water: require(`${BASE_URL}/water.png`),
-};
 
 type CardState = {
   currentTemplate: any;
@@ -90,7 +76,7 @@ type CardState = {
 };
 
 const initialState: CardState = {
-  currentTemplate: TEMPLATES.normal,
+  currentTemplate: CARD_TEMPLATES.normal,
   pokemonImage: null,
   hp: "",
   name: "",
@@ -457,7 +443,7 @@ export default function PokemonCard() {
 
             {/* ========= BEGIN:: Separador ========= */}
             {(movesCount === 2 || (movesCount === 1 && hasPassiveSkill)) && (
-              <View style={[styles.movesSeparatorLine, currentTemplate === TEMPLATES.dark && { backgroundColor: 'white' }]} />
+              <View style={[styles.movesSeparatorLine, currentTemplate === CARD_TEMPLATES.dark &&{ backgroundColor: 'white' }]} />
             )}
             {/* ========= END:: Separador ========= */}
 
@@ -827,7 +813,7 @@ export default function PokemonCard() {
           visible={isTypeModalVisible}
           onClose={() => setTypeModalVisible(false)}
           onSelectType={(id) => {
-            const template = TEMPLATES[id as keyof typeof TEMPLATES];
+            const template = CARD_TEMPLATES[id];
             updateCard({ currentTemplate: template });
             setTypeModalVisible(false);
           }}
