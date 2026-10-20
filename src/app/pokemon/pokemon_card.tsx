@@ -786,6 +786,7 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.illustrationButton,
+                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.illustrationButtonCustom,
                 isPreviewMode && styles.previewMode,
                 isPreviewMode && { left: 45 }
               ]}
@@ -804,6 +805,7 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.extraInfoButton,
+                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.extraInfoButtonCustom,
                 isPreviewMode && styles.previewMode
               ]}
               onPress={() => setExtraInfoModalVisible(true)}
@@ -819,6 +821,7 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.pokemonNumberButton,
+                BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.pokemonNumberButtonCustom,
                 isPreviewMode && styles.previewMode
               ]}
               onPress={() => setPokemonNumberModalVisible(true)}
@@ -834,6 +837,7 @@ export default function PokemonCard() {
             <TouchableOpacity
                 style={[
                   styles.rarityButton,
+                  BUTTON_CUSTOM_TEMPLATES.includes(currentTemplate) && styles.rarityButtonCustom,
                   isPreviewMode && styles.previewMode
                 ]}
                 onPress={() => setRarityModalVisible(true)}
@@ -1770,16 +1774,20 @@ const styles = StyleSheet.create({
   // ========= BEGIN:: Illustrador =========
   illustrationButton: {
     position: "absolute",
-    top: 980, // Valor provisório
-    left: 40, // Valor provisório
-    width: 141, // Valor provisório
-    height: 25, // Valor provisório
+    top: 980,
+    left: 40,
+    width: 141,
+    height: 25,
     borderWidth: 3,
     borderColor: "white",
     borderRadius: 8,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     justifyContent: "center",
     alignItems: "flex-start",
+  },
+  illustrationButtonCustom: {
+    left: 32,
+    top: 977,
   },
   illustrationText: {
     fontFamily: "GillSans-Bold",
@@ -1806,6 +1814,9 @@ const styles = StyleSheet.create({
     alignItems: "center", // Puxa para a esquerda
     padding: 0, // Sem padding extra, texto encosta nas bordas
   },
+  extraInfoButtonCustom: {
+    top: 977,
+  },
   extraInfoText: {
     fontFamily: "GillSans",
     fontSize: 14,
@@ -1820,16 +1831,20 @@ const styles = StyleSheet.create({
   // ========= BEGIN:: Número da coleção =========
   pokemonNumberButton: {
     position: "absolute",
-    top: 980, // Mesmo alinhamento vertical do ilustrador
-    right: 70, // Provisório (jogando um pouco mais pra direita)
-    width: 55, // Mesma largura
-    height: 25, // Mesma altura
+    top: 980,
+    right: 70,
+    width: 55,
+    height: 25,
     borderWidth: 3,
     borderColor: "white",
     borderRadius: 8,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     justifyContent: "center",
     alignItems: "center",
+  },
+  pokemonNumberButtonCustom: {
+    top: 977,
+    right: 63,
   },
   pokemonNumberText: {
     fontFamily: "GillSans",
@@ -1845,7 +1860,7 @@ const styles = StyleSheet.create({
   rarityButton: {
     position: "absolute",
     top: 980,
-    right: 40, // Ao lado direito do pokemon number
+    right: 40,
     width: 30,
     height: 25,
     borderWidth: 3,
@@ -1854,6 +1869,10 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     justifyContent: "center",
     alignItems: "center",
+  },
+  rarityButtonCustom: {
+    top: 977,
+    right: 31,
   },
   // ========= END:: Raridade =========
 
@@ -1884,10 +1903,10 @@ const styles = StyleSheet.create({
     fontFamily: "GillSans",
     fontSize: 20,
     color: "#000",
-    textAlign: "left", // Geralmente o texto das habilidades começa alinhado à esquerda
+    textAlign: "left",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
-    includeFontPadding: false, // Remove padding extra nativo da fonte no Android
+    includeFontPadding: false,
   },
   skillDamageText: {
     fontFamily: "Futura-Heavy",
