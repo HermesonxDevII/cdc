@@ -17,7 +17,7 @@ import * as Sharing from 'expo-sharing';
 import { captureRef } from 'react-native-view-shot';
 import { BottomTabInset, MaxContentWidth, Spacing } from "@/constants/theme";
 import { TYPE_ICONS } from "@/constants/type_icons";
-import { CARD_TEMPLATES } from "@/constants/card_templates";
+import { CARD_TEMPLATES, CardStage } from "@/constants/card_templates";
 
 import { Back } from "@/components/back";
 import { TypeModal } from "@/components/modals/type_modal";
@@ -44,7 +44,8 @@ import { ResponsiveText } from "@/components/responsive-text";
 import { useRouter } from "expo-router";
 
 type CardState = {
-  currentTemplate: string; // id do template em CARD_TEMPLATES
+  currentTemplate: string; // id do template em CARD_TEMPLATES[currentStage]
+  currentStage: CardStage;
   pokemonImage: string | null;
   hp: string;
   name: string;
@@ -77,6 +78,7 @@ type CardState = {
 
 const initialState: CardState = {
   currentTemplate: "normal",
+  currentStage: "basic",
   pokemonImage: null,
   hp: "",
   name: "",
@@ -202,7 +204,7 @@ export default function PokemonCard() {
   const canRedo = historyIndex < history.length - 1;
 
   const {
-    currentTemplate, pokemonImage, hp, name, description, curiosity,
+    currentTemplate, currentStage, pokemonImage, hp, name, description, curiosity,
     illustration, pokemonNumber, rarity, extraInfo, weakness, secondWeakness,
     weaknessValue, level, resistance, secondResistance, resistanceValue, retreat, movesCount,
     weaknessesCount, resistancesCount, hasPassiveSkill, passiveSkill, firstSkill, firstSkillDamage,
@@ -294,7 +296,7 @@ export default function PokemonCard() {
 
           {/* Carta real proporção de 744x1045 */}
           <View ref={cardRef} style={styles.realSizeCard}>
-            <Image source={CARD_TEMPLATES[currentTemplate]} style={styles.cardImage} />
+            <Image source={CARD_TEMPLATES[currentStage][currentTemplate]} style={styles.cardImage} />
 
             {/* ========= BEGIN:: Nome ========= */}
             <TouchableOpacity
@@ -970,6 +972,7 @@ export default function PokemonCard() {
             updateCard({ currentTemplate: id });
             setTypeModalVisible(false);
           }}
+          stage={currentStage}
         />
 
         {/* Modal de HP */}
@@ -1215,6 +1218,9 @@ export default function PokemonCard() {
         <MenuModal
           visible={isMenuModalVisible}
           onClose={() => setMenuModalVisible(false)}
+          currentTemplate={currentTemplate}
+          stage={currentStage}
+          onSelectStage={(stage) => updateCard({ currentStage: stage })}
           movesCount={movesCount}
           onSelectMovesCount={(count) => {
             if (count === 2) {
@@ -1497,11 +1503,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     overflow: "hidden", // Para a imagem não vazar das bordas redondas
   },
+  // A caixa é 3px maior de cada lado que a janela do template (85→659 x 132→530):
+  // assim a imagem, que fica por dentro da borda de 3px, cobre a janela branca inteira
   imageButtonCustom: {
-    top: 131,
-    left: 85,
-    width: 575,
-    height: 400,
+    top: 128,
+    left: 82,
+    width: 581,
+    height: 406,
     borderColor: "black",
   },
   pokemonImage: {

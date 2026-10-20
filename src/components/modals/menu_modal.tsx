@@ -1,10 +1,20 @@
 import React, { useState } from 'react';
 import { Modal, StyleSheet, TouchableOpacity, View, Text, Pressable, Platform, KeyboardAvoidingView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { CARD_TEMPLATES, CardStage } from '@/constants/card_templates';
+
+const STAGE_OPTIONS: { id: CardStage; label: string }[] = [
+  { id: 'basic', label: 'Básico' },
+  { id: 'stage_1', label: '1' },
+  { id: 'stage_2', label: '2' },
+];
 
 interface MenuModalProps {
   visible: boolean;
   onClose: () => void;
+  currentTemplate: string;
+  stage: CardStage;
+  onSelectStage: (stage: CardStage) => void;
   movesCount: number;
   onSelectMovesCount: (count: number) => void;
   hasPassiveSkill: boolean;
@@ -15,13 +25,19 @@ interface MenuModalProps {
   onSelectResistancesCount: (count: number) => void;
 }
 
-export function MenuModal({ visible, onClose, movesCount, onSelectMovesCount, hasPassiveSkill, onSelectPassiveSkill, weaknessesCount, onSelectWeaknessesCount, resistancesCount, onSelectResistancesCount }: MenuModalProps) {
+export function MenuModal({ visible, onClose, currentTemplate, stage, onSelectStage, movesCount, onSelectMovesCount, hasPassiveSkill, onSelectPassiveSkill, weaknessesCount, onSelectWeaknessesCount, resistancesCount, onSelectResistancesCount }: MenuModalProps) {
   const insets = useSafeAreaInsets();
 
+  const [isStageSelectOpen, setIsStageSelectOpen] = useState(false);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [isPassiveSelectOpen, setIsPassiveSelectOpen] = useState(false);
   const [isWeaknessesSelectOpen, setIsWeaknessesSelectOpen] = useState(false);
   const [isResistancesSelectOpen, setIsResistancesSelectOpen] = useState(false);
+
+  const handleStageSelect = (value: CardStage) => {
+    onSelectStage(value);
+    setIsStageSelectOpen(false);
+  };
 
   const handleSelect = (value: number) => {
     onSelectMovesCount(value);
@@ -58,6 +74,37 @@ export function MenuModal({ visible, onClose, movesCount, onSelectMovesCount, ha
             </TouchableOpacity>
 
             <Text style={styles.title}>Opções da Carta</Text>
+
+            <View style={[styles.optionContainer, { zIndex: 3 }]}>
+              <Text style={styles.label}>Estágio:</Text>
+
+              {/* Custom Select Box */}
+              <View style={styles.selectWrapper}>
+                <TouchableOpacity
+                  style={styles.selectBox}
+                  onPress={() => setIsStageSelectOpen(!isStageSelectOpen)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.selectValue}>{STAGE_OPTIONS.find((option) => option.id === stage)?.label}</Text>
+                  <Text style={styles.selectArrow}>{isStageSelectOpen ? '▲' : '▼'}</Text>
+                </TouchableOpacity>
+
+                {/* Dropdown Options (só os estágios que têm carta para o tipo atual) */}
+                {isStageSelectOpen && (
+                  <View style={styles.dropdownMenu}>
+                    {STAGE_OPTIONS.filter((option) => currentTemplate in CARD_TEMPLATES[option.id]).map((option) => (
+                      <TouchableOpacity
+                        key={option.id}
+                        style={styles.dropdownOption}
+                        onPress={() => handleStageSelect(option.id)}
+                      >
+                        <Text style={[styles.dropdownOptionText, stage === option.id && styles.selectedOptionText]}>{option.label}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )}
+              </View>
+            </View>
 
             <View style={[styles.optionContainer, { zIndex: 2 }]}>
               <Text style={styles.label}>Movimentos:</Text>

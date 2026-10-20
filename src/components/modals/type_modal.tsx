@@ -2,15 +2,16 @@ import { useState } from 'react';
 import { Modal, StyleSheet, TouchableOpacity, View, Text, Image, Pressable , KeyboardAvoidingView, Platform, ScrollView, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TYPES_CURRENT, TYPES_OLD, TYPES_OLD_2 } from '@/constants/type_icons';
-import { CARD_TEMPLATES } from '@/constants/card_templates';
+import { CARD_TEMPLATES, CardStage } from '@/constants/card_templates';
 
 interface TypeModalProps {
   visible: boolean;
   onClose: () => void;
   onSelectType: (id: string) => void;
+  stage: CardStage;
 }
 
-export function TypeModal({ visible, onClose, onSelectType }: TypeModalProps) {
+export function TypeModal({ visible, onClose, onSelectType, stage }: TypeModalProps) {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const [activeTab, setActiveTab] = useState<'current' | 'old' | 'old_2'>('current');
@@ -96,7 +97,7 @@ export function TypeModal({ visible, onClose, onSelectType }: TypeModalProps) {
           <ScrollView style={{ maxHeight: gridMaxHeight }}>
             {/* Responder aqui dentro para o toque entre os ícones não travar a rolagem no modal */}
             <View style={styles.grid} onStartShouldSetResponder={() => true}>
-              {getActiveList().filter((type) => type.id in CARD_TEMPLATES).map((type) => (
+              {getActiveList().filter((type) => type.id in CARD_TEMPLATES[stage]).map((type) => (
                 <TouchableOpacity key={type.id} style={styles.iconButton} onPress={() => onSelectType(type.id)}>
                   <Image source={type.source} style={styles.typeIcon} />
                 </TouchableOpacity>
