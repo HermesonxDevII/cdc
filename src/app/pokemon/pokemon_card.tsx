@@ -50,6 +50,7 @@ type CardState = {
   currentStage: CardStage;
   pokemonImage: string | null;
   collectionSymbol: string | null;
+  preEvolutionImage: string | null;
   hp: string;
   name: string;
   description: string;
@@ -84,6 +85,7 @@ const initialState: CardState = {
   currentStage: "basic",
   pokemonImage: null,
   collectionSymbol: null,
+  preEvolutionImage: null,
   hp: "",
   name: "",
   description: "",
@@ -208,7 +210,7 @@ export default function PokemonCard() {
   const canRedo = historyIndex < history.length - 1;
 
   const {
-    currentTemplate, currentStage, pokemonImage, collectionSymbol, hp, name, description, curiosity,
+    currentTemplate, currentStage, pokemonImage, collectionSymbol, preEvolutionImage, hp, name, description, curiosity,
     illustration, pokemonNumber, rarity, extraInfo, weakness, secondWeakness,
     weaknessValue, level, resistance, secondResistance, resistanceValue, retreat, movesCount,
     weaknessesCount, resistancesCount, hasPassiveSkill, passiveSkill, firstSkill, firstSkillDamage,
@@ -312,13 +314,41 @@ export default function PokemonCard() {
           <View ref={cardRef} style={styles.realSizeCard}>
             <Image source={templateSource} style={styles.cardImage} />
 
+            {/* ========= BEGIN:: Pré-evolução (só cartas de estágio) ========= */}
+            {isStageCard && (
+              <TouchableOpacity
+                style={[
+                  styles.preEvolutionButton,
+                  buttonCheckTemplate() && styles.preEvolutionButtonCustom,
+                  isPreviewMode && styles.previewMode,
+                  // Sem a borda (transparente) na prévia, a foto ocupa a box inteira e cobre o prateado da estrela
+                  isPreviewMode && { borderWidth: 0 },
+                ]}
+                onPress={() => pickImage((uri) => updateCard({ preEvolutionImage: uri }))}
+                disabled={isPreviewMode}
+              >
+                {preEvolutionImage ?
+                  <Image
+                    source={{ uri: preEvolutionImage }}
+                    style={styles.preEvolutionImage}
+                  />
+                : null}
+              </TouchableOpacity>
+            )}
+            {/* ========= END:: Pré-evolução ========= */}
+
             {/* ========= BEGIN:: Nome ========= */}
             <TouchableOpacity
               style={[
                 styles.nameButton,
+                isStageCard && { left: 180, width: 200 },
                 buttonCheckTemplate() && styles.nameButtonCustom,
-                isStageCard && { left: 180, width: 210 },
-                buttonCheckTemplate() && isStageCard && { left: 170, width: 230 },
+                buttonCheckTemplate() && isStageCard && {
+                  top: 67,
+                  left: 170,
+                  width: 230,
+                  height: 51
+                },
                 isPreviewMode && styles.previewMode
               ]}
               onPress={() => setNameModalVisible(true)}
@@ -329,6 +359,7 @@ export default function PokemonCard() {
                   style={[
                     styles.nameText,
                     buttonCheckTemplate() && styles.nameTextCustom,
+                    buttonCheckTemplate() && isStageCard && { fontSize: 45 },
                     textCheckTemplate() && { color: "#fff" },
                   ]}
                 >
@@ -365,6 +396,7 @@ export default function PokemonCard() {
             <TouchableOpacity
               style={[
                 styles.hpButton,
+                isStageCard && { top: 73 },
                 buttonCheckTemplate() && styles.hpButtonCustom,
                 isPreviewMode && styles.previewMode,
                 { width: hp.length > 2 ? 150 : 125 }
@@ -519,7 +551,6 @@ export default function PokemonCard() {
                   style={[
                     styles.firstSkillEnergyButton,
                     isPreviewMode && styles.previewMode,
-                    isPreviewMode && firstSkillEnergy && firstSkillEnergy.length >= 3 && { top: 605 },
                   ]}
                   onPress={() => setFirstSkillEnergyModalVisible(true)}
                   disabled={isPreviewMode}
@@ -603,7 +634,6 @@ export default function PokemonCard() {
                     styles.secondSkillEnergyButton,
                     buttonCheckTemplate() && movesCount === 1 && hasPassiveSkill && styles.secondSkillEnergyButtonCustom,
                     isPreviewMode && styles.previewMode,
-                    isPreviewMode && secondSkillEnergy && secondSkillEnergy.length >= 3 && { top: 725 },
                   ]}
                   onPress={() => setSecondSkillEnergyModalVisible(true)}
                   disabled={isPreviewMode}
@@ -1457,6 +1487,31 @@ const styles = StyleSheet.create({
   movesSeparatorLineCustom: {
     top: 730,
   },
+  // ========= BEGIN:: Pré-evolução =========
+  preEvolutionButton: {
+    position: "absolute",
+    top: 89,
+    left: 64,
+    width: 93,
+    height: 79,
+    borderWidth: 3,
+    borderColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  preEvolutionButtonCustom: {
+    top: 81,
+    left: 59,
+    width: 89,
+    height: 80,
+  },
+  preEvolutionImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+  // ========= END:: Pré-evolução =========
+
   // ========= BEGIN:: Nome =========
   nameButton: {
     position: "absolute",
@@ -1519,16 +1574,16 @@ const styles = StyleSheet.create({
   // ========= BEGIN:: HP =========
   hpButton: {
     position: "absolute",
-    top: 69, // Mesmo alinhamento vertical da bolinha
+    top: 69,
     right: 130,
     width: 150,
-    height: 50, // Mesma altura
+    height: 50,
     borderWidth: 3,
     borderColor: "white",
     borderRadius: 8,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
-    justifyContent: "flex-start", // Centraliza o texto verticalmente
-    alignItems: "flex-start", // Centraliza o texto horizontalmente
+    justifyContent: "center",
+    alignItems: "flex-start",
   },
   // Estilo único dos templates listados em BUTTON_CUSTOM_TEMPLATES
   hpButtonCustom: {
