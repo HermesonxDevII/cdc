@@ -751,7 +751,8 @@ export default function PokemonCard() {
                       <ResponsiveText
                         style={[
                           styles.skillNameText,
-                          { fontSize: 35, textAlign: 'center', width: '100%' },
+                          { fontSize: 35 },
+                          !firstSkill.description?.trim() && { textAlign: 'center', width: '100%' },
                           textCheckTemplate() && { color: "#fff" }
                         ]}
                       >
