@@ -1533,11 +1533,14 @@ const styles = StyleSheet.create({
   },
   nameText: {
     fontFamily: "GillSans-Bold",
-    fontSize: 45,
+    fontSize: 51,
     color: "#000",
+    includeFontPadding: false,
+    lineHeight: 47,
   },
   nameTextCustom: {
-    fontSize: 35,
+    fontSize: 46,
+    lineHeight: 38,
   },
   // ========= END:: Nome =========
 
