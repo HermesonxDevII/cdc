@@ -579,9 +579,15 @@ export default function PokemonCard() {
                   disabled={isPreviewMode}
                 >
                   {firstSkill ? (
-                    <ResponsiveText style={[styles.skillDescriptionText, textCheckTemplate() && { color: "#fff" }]}>
-                      <ResponsiveText style={[styles.skillNameText, textCheckTemplate() && { color: "#fff" }]}>{firstSkill.name} </ResponsiveText>
-                      {firstSkill.description}
+                    <ResponsiveText
+                      style={[
+                        styles.skillDescriptionText,
+                        !firstSkill.description?.trim() && { textAlign: "center", width: "100%" },
+                        textCheckTemplate() && { color: "#fff" }
+                      ]}
+                    >
+                      <ResponsiveText style={[styles.skillNameText, textCheckTemplate() && { color: "#fff" }]}>{firstSkill.name}</ResponsiveText>
+                      {firstSkill.description ? ` ${firstSkill.description}` : ""}
                     </ResponsiveText>
                   ) : null}
                 </TouchableOpacity>
@@ -663,9 +669,15 @@ export default function PokemonCard() {
                   disabled={isPreviewMode}
                 >
                   {secondSkill ? (
-                    <ResponsiveText style={[styles.skillDescriptionText, textCheckTemplate() && { color: "#fff" }]}>
-                      <ResponsiveText style={[styles.skillNameText, textCheckTemplate() && { color: "#fff" }]}>{secondSkill.name} </ResponsiveText>
-                      {secondSkill.description}
+                    <ResponsiveText
+                      style={[
+                        styles.skillDescriptionText,
+                        !secondSkill.description?.trim() && { textAlign: "center", width: "100%" },
+                        textCheckTemplate() && { color: "#fff" }
+                      ]}
+                    >
+                      <ResponsiveText style={[styles.skillNameText, textCheckTemplate() && { color: "#fff" }]}>{secondSkill.name}</ResponsiveText>
+                      {secondSkill.description ? ` ${secondSkill.description}` : ""}
                     </ResponsiveText>
                   ) : null}
                 </TouchableOpacity>
@@ -739,7 +751,7 @@ export default function PokemonCard() {
                       <ResponsiveText
                         style={[
                           styles.skillNameText,
-                          { fontSize: 35, textAlign: 'center' },
+                          { fontSize: 35, textAlign: 'center', width: '100%' },
                           textCheckTemplate() && { color: "#fff" }
                         ]}
                       >
