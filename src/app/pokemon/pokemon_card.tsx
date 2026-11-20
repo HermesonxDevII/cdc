@@ -524,7 +524,7 @@ export default function PokemonCard() {
             </TouchableOpacity>
             {/* ========= END:: Imagem ========= */}
 
-            {/* ========= BEGIN: Descrição ========= */}
+            {/* ========= BEGIN:: Descrição ========= */}
             <TouchableOpacity
               style={[
                 styles.descriptionButton,
@@ -540,7 +540,7 @@ export default function PokemonCard() {
                 </ResponsiveText>
               : null}
             </TouchableOpacity>
-            {/* ========= END: Descrição ========= */}
+            {/* ========= END:: Descrição ========= */}
 
             {/* ========= BEGIN:: Símbolo da Coleção ========= */}
             <TouchableOpacity
@@ -632,7 +632,7 @@ export default function PokemonCard() {
                     </ResponsiveText>
                   ) : null}
                 </TouchableOpacity>
-                {/* ========= END:: Nome e descrição */}
+                {/* ========= END:: Nome e descrição ========= */}
 
                 {/* ========= BEGIN:: Qtd. de Dano ========= */}
                 <TouchableOpacity
@@ -751,7 +751,7 @@ export default function PokemonCard() {
             )}
             {/* ========= END:: Movimento 2 ========= */}
 
-            {/* ========= END:: Movimento unico ========= */}
+            {/* ========= BEGIN:: Movimento único ========= */}
             {movesCount === 1 && !hasPassiveSkill && (
               <>
                 {/* ========= BEGIN:: Custo ========= */}
@@ -776,7 +776,7 @@ export default function PokemonCard() {
                     </View>
                   ) : null}
                 </TouchableOpacity>
-                {/* ========= BEGIN:: Custo ========= */}
+                {/* ========= END:: Custo ========= */}
 
                 {/* ========= BEGIN:: Nome e descrição ========= */}
                 <TouchableOpacity
@@ -841,7 +841,7 @@ export default function PokemonCard() {
                 {/* ========= END:: Qtd. de Dano ========= */}
               </>
             )}
-            {/* ========= END:: Movimento unico ========= */}
+            {/* ========= END:: Movimento único ========= */}
 
             {/* ========= BEGIN:: Fraquezas ========= */}
             {/* ========= BEGIN:: Fraqueza 1 ========= */}
@@ -1058,7 +1058,7 @@ export default function PokemonCard() {
                 </ResponsiveText>
               ) : null}
             </TouchableOpacity>
-            {/* ========= BEGIN:: Illustrador ========= */}
+            {/* ========= END:: Illustrador ========= */}
 
             {/* ========= BEGIN:: Licença ========= */}
             <TouchableOpacity
@@ -1770,7 +1770,7 @@ const styles = StyleSheet.create({
   },
   // ========= END:: Imagem =========
 
-  // ========= BEGIN: Descrição =========
+  // ========= BEGIN:: Descrição =========
   descriptionButton: {
     position: "absolute",
     top: 549,
@@ -1797,7 +1797,7 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
   },
-  // ========= END: Descrição =========
+  // ========= END:: Descrição =========
 
   // ========= BEGIN:: Símbolo da Coleção =========
   collectionSymbolButton: {
