@@ -343,38 +343,26 @@ export default function PokemonCard() {
 
             {/* ========= BEGIN:: Evolui de (só cartas de estágio) ========= */}
             {isStageCard && (
-              <>
-                <ResponsiveText
-                  style={[
-                    styles.evolvesFromText,
-                    buttonCheckTemplate() && styles.evolvesFromTextCustom,
-                    textCheckTemplate() && { color: "#fff" },
-                  ]}
-                >
-                  Evolui de
-                </ResponsiveText>
-
-                <TouchableOpacity
-                  style={[
-                    styles.preEvolutionNameButton,
-                    buttonCheckTemplate() && styles.preEvolutionNameButtonCustom,
-                    isPreviewMode && styles.previewMode,
-                  ]}
-                  onPress={() => setPreEvolutionNameModalVisible(true)}
-                  disabled={isPreviewMode}
-                >
-                  {preEvolutionName ? (
-                    <ResponsiveText
-                      style={[
-                        styles.preEvolutionNameText,
-                        textCheckTemplate() && { color: "#fff" },
-                      ]}
-                    >
-                      {preEvolutionName}
-                    </ResponsiveText>
-                  ) : null}
-                </TouchableOpacity>
-              </>
+              <TouchableOpacity
+                style={[
+                  styles.preEvolutionNameButton,
+                  buttonCheckTemplate() && styles.preEvolutionNameButtonCustom,
+                  isPreviewMode && styles.previewMode,
+                ]}
+                onPress={() => setPreEvolutionNameModalVisible(true)}
+                disabled={isPreviewMode}
+              >
+                {preEvolutionName ? (
+                  <ResponsiveText
+                    style={[
+                      styles.preEvolutionNameText,
+                      textCheckTemplate() && { color: "#fff" },
+                    ]}
+                  >
+                    Evolui de {preEvolutionName}
+                  </ResponsiveText>
+                ) : null}
+              </TouchableOpacity>
             )}
             {/* ========= END:: Evolui de ========= */}
 
@@ -1577,24 +1565,11 @@ const styles = StyleSheet.create({
   // ========= END:: Pré-evolução =========
 
   // ========= BEGIN:: Evolui de =========
-  evolvesFromText: {
-    position: "absolute",
-    top: 48,
-    left: 160,
-    fontFamily: "GillSans-Bold-Italic",
-    fontSize: 17,
-    color: "#000",
-    includeFontPadding: false,
-  },
-  evolvesFromTextCustom: {
-    top: 45,
-    left: 170,
-  },
   preEvolutionNameButton: {
     position: "absolute",
-    top: 43,
-    left: 235,
-    width: 140,
+    top: 45,
+    left: 160,
+    width: 205,
     height: 25,
     borderWidth: 3,
     borderColor: "white",
@@ -1605,14 +1580,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   preEvolutionNameButtonCustom: {
-    top: 40,
-    left: 248,
+    height: 23,
+    top: 42,
+    left: 150,
   },
   preEvolutionNameText: {
     fontFamily: "GillSans-Bold-Italic",
     fontSize: 17,
     color: "#000",
     includeFontPadding: false,
+    // Mesmo caso do nameText: o overflow: "hidden" padrão do Text cortava as pernas do g, j, p e q
+    overflow: "visible",
   },
   // ========= END:: Evolui de =========
 
