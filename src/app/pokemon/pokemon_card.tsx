@@ -1641,6 +1641,9 @@ const styles = StyleSheet.create({
     color: "#000",
     includeFontPadding: false,
     lineHeight: 47,
+    // O lineHeight é menor que a altura natural da fonte, então as pernas do g, j, p e q passam da
+    // caixa do Text. O RN põe overflow: "hidden" em todo Text por padrão, e era isso que as cortava.
+    overflow: "visible",
   },
   nameTextCustom: {
     fontSize: 46,
