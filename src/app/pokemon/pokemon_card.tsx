@@ -25,6 +25,7 @@ import { Back } from "@/components/back";
 import { TypeModal } from "@/components/modals/type_modal";
 import { HpModal } from "@/components/modals/hp_modal";
 import { NameModal } from "@/components/modals/name_modal";
+import { PreEvolutionNameModal } from "@/components/modals/pre_evolution_name_modal";
 import { DescriptionModal } from "@/components/modals/description_modal";
 import { CuriosityModal } from "@/components/modals/curiosity_modal";
 import { IllustrationModal } from "@/components/modals/illustration_modal";
@@ -51,6 +52,7 @@ type CardState = {
   pokemonImage: string | null;
   collectionSymbol: string | null;
   preEvolutionImage: string | null;
+  preEvolutionName?: string;
   hp: string;
   name: string;
   description: string;
@@ -86,6 +88,7 @@ const initialState: CardState = {
   pokemonImage: null,
   collectionSymbol: null,
   preEvolutionImage: null,
+  preEvolutionName: "",
   hp: "",
   name: "",
   description: "",
@@ -147,6 +150,7 @@ const cardScale = (screenWidth * 0.9) / CARD_REAL_WIDTH;
 export default function PokemonCard() {
   const [isTypeModalVisible, setTypeModalVisible] = useState<boolean>(false);
   const [isHpModalVisible, setHpModalVisible] = useState<boolean>(false);
+  const [isPreEvolutionNameModalVisible, setPreEvolutionNameModalVisible] = useState<boolean>(false);
   const [isNameModalVisible, setNameModalVisible] = useState<boolean>(false);
   const [isDescriptionModalVisible, setDescriptionModalVisible] =
     useState<boolean>(false);
@@ -210,7 +214,7 @@ export default function PokemonCard() {
   const canRedo = historyIndex < history.length - 1;
 
   const {
-    currentTemplate, currentStage, pokemonImage, collectionSymbol, preEvolutionImage, hp, name, description, curiosity,
+    currentTemplate, currentStage, pokemonImage, collectionSymbol, preEvolutionImage, preEvolutionName, hp, name, description, curiosity,
     illustration, pokemonNumber, rarity, extraInfo, weakness, secondWeakness,
     weaknessValue, level, resistance, secondResistance, resistanceValue, retreat, movesCount,
     weaknessesCount, resistancesCount, hasPassiveSkill, passiveSkill, firstSkill, firstSkillDamage,
@@ -337,11 +341,48 @@ export default function PokemonCard() {
             )}
             {/* ========= END:: Pré-evolução ========= */}
 
+            {/* ========= BEGIN:: Evolui de (só cartas de estágio) ========= */}
+            {isStageCard && (
+              <>
+                <ResponsiveText
+                  style={[
+                    styles.evolvesFromText,
+                    buttonCheckTemplate() && styles.evolvesFromTextCustom,
+                    textCheckTemplate() && { color: "#fff" },
+                  ]}
+                >
+                  Evolui de
+                </ResponsiveText>
+
+                <TouchableOpacity
+                  style={[
+                    styles.preEvolutionNameButton,
+                    buttonCheckTemplate() && styles.preEvolutionNameButtonCustom,
+                    isPreviewMode && styles.previewMode,
+                  ]}
+                  onPress={() => setPreEvolutionNameModalVisible(true)}
+                  disabled={isPreviewMode}
+                >
+                  {preEvolutionName ? (
+                    <ResponsiveText
+                      style={[
+                        styles.preEvolutionNameText,
+                        textCheckTemplate() && { color: "#fff" },
+                      ]}
+                    >
+                      {preEvolutionName}
+                    </ResponsiveText>
+                  ) : null}
+                </TouchableOpacity>
+              </>
+            )}
+            {/* ========= END:: Evolui de ========= */}
+
             {/* ========= BEGIN:: Nome ========= */}
             <TouchableOpacity
               style={[
                 styles.nameButton,
-                isStageCard && { left: 180, width: 200 },
+                isStageCard && { left: 180, width: 210 },
                 buttonCheckTemplate() && styles.nameButtonCustom,
                 buttonCheckTemplate() && isStageCard && {
                   top: 67,
@@ -1101,6 +1142,16 @@ export default function PokemonCard() {
           }}
         />
 
+        {/* Modal de Pré-Evolução */}
+        <PreEvolutionNameModal
+          visible={isPreEvolutionNameModalVisible}
+          onClose={() => setPreEvolutionNameModalVisible(false)}
+          onSave={(valor) => {
+            updateCard({ preEvolutionName: valor });
+            setPreEvolutionNameModalVisible(false);
+          }}
+        />
+
         {/* Modal de Nome */}
         <NameModal
           visible={isNameModalVisible}
@@ -1524,6 +1575,46 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   // ========= END:: Pré-evolução =========
+
+  // ========= BEGIN:: Evolui de =========
+  evolvesFromText: {
+    position: "absolute",
+    top: 48,
+    left: 160,
+    fontFamily: "GillSans-Bold-Italic",
+    fontSize: 17,
+    color: "#000",
+    includeFontPadding: false,
+  },
+  evolvesFromTextCustom: {
+    top: 45,
+    left: 170,
+  },
+  preEvolutionNameButton: {
+    position: "absolute",
+    top: 43,
+    left: 235,
+    width: 140,
+    height: 25,
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    paddingHorizontal: 5,
+  },
+  preEvolutionNameButtonCustom: {
+    top: 40,
+    left: 248,
+  },
+  preEvolutionNameText: {
+    fontFamily: "GillSans-Bold-Italic",
+    fontSize: 17,
+    color: "#000",
+    includeFontPadding: false,
+  },
+  // ========= END:: Evolui de =========
 
   // ========= BEGIN:: Nome =========
   nameButton: {
