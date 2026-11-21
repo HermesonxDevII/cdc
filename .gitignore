@@ -41,3 +41,6 @@ example
 # generated native folders
 /ios
 /android
+
+# Claude Code: estado local da trava de testes (.claude/hooks/verify-gate.js)
+.claude/.verify-state.json

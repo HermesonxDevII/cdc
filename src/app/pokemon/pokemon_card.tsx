@@ -18,7 +18,7 @@ import * as Sharing from 'expo-sharing';
 import { captureRef } from 'react-native-view-shot';
 import { BottomTabInset, MaxContentWidth, Spacing } from "@/constants/theme";
 import { TYPE_ICONS } from "@/constants/type_icons";
-import { CARD_TEMPLATES, CardStage } from "@/constants/card_templates";
+import { BUTTON_CUSTOM_TEMPLATES, CARD_TEMPLATES, CardStage, TEXT_CUSTOM_TEMPLATES } from "@/constants/card_templates";
 import { STAGE_IMAGE_OUTLINES, OutlinePoint, outlineToPath, outlineBox } from "@/constants/stage_image_outlines";
 
 import { Back } from "@/components/back";
@@ -126,17 +126,6 @@ const RARITY_ICONS: Record<string, any> = {
   promo: require('../../../assets/images/icons/rarities/promo.png'),
 };
 
-// Templates que recebem o estilo único hpButtonCustom (definido em styles)
-const BUTTON_CUSTOM_TEMPLATES = [
-  "bug", "dragon", "earth", "fairy", "flying", "ghost", "ice", "poison", "rock",
-  "dragon_old", "fairy_old",
-  "dark_old_2", "eletric_old_2", "fighter_old_2", "fire_old_2", "grass_old_2", "metal_old_2",
-  "psychic_old_2", "water_old_2"
-];
-const TEXT_CUSTOM_TEMPLATES = [
-  "dark", "dragon_old", "dark_old_2"
-];
-
 // 1. Definimos o tamanho REAL e gigante da carta para exportação
 const CARD_REAL_WIDTH = 744;
 const CARD_REAL_HEIGHT = 1045;
@@ -180,7 +169,7 @@ export default function PokemonCard() {
   const [isPassiveSkillModalVisible, setPassiveSkillModalVisible] = useState<boolean>(false);
   const [isPreviewMode, setIsPreviewMode] = useState<boolean>(false);
 
-  const cardRef = useRef<View>(null);
+  const cardRef = useRef<React.ComponentRef<typeof View>>(null);
 
   const [history, setHistory] = useState<CardState[]>([initialState]);
   const [historyIndex, setHistoryIndex] = useState<number>(0);
@@ -222,7 +211,7 @@ export default function PokemonCard() {
   } = currentState;
 
   const templateSource = CARD_TEMPLATES[currentStage][currentTemplate];
-  const templateWidth = Image.resolveAssetSource(templateSource).width;
+  const templateWidth = Image.resolveAssetSource(templateSource)?.width ?? 0;
   const isStageCard = currentStage !== "basic";
 
   // Nas cartas de estágio a estrela invade a janela da foto: a foto e a box são desenhadas em SVG

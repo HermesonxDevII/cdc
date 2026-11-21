@@ -6,6 +6,18 @@ const STAGE_2_URL = '../../assets/images/templates/pokemon/stage_2';
 
 export type CardStage = 'basic' | 'stage_1' | 'stage_2';
 
+// Templates cujo PNG tem 3068x4196 (os demais têm 2250x3150): o layout é outro, então recebem os
+// estilos *Custom do pokemon_card. O teste em __tests__/card_templates.test.ts confere a lista com os PNGs.
+export const BUTTON_CUSTOM_TEMPLATES: string[] = [
+  'bug', 'dragon', 'earth', 'fairy', 'flying', 'ghost', 'ice', 'poison', 'rock',
+  'dragon_old', 'fairy_old',
+  'dark_old_2', 'dragon_old_2', 'eletric_old_2', 'fighter_old_2', 'fire_old_2', 'grass_old_2', 'metal_old_2',
+  'psychic_old_2', 'water_old_2',
+];
+
+// Templates de fundo escuro: os textos da carta ficam brancos
+export const TEXT_CUSTOM_TEMPLATES: string[] = ['dark', 'dragon_old', 'dark_old_2'];
+
 export const CARD_TEMPLATES: Record<CardStage, Record<string, ImageSourcePropType>> = {
   basic: {
     bug: require(`${BASIC_URL}/bug.png`),

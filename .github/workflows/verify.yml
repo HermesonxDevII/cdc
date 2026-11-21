@@ -1,0 +1,21 @@
+# Roda o type-check e os testes a cada push na main e em todo pull request
+name: Verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      HUSKY: 0 # o hook de pre-commit não serve para nada no CI
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run verify
