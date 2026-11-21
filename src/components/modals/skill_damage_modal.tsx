@@ -35,7 +35,7 @@ export function SkillDamageModal({ visible, onClose, onSave }: SkillDamageModalP
             </View>
           )}
 
-          <Text style={styles.title}>Dano da Habilidade</Text>
+          <Text style={styles.title}>Dano do Movimento</Text>
           
           {/* Input de Valor */}
           <TextInput

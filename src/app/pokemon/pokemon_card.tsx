@@ -80,6 +80,7 @@ type CardState = {
   secondSkill: { name: string; description: string } | null;
   secondSkillDamage: string;
   secondSkillEnergy: string[] | null;
+  descriptionSpacing: Partial<Record<MoveBox, DescriptionSpacing>>; // box sem ajuste = estilo padrão
 };
 
 const initialState: CardState = {
@@ -116,7 +117,25 @@ const initialState: CardState = {
   secondSkill: null,
   secondSkillDamage: "",
   secondSkillEnergy: null,
+  descriptionSpacing: {},
 };
+
+// Boxes que continuam visíveis (e podem ser selecionadas) no modo editor de descrição de movimento
+type MoveBox = "passive" | "move1" | "move2" | "singleMove";
+
+// Ajuste de espaçamento da descrição de uma box, feito no modo editor: valores somados ao estilo padrão (0 = padrão)
+type DescriptionSpacing = { lineHeight: number; letterSpacing: number };
+
+// Quanto cada toque nas setas do modo editor muda (em px da carta 744x1045)
+const LINE_HEIGHT_STEP = 1;
+const LETTER_SPACING_STEP = 0.25;
+
+// Altura natural da linha na fonte GillSans, proporcional ao tamanho: (ascender + descender) / unitsPerEm do
+// gill_sans.ttf. As descrições não têm lineHeight no estilo, então essa é a base do line height ajustado
+const GILL_SANS_LINE_HEIGHT = (1903 + 472) / 2048;
+
+// Tamanho da fonte da descrição do Movimento único (as outras descrições usam o do skillDescriptionText)
+const SINGLE_MOVE_DESCRIPTION_FONT_SIZE = 23;
 
 // Mapeamento dos símbolos de raridade (os de tipagem vêm de @/constants/type_icons)
 const RARITY_ICONS: Record<string, any> = {
@@ -168,6 +187,21 @@ export default function PokemonCard() {
   const [isMenuModalVisible, setMenuModalVisible] = useState<boolean>(false);
   const [isPassiveSkillModalVisible, setPassiveSkillModalVisible] = useState<boolean>(false);
   const [isPreviewMode, setIsPreviewMode] = useState<boolean>(false);
+  // Modo editor de descrição de movimento (opção do menu): como o preview, fica fora do histórico de desfazer
+  const [editMovesDescription, setEditMovesDescription] = useState<boolean>(false);
+  // Box selecionada no modo editor (uma por vez): fica azul em vez de abrir o modal de edição
+  const [selectedMoveBox, setSelectedMoveBox] = useState<MoveBox | null>(null);
+
+  // No modo editor, tocar numa box de movimento seleciona ela (ou desmarca, se já estava) em vez de abrir o modal
+  const handleMoveBoxPress = (box: MoveBox, openModal: () => void) => {
+    if (!editMovesDescription) return openModal();
+    setSelectedMoveBox(selectedMoveBox === box ? null : box);
+  };
+  const isMoveBoxSelected = (box: MoveBox) => editMovesDescription && selectedMoveBox === box;
+
+  // Boxes como no preview (sem borda e fundo, só o valor aparece, e não abrem o modal): no preview, todas;
+  // no modo editor de descrição, todas menos as de Habilidade e de nome/descrição dos movimentos
+  const hideBoxes = isPreviewMode || editMovesDescription;
 
   const cardRef = useRef<React.ComponentRef<typeof View>>(null);
 
@@ -207,7 +241,7 @@ export default function PokemonCard() {
     illustration, pokemonNumber, rarity, extraInfo, weakness, secondWeakness,
     weaknessValue, level, resistance, secondResistance, resistanceValue, retreat, movesCount,
     weaknessesCount, resistancesCount, hasPassiveSkill, passiveSkill, firstSkill, firstSkillDamage,
-    firstSkillEnergy, secondSkill, secondSkillDamage, secondSkillEnergy
+    firstSkillEnergy, secondSkill, secondSkillDamage, secondSkillEnergy, descriptionSpacing
   } = currentState;
 
   const templateSource = CARD_TEMPLATES[currentStage][currentTemplate];
@@ -219,6 +253,55 @@ export default function PokemonCard() {
   const stageImageOutline: OutlinePoint[] | undefined = isStageCard
     ? STAGE_IMAGE_OUTLINES[templateWidth]
     : undefined;
+
+  // ========= Modo editor de descrição: espaçamento da descrição de cada box =========
+  const spacingOf = (box: MoveBox): DescriptionSpacing =>
+    descriptionSpacing[box] ?? { lineHeight: 0, letterSpacing: 0 };
+  const isSpacingAdjusted = (box: MoveBox) =>
+    spacingOf(box).lineHeight !== 0 || spacingOf(box).letterSpacing !== 0;
+  const baseLineHeight = (box: MoveBox) =>
+    Math.round(
+      (box === "singleMove" ? SINGLE_MOVE_DESCRIPTION_FONT_SIZE : styles.skillDescriptionText.fontSize) *
+        GILL_SANS_LINE_HEIGHT
+    );
+
+  // Estilo extra da descrição: só existe se o usuário ajustou o espaçamento dela; sem ajuste fica o estilo padrão
+  const descriptionSpacingStyle = (box: MoveBox, hasDescription: boolean) => {
+    if (!hasDescription || !isSpacingAdjusted(box)) return null;
+    const { lineHeight, letterSpacing } = spacingOf(box);
+    return {
+      ...(lineHeight !== 0 ? { lineHeight: baseLineHeight(box) + lineHeight } : {}),
+      ...(letterSpacing !== 0 ? { letterSpacing } : {}),
+      // Com o line height menor, as letras passam da caixa do Text, e o overflow padrão as cortaria (ver nameText)
+      overflow: "visible" as const,
+    };
+  };
+  // Na Habilidade e nos Movimentos 1 e 2 o nome fica dentro do parágrafo da descrição: sem isso herdaria o letter spacing
+  const keepNameSpacing = (box: MoveBox) => isSpacingAdjusted(box) && { letterSpacing: 0 };
+
+  // Setas do modo editor: somam um passo ao espaçamento da descrição da box selecionada
+  const adjustDescriptionSpacing = (change: Partial<DescriptionSpacing>) => {
+    if (!selectedMoveBox) return;
+    const current = spacingOf(selectedMoveBox);
+    const lineHeight = current.lineHeight + (change.lineHeight ?? 0);
+    if (baseLineHeight(selectedMoveBox) + lineHeight < 1) return; // o line height precisa continuar positivo
+    updateCard({
+      descriptionSpacing: {
+        ...descriptionSpacing,
+        [selectedMoveBox]: { lineHeight, letterSpacing: current.letterSpacing + (change.letterSpacing ?? 0) },
+      },
+    });
+  };
+
+  // Girar: volta a descrição da box selecionada para o estilo padrão
+  const resetDescriptionSpacing = () => {
+    if (!selectedMoveBox) return;
+    const { [selectedMoveBox]: _reset, ...otherBoxes } = descriptionSpacing;
+    updateCard({ descriptionSpacing: otherBoxes });
+  };
+  const canResetSpacing = selectedMoveBox !== null && isSpacingAdjusted(selectedMoveBox);
+  // Sem box selecionada as setas ficam apagadas, como o Girar
+  const canAdjustSpacing = selectedMoveBox !== null;
 
   const router = useRouter();
 
@@ -313,12 +396,12 @@ export default function PokemonCard() {
                 style={[
                   styles.preEvolutionButton,
                   buttonCheckTemplate() && styles.preEvolutionButtonCustom,
-                  isPreviewMode && styles.previewMode,
+                  hideBoxes && styles.previewMode,
                   // Sem a borda (transparente) na prévia, a foto ocupa a box inteira e cobre o prateado da estrela
-                  isPreviewMode && { borderWidth: 0 },
+                  hideBoxes && { borderWidth: 0 },
                 ]}
                 onPress={() => pickImage((uri) => updateCard({ preEvolutionImage: uri }))}
-                disabled={isPreviewMode}
+                disabled={hideBoxes}
               >
                 {preEvolutionImage ?
                   <Image
@@ -336,10 +419,10 @@ export default function PokemonCard() {
                 style={[
                   styles.preEvolutionNameButton,
                   buttonCheckTemplate() && styles.preEvolutionNameButtonCustom,
-                  isPreviewMode && styles.previewMode,
+                  hideBoxes && styles.previewMode,
                 ]}
                 onPress={() => setPreEvolutionNameModalVisible(true)}
-                disabled={isPreviewMode}
+                disabled={hideBoxes}
               >
                 {preEvolutionName ? (
                   <ResponsiveText
@@ -367,10 +450,10 @@ export default function PokemonCard() {
                   width: 230,
                   height: 51
                 },
-                isPreviewMode && styles.previewMode
+                hideBoxes && styles.previewMode,
               ]}
               onPress={() => setNameModalVisible(true)}
-              disabled={isPreviewMode}
+              disabled={hideBoxes}
             >
               {name ?
                 <ResponsiveText
@@ -392,15 +475,15 @@ export default function PokemonCard() {
               style={[
                 styles.levelButton,
                 buttonCheckTemplate() && styles.levelButtonCustom,
-                isPreviewMode && styles.previewMode,
+                hideBoxes && styles.previewMode,
                 {
                   right: buttonCheckTemplate()
                     ? (hp.length > 2 ? 265 : 240)
                     : (hp.length > 2 ? 285 : 260)
-                }
+                },
               ]}
               onPress={() => setLevelModalVisible(true)}
-              disabled={isPreviewMode}
+              disabled={hideBoxes}
             >
               {level ?
                 <ResponsiveText style={[styles.levelText, textCheckTemplate() && { color: "#fff" }]}>
@@ -416,11 +499,11 @@ export default function PokemonCard() {
                 styles.hpButton,
                 isStageCard && { top: 73 },
                 buttonCheckTemplate() && styles.hpButtonCustom,
-                isPreviewMode && styles.previewMode,
-                { width: hp.length > 2 ? 150 : 125 }
+                hideBoxes && styles.previewMode,
+                { width: hp.length > 2 ? 150 : 125 },
               ]}
               onPress={() => setHpModalVisible(true)}
-              disabled={isPreviewMode}
+              disabled={hideBoxes}
             >
               {hp ?
                 <ResponsiveText style={[styles.hpText, textCheckTemplate() && { color: "#fff" }]}>
@@ -435,10 +518,10 @@ export default function PokemonCard() {
               style={[
                 styles.typeButton,
                 buttonCheckTemplate() && styles.typeButtonCustom,
-                isPreviewMode && styles.previewMode
+                hideBoxes && styles.previewMode,
               ]}
               onPress={() => setTypeModalVisible(true)}
-              disabled={isPreviewMode}
+              disabled={hideBoxes}
             />
             {/* ========= END:: Tipo ========= */}
 
@@ -458,7 +541,7 @@ export default function PokemonCard() {
                     <Path d={outlineToPath(stageImageOutline)} />
                   </ClipPath>
                 </Defs>
-                {!isPreviewMode && (
+                {!hideBoxes && (
                   <Path d={outlineToPath(stageImageOutline)} fill="rgba(255, 255, 255, 0.2)" />
                 )}
                 {pokemonImage && (
@@ -469,7 +552,7 @@ export default function PokemonCard() {
                     clipPath={`url(#stageImageClip-${templateWidth})`}
                   />
                 )}
-                {!isPreviewMode && (
+                {!hideBoxes && (
                   <Path
                     d={outlineToPath(stageImageOutline)}
                     fill="none"
@@ -485,14 +568,14 @@ export default function PokemonCard() {
                 styles.imageButton,
                 buttonCheckTemplate() && styles.imageButtonCustom,
                 stageImageOutline && styles.imageButtonStage,
-                isPreviewMode && styles.previewMode
+                hideBoxes && styles.previewMode,
               ]}
               onPress={() => pickImage((uri) => updateCard({ pokemonImage: uri }))}
-              disabled={isPreviewMode}
+              disabled={hideBoxes}
             >
               {pokemonImage
                 ? !stageImageOutline && <Image source={{ uri: pokemonImage }} style={styles.pokemonImage} />
-                : !isPreviewMode && (
+                : !hideBoxes && (
                   <ResponsiveText style={[styles.imageButtonText, buttonCheckTemplate() && styles.imageButtonTextCustom]}>
                     Clique aqui para{"\n"}adicionar uma imagem
                   </ResponsiveText>
@@ -506,10 +589,10 @@ export default function PokemonCard() {
               style={[
                 styles.descriptionButton,
                 buttonCheckTemplate() && styles.descriptionButtonCustom,
-                isPreviewMode && styles.previewMode,
+                hideBoxes && styles.previewMode,
               ]}
               onPress={() => setDescriptionModalVisible(true)}
-              disabled={isPreviewMode}
+              disabled={hideBoxes}
             >
               {description ?
                 <ResponsiveText style={[styles.descriptionText, textCheckTemplate() && { color: "#fff" }]}>
@@ -524,10 +607,10 @@ export default function PokemonCard() {
               style={[
                 styles.collectionSymbolButton,
                 buttonCheckTemplate() && styles.collectionSymbolButtonCustom,
-                isPreviewMode && styles.previewMode,
+                hideBoxes && styles.previewMode,
               ]}
               onPress={() => pickImage((uri) => updateCard({ collectionSymbol: uri }))}
-              disabled={isPreviewMode}
+              disabled={hideBoxes}
             >
               {collectionSymbol ?
                 <Image
@@ -544,14 +627,23 @@ export default function PokemonCard() {
                 style={[
                   styles.passiveSkillButton,
                   buttonCheckTemplate() && styles.passiveSkillButtonCustom,
-                  isPreviewMode && styles.previewMode
+                  isPreviewMode && styles.previewMode,
+                  isMoveBoxSelected("passive") && styles.selectedBox,
                 ]}
-                onPress={() => setPassiveSkillModalVisible(true)}
+                accessibilityLabel="Habilidade"
+                onPress={() => handleMoveBoxPress("passive", () => setPassiveSkillModalVisible(true))}
                 disabled={isPreviewMode}
               >
                 {passiveSkill ? (
-                  <ResponsiveText style={[styles.skillDescriptionText, { width: '100%' }, textCheckTemplate() && { color: "#fff" }]}>
-                    <ResponsiveText style={[styles.skillNameText, { color: passiveSkill.color || '#CC0000', fontSize: 25 }]}>
+                  <ResponsiveText
+                    style={[
+                      styles.skillDescriptionText,
+                      { width: '100%' },
+                      textCheckTemplate() && { color: "#fff" },
+                      descriptionSpacingStyle("passive", !!passiveSkill.description?.trim()),
+                    ]}
+                  >
+                    <ResponsiveText style={[styles.skillNameText, { color: passiveSkill.color || '#CC0000', fontSize: 25 }, keepNameSpacing("passive")]}>
                       Poder Pokémon: <ResponsiveText style={{ color: passiveSkill.color }}>{passiveSkill.name} </ResponsiveText>
                     </ResponsiveText>
                     {passiveSkill.description}
@@ -568,10 +660,11 @@ export default function PokemonCard() {
                 <TouchableOpacity
                   style={[
                     styles.firstSkillEnergyButton,
-                    isPreviewMode && styles.previewMode,
+                    hideBoxes && styles.previewMode,
                   ]}
+                  accessibilityLabel="Custo do Movimento 1"
                   onPress={() => setFirstSkillEnergyModalVisible(true)}
-                  disabled={isPreviewMode}
+                  disabled={hideBoxes}
                 >
                   {firstSkillEnergy && firstSkillEnergy.length > 0 ? (
                     <View style={styles.skillEnergyContainer}>
@@ -591,9 +684,11 @@ export default function PokemonCard() {
                 <TouchableOpacity
                   style={[
                     styles.firstSkillButton,
-                    isPreviewMode && styles.previewMode
+                    isPreviewMode && styles.previewMode,
+                    isMoveBoxSelected("move1") && styles.selectedBox,
                   ]}
-                  onPress={() => setFirstSkillModalVisible(true)}
+                  accessibilityLabel="Movimento 1"
+                  onPress={() => handleMoveBoxPress("move1", () => setFirstSkillModalVisible(true))}
                   disabled={isPreviewMode}
                 >
                   {firstSkill ? (
@@ -601,10 +696,11 @@ export default function PokemonCard() {
                       style={[
                         styles.skillDescriptionText,
                         !firstSkill.description?.trim() && { textAlign: "center", width: "100%" },
-                        textCheckTemplate() && { color: "#fff" }
+                        textCheckTemplate() && { color: "#fff" },
+                        descriptionSpacingStyle("move1", !!firstSkill.description?.trim()),
                       ]}
                     >
-                      <ResponsiveText style={[styles.skillNameText, textCheckTemplate() && { color: "#fff" }]}>{firstSkill.name}</ResponsiveText>
+                      <ResponsiveText style={[styles.skillNameText, textCheckTemplate() && { color: "#fff" }, keepNameSpacing("move1")]}>{firstSkill.name}</ResponsiveText>
                       {firstSkill.description ? ` ${firstSkill.description}` : ""}
                     </ResponsiveText>
                   ) : null}
@@ -615,10 +711,11 @@ export default function PokemonCard() {
                 <TouchableOpacity
                   style={[
                     styles.firstSkillDamageButton,
-                    isPreviewMode && styles.previewMode,
+                    hideBoxes && styles.previewMode,
                   ]}
+                  accessibilityLabel="Dano do Movimento 1"
                   onPress={() => setFirstSkillDamageModalVisible(true)}
-                  disabled={isPreviewMode}
+                  disabled={hideBoxes}
                 >
                   {firstSkillDamage ?
                     <ResponsiveText
@@ -657,10 +754,11 @@ export default function PokemonCard() {
                   style={[
                     styles.secondSkillEnergyButton,
                     buttonCheckTemplate() && movesCount === 1 && hasPassiveSkill && styles.secondSkillEnergyButtonCustom,
-                    isPreviewMode && styles.previewMode,
+                    hideBoxes && styles.previewMode,
                   ]}
+                  accessibilityLabel="Custo do Movimento 2"
                   onPress={() => setSecondSkillEnergyModalVisible(true)}
-                  disabled={isPreviewMode}
+                  disabled={hideBoxes}
                 >
                   {secondSkillEnergy && secondSkillEnergy.length > 0 ? (
                     <View style={styles.skillEnergyContainer}>
@@ -681,9 +779,11 @@ export default function PokemonCard() {
                   style={[
                     styles.secondSkillButton,
                     buttonCheckTemplate() && movesCount === 1 && hasPassiveSkill && styles.secondSkillButtonCustom,
-                    isPreviewMode && styles.previewMode
+                    isPreviewMode && styles.previewMode,
+                    isMoveBoxSelected("move2") && styles.selectedBox,
                   ]}
-                  onPress={() => setSecondSkillModalVisible(true)}
+                  accessibilityLabel="Movimento 2"
+                  onPress={() => handleMoveBoxPress("move2", () => setSecondSkillModalVisible(true))}
                   disabled={isPreviewMode}
                 >
                   {secondSkill ? (
@@ -691,10 +791,11 @@ export default function PokemonCard() {
                       style={[
                         styles.skillDescriptionText,
                         !secondSkill.description?.trim() && { textAlign: "center", width: "100%" },
-                        textCheckTemplate() && { color: "#fff" }
+                        textCheckTemplate() && { color: "#fff" },
+                        descriptionSpacingStyle("move2", !!secondSkill.description?.trim()),
                       ]}
                     >
-                      <ResponsiveText style={[styles.skillNameText, textCheckTemplate() && { color: "#fff" }]}>{secondSkill.name}</ResponsiveText>
+                      <ResponsiveText style={[styles.skillNameText, textCheckTemplate() && { color: "#fff" }, keepNameSpacing("move2")]}>{secondSkill.name}</ResponsiveText>
                       {secondSkill.description ? ` ${secondSkill.description}` : ""}
                     </ResponsiveText>
                   ) : null}
@@ -706,10 +807,11 @@ export default function PokemonCard() {
                   style={[
                     styles.secondSkillDamageButton,
                     buttonCheckTemplate() && movesCount === 1 && hasPassiveSkill && styles.secondSkillDamageButtonCustom,
-                    isPreviewMode && styles.previewMode,
+                    hideBoxes && styles.previewMode,
                   ]}
+                  accessibilityLabel="Dano do Movimento 2"
                   onPress={() => setSecondSkillDamageModalVisible(true)}
-                  disabled={isPreviewMode}
+                  disabled={hideBoxes}
                 >
                   {secondSkillDamage ?
                     <ResponsiveText
@@ -735,11 +837,12 @@ export default function PokemonCard() {
                 <TouchableOpacity
                   style={[
                     styles.firstSkillEnergyButton,
-                    isPreviewMode && styles.previewMode,
-                    { top: 650, height: 100 }
+                    hideBoxes && styles.previewMode,
+                    { top: 650, height: 100 },
                   ]}
+                  accessibilityLabel="Custo do Movimento único"
                   onPress={() => setFirstSkillEnergyModalVisible(true)}
-                  disabled={isPreviewMode}
+                  disabled={hideBoxes}
                 >
                   {firstSkillEnergy && firstSkillEnergy.length > 0 ? (
                     <View style={styles.skillEnergyContainer}>
@@ -760,8 +863,10 @@ export default function PokemonCard() {
                   style={[
                     styles.singleSkillButton,
                     isPreviewMode && styles.previewMode,
+                    isMoveBoxSelected("singleMove") && styles.selectedBox,
                   ]}
-                  onPress={() => setFirstSkillModalVisible(true)}
+                  accessibilityLabel="Movimento único"
+                  onPress={() => handleMoveBoxPress("singleMove", () => setFirstSkillModalVisible(true))}
                   disabled={isPreviewMode}
                 >
                   {firstSkill ? (
@@ -781,8 +886,9 @@ export default function PokemonCard() {
                         <ResponsiveText
                           style={[
                             styles.skillDescriptionText,
-                            { fontSize: 23, textAlign: 'left', marginTop: 5 },
+                            { fontSize: SINGLE_MOVE_DESCRIPTION_FONT_SIZE, textAlign: 'left', marginTop: 5 },
                             textCheckTemplate() && { color: "#fff" },
+                            descriptionSpacingStyle("singleMove", !!firstSkill.description.trim()),
                           ]}
                         >
                           {firstSkill.description}
@@ -797,11 +903,12 @@ export default function PokemonCard() {
                 <TouchableOpacity
                   style={[
                     styles.firstSkillDamageButton,
-                    isPreviewMode && styles.previewMode,
-                    { top: 650, height: 100 } // Valores provisórios centralizados
+                    hideBoxes && styles.previewMode,
+                    { top: 650, height: 100 }, // Valores provisórios centralizados
                   ]}
+                  accessibilityLabel="Dano do Movimento único"
                   onPress={() => setFirstSkillDamageModalVisible(true)}
-                  disabled={isPreviewMode}
+                  disabled={hideBoxes}
                 >
                   {firstSkillDamage ?
                     <ResponsiveText
@@ -828,13 +935,13 @@ export default function PokemonCard() {
                 weaknessesCount === 2 && { left: 89 },
                 buttonCheckTemplate() && styles.weaknessButtonCustom,
                 buttonCheckTemplate() && weaknessesCount === 2 && { left: 79 },
-                isPreviewMode && styles.previewMode,
-                !buttonCheckTemplate() && isPreviewMode && {
+                hideBoxes && styles.previewMode,
+                !buttonCheckTemplate() && hideBoxes && {
                   left: weaknessesCount === 2 ? 90 : 110
                 },
               ]}
               onPress={() => setWeaknessModalVisible(true)}
-              disabled={isPreviewMode}
+              disabled={hideBoxes}
             >
               {weakness ? (
                 <Image
@@ -851,13 +958,13 @@ export default function PokemonCard() {
                 style={[
                   styles.secondWeaknessButton,
                   buttonCheckTemplate() && styles.secondWeaknessButtonCustom,
-                  isPreviewMode && styles.previewMode,
-                  !buttonCheckTemplate() && isPreviewMode && {
+                  hideBoxes && styles.previewMode,
+                  !buttonCheckTemplate() && hideBoxes && {
                     left: 135,
                   },
                 ]}
                 onPress={() => setSecondWeaknessModalVisible(true)}
-                disabled={isPreviewMode}
+                disabled={hideBoxes}
               >
                 {secondWeakness ? (
                   <Image
@@ -876,11 +983,11 @@ export default function PokemonCard() {
                 weaknessesCount === 2 && { left: 184 },
                 buttonCheckTemplate() && styles.weaknessValueButtonCustom,
                 buttonCheckTemplate() && weaknessesCount === 2 && { left: 167 },
-                isPreviewMode && styles.previewMode,
-                !buttonCheckTemplate() &&  isPreviewMode && { left: weaknessesCount === 2 ? 180 : 155 },
+                hideBoxes && styles.previewMode,
+                !buttonCheckTemplate() &&  hideBoxes && { left: weaknessesCount === 2 ? 180 : 155 },
               ]}
               onPress={() => setWeaknessValueModalVisible(true)}
-              disabled={isPreviewMode}
+              disabled={hideBoxes}
             >
               {weaknessValue ?
                 <ResponsiveText
@@ -905,13 +1012,13 @@ export default function PokemonCard() {
                 resistancesCount === 2 && { left: 316 },
                 buttonCheckTemplate() && styles.resistanceButtonCustom,
                 buttonCheckTemplate() && resistancesCount === 2 && { left: 319 },
-                isPreviewMode && styles.previewMode,
-                isPreviewMode && {
+                hideBoxes && styles.previewMode,
+                hideBoxes && {
                   left: resistancesCount === 2 ? 318 : 338
                 },
               ]}
               onPress={() => setResistanceModalVisible(true)}
-              disabled={isPreviewMode}
+              disabled={hideBoxes}
             >
               {resistance ? (
                 <Image
@@ -928,13 +1035,13 @@ export default function PokemonCard() {
                 style={[
                   styles.secondResistanceButton,
                   buttonCheckTemplate() && styles.secondResistanceButtonCustom,
-                  isPreviewMode && styles.previewMode,
-                  isPreviewMode && {
+                  hideBoxes && styles.previewMode,
+                  hideBoxes && {
                     left: 363
                   },
                 ]}
                 onPress={() => setSecondResistanceModalVisible(true)}
-                disabled={isPreviewMode}
+                disabled={hideBoxes}
               >
                 {secondResistance ? (
                   <Image
@@ -953,10 +1060,10 @@ export default function PokemonCard() {
                 resistancesCount === 2 && { left: 412 },
                 buttonCheckTemplate() && styles.resistanceValueButtonCustom,
                 buttonCheckTemplate() && resistancesCount === 2 && { left: 407 },
-                isPreviewMode && styles.previewMode,
+                hideBoxes && styles.previewMode,
               ]}
               onPress={() => setResistanceValueModalVisible(true)}
-              disabled={isPreviewMode}
+              disabled={hideBoxes}
             >
               {resistanceValue ?
                 <ResponsiveText
@@ -978,10 +1085,10 @@ export default function PokemonCard() {
               style={[
                 styles.retreatButton,
                 buttonCheckTemplate() && styles.retreatButtonCustom,
-                isPreviewMode && styles.previewMode,
+                hideBoxes && styles.previewMode,
               ]}
               onPress={() => setRetreatModalVisible(true)}
-              disabled={isPreviewMode}
+              disabled={hideBoxes}
             >
               {retreat ? (
                 <View style={{ flexDirection: 'row', gap: 2 }}>
@@ -1005,10 +1112,10 @@ export default function PokemonCard() {
               style={[
                 styles.curiosityButton,
                 buttonCheckTemplate() && styles.curiosityButtonCustom,
-                isPreviewMode && styles.previewMode,
+                hideBoxes && styles.previewMode,
               ]}
               onPress={() => setCuriosityModalVisible(true)}
-              disabled={isPreviewMode}
+              disabled={hideBoxes}
             >
               {curiosity ?
                 <ResponsiveText style={[ styles.curiosityText, textCheckTemplate() && { color: "#fff" }]}>
@@ -1023,11 +1130,11 @@ export default function PokemonCard() {
               style={[
                 styles.illustrationButton,
                 buttonCheckTemplate() && styles.illustrationButtonCustom,
-                isPreviewMode && styles.previewMode,
-                !buttonCheckTemplate() && isPreviewMode && { left: 45 }
+                hideBoxes && styles.previewMode,
+                !buttonCheckTemplate() && hideBoxes && { left: 45 },
               ]}
               onPress={() => setIllustrationModalVisible(true)}
-              disabled={isPreviewMode}
+              disabled={hideBoxes}
             >
               {illustration ? (
                 <ResponsiveText style={[styles.illustrationText, textCheckTemplate() && { color: "#fff" }]}>
@@ -1042,10 +1149,10 @@ export default function PokemonCard() {
               style={[
                 styles.extraInfoButton,
                 buttonCheckTemplate() && styles.extraInfoButtonCustom,
-                isPreviewMode && styles.previewMode
+                hideBoxes && styles.previewMode,
               ]}
               onPress={() => setExtraInfoModalVisible(true)}
-              disabled={isPreviewMode}
+              disabled={hideBoxes}
             >
               {extraInfo ?
                 <ResponsiveText style={[styles.extraInfoText, textCheckTemplate() && { color: "#fff" }]}>
@@ -1060,10 +1167,10 @@ export default function PokemonCard() {
               style={[
                 styles.pokemonNumberButton,
                 buttonCheckTemplate() && styles.pokemonNumberButtonCustom,
-                isPreviewMode && styles.previewMode
+                hideBoxes && styles.previewMode,
               ]}
               onPress={() => setPokemonNumberModalVisible(true)}
-              disabled={isPreviewMode}
+              disabled={hideBoxes}
             >
               {pokemonNumber ?
                 <ResponsiveText style={[styles.pokemonNumberText, textCheckTemplate() && { color: "#fff" }]}>
@@ -1078,10 +1185,10 @@ export default function PokemonCard() {
                 style={[
                   styles.rarityButton,
                   buttonCheckTemplate() && styles.rarityButtonCustom,
-                  isPreviewMode && styles.previewMode
+                  hideBoxes && styles.previewMode,
                 ]}
                 onPress={() => setRarityModalVisible(true)}
-                disabled={isPreviewMode}
+                disabled={hideBoxes}
               >
                 {rarity ? (
                   <Image
@@ -1367,6 +1474,7 @@ export default function PokemonCard() {
           onSelectStage={(stage) => updateCard({ currentStage: stage })}
           movesCount={movesCount}
           onSelectMovesCount={(count) => {
+            setSelectedMoveBox(null); // a box selecionada no modo editor pode deixar de existir
             if (count === 2) {
               updateCard({ movesCount: count, hasPassiveSkill: false });
             } else {
@@ -1375,6 +1483,7 @@ export default function PokemonCard() {
           }}
           hasPassiveSkill={hasPassiveSkill}
           onSelectPassiveSkill={(hasPassive) => {
+            setSelectedMoveBox(null); // a box selecionada no modo editor pode deixar de existir
             if (hasPassive) {
               updateCard({ hasPassiveSkill: hasPassive, movesCount: 1 });
             } else {
@@ -1385,6 +1494,11 @@ export default function PokemonCard() {
           onSelectWeaknessesCount={(count) => updateCard({ weaknessesCount: count })}
           resistancesCount={resistancesCount}
           onSelectResistancesCount={(count) => updateCard({ resistancesCount: count })}
+          editMovesDescription={editMovesDescription}
+          onSelectEditMovesDescription={(edit) => {
+            setEditMovesDescription(edit);
+            setSelectedMoveBox(null); // ligar ou desligar o modo sempre começa sem box selecionada
+          }}
         />
 
         {/* Modal de Descarte de Alterações */}
@@ -1399,51 +1513,128 @@ export default function PokemonCard() {
 
         {/* ========= BEGIN:: Footer bar ========= */}
         <View style={styles.footerBar}>
-          {/* Undo */}
-          <TouchableOpacity
-            onPress={undo}
-            disabled={isPreviewMode || !canUndo}
-            style={{ opacity: isPreviewMode || !canUndo ? 0.3 : 1 }}
-          >
-            <Image
-              source={require("../../../assets/images/icons/arrow_left.png")}
-              style={styles.footerIcon}
-            />
-          </TouchableOpacity>
+          {editMovesDescription ? (
+            <>
+              {/* Modo editor de descrição de movimento (opção "Editar desc. de Mov." do menu): os ícones ajustam
+                  o espaçamento da descrição da box selecionada; o menu continua para o usuário desligar o modo */}
+              {/* Girar: volta a descrição da box selecionada para o padrão (só com algum ajuste feito) */}
+              <TouchableOpacity
+                accessibilityLabel="Restaurar espaçamento da descrição"
+                onPress={resetDescriptionSpacing}
+                disabled={!canResetSpacing}
+                style={{ opacity: canResetSpacing ? 1 : 0.3 }}
+              >
+                <Image
+                  source={require("../../../assets/images/icons/rotate-ccw.png")}
+                  style={[styles.footerIcon]}
+                />
+              </TouchableOpacity>
 
-          {/* Save */}
-          <TouchableOpacity
-            onPress={handleSaveCard}
-            style={{ opacity: 1 }}
-          >
-            <Image
-              source={require("../../../assets/images/icons/save.png")}
-              style={styles.footerIcon}
-            />
-          </TouchableOpacity>
+              {/* Cima: diminui o line height */}
+              <TouchableOpacity
+                accessibilityLabel="Diminuir altura da linha"
+                onPress={() => adjustDescriptionSpacing({ lineHeight: -LINE_HEIGHT_STEP })}
+                disabled={!canAdjustSpacing}
+                style={{ opacity: canAdjustSpacing ? 1 : 0.3 }}
+              >
+                <Image
+                  source={require("../../../assets/images/icons/arrow-up.png")}
+                  style={[styles.footerIcon]}
+                />
+              </TouchableOpacity>
 
-          {/* Preview */}
-          <TouchableOpacity onPress={() => setIsPreviewMode(!isPreviewMode)}>
-            <Image
-              source={require("../../../assets/images/icons/eye.png")}
-              style={styles.footerIcon}
-            />
-          </TouchableOpacity>
+              {/* Baixo: aumenta o line height */}
+              <TouchableOpacity
+                accessibilityLabel="Aumentar altura da linha"
+                onPress={() => adjustDescriptionSpacing({ lineHeight: LINE_HEIGHT_STEP })}
+                disabled={!canAdjustSpacing}
+                style={{ opacity: canAdjustSpacing ? 1 : 0.3 }}
+              >
+                <Image
+                  source={require("../../../assets/images/icons/arrow-down.png")}
+                  style={[styles.footerIcon]}
+                />
+              </TouchableOpacity>
 
-          {/* Redo */}
-          <TouchableOpacity
-            onPress={redo}
-            disabled={isPreviewMode || !canRedo}
-            style={{ opacity: isPreviewMode || !canRedo ? 0.3 : 1 }}
-          >
-            <Image
-              source={require("../../../assets/images/icons/arrow_right.png")}
-              style={styles.footerIcon}
-            />
-          </TouchableOpacity>
+              {/* Esquerda: diminui o letter spacing */}
+              <TouchableOpacity
+                accessibilityLabel="Diminuir espaço entre letras"
+                onPress={() => adjustDescriptionSpacing({ letterSpacing: -LETTER_SPACING_STEP })}
+                disabled={!canAdjustSpacing}
+                style={{ opacity: canAdjustSpacing ? 1 : 0.3 }}
+              >
+                <Image
+                  source={require("../../../assets/images/icons/arrow-left.png")}
+                  style={[styles.footerIcon]}
+                />
+              </TouchableOpacity>
+
+              {/* Direita: aumenta o letter spacing */}
+              <TouchableOpacity
+                accessibilityLabel="Aumentar espaço entre letras"
+                onPress={() => adjustDescriptionSpacing({ letterSpacing: LETTER_SPACING_STEP })}
+                disabled={!canAdjustSpacing}
+                style={{ opacity: canAdjustSpacing ? 1 : 0.3 }}
+              >
+                <Image
+                  source={require("../../../assets/images/icons/arrow-right.png")}
+                  style={[styles.footerIcon]}
+                />
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              {/* Undo */}
+              <TouchableOpacity
+                accessibilityLabel="Desfazer"
+                onPress={undo}
+                disabled={isPreviewMode || !canUndo}
+                style={{ opacity: isPreviewMode || !canUndo ? 0.3 : 1 }}
+              >
+                <Image
+                  source={require("../../../assets/images/icons/arrow_left.png")}
+                  style={styles.footerIcon}
+                />
+              </TouchableOpacity>
+
+              {/* Save */}
+              <TouchableOpacity
+                accessibilityLabel="Salvar"
+                onPress={handleSaveCard}
+                style={{ opacity: 1 }}
+              >
+                <Image
+                  source={require("../../../assets/images/icons/save.png")}
+                  style={styles.footerIcon}
+                />
+              </TouchableOpacity>
+
+              {/* Preview */}
+              <TouchableOpacity accessibilityLabel="Pré-visualizar" onPress={() => setIsPreviewMode(!isPreviewMode)}>
+                <Image
+                  source={require("../../../assets/images/icons/eye.png")}
+                  style={styles.footerIcon}
+                />
+              </TouchableOpacity>
+
+              {/* Redo */}
+              <TouchableOpacity
+                accessibilityLabel="Refazer"
+                onPress={redo}
+                disabled={isPreviewMode || !canRedo}
+                style={{ opacity: isPreviewMode || !canRedo ? 0.3 : 1 }}
+              >
+                <Image
+                  source={require("../../../assets/images/icons/arrow_right.png")}
+                  style={styles.footerIcon}
+                />
+              </TouchableOpacity>
+            </>
+          )}
 
           {/* Menu */}
           <TouchableOpacity
+            accessibilityLabel="Menu"
             onPress={() => setMenuModalVisible(true)}
             disabled={isPreviewMode}
             style={{ opacity: isPreviewMode ? 0.3 : 1 }}
@@ -1505,6 +1696,11 @@ const styles = StyleSheet.create({
   previewMode: {
     backgroundColor: "transparent",
     borderColor: "transparent",
+  },
+  // Box selecionada no modo editor de descrição de movimento: troca o branco da box por azul
+  selectedBox: {
+    borderColor: "#3B82F6",
+    backgroundColor: "rgba(59, 130, 246, 0.2)",
   },
   realSizeCard: {
     width: CARD_REAL_WIDTH,

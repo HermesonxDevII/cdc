@@ -64,6 +64,9 @@
     "modulePaths": [
       "<rootDir>/node_modules/expo/node_modules"
     ],
+    "moduleNameMapper": {
+      "\\.css$": "<rootDir>/jest.style-stub.js"
+    },
     "setupFilesAfterEnv": [
       "<rootDir>/jest.setup.ts"
     ],

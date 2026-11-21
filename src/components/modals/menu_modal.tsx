@@ -23,9 +23,11 @@ interface MenuModalProps {
   onSelectWeaknessesCount: (count: number) => void;
   resistancesCount: number;
   onSelectResistancesCount: (count: number) => void;
+  editMovesDescription: boolean;
+  onSelectEditMovesDescription: (edit: boolean) => void;
 }
 
-export function MenuModal({ visible, onClose, currentTemplate, stage, onSelectStage, movesCount, onSelectMovesCount, hasPassiveSkill, onSelectPassiveSkill, weaknessesCount, onSelectWeaknessesCount, resistancesCount, onSelectResistancesCount }: MenuModalProps) {
+export function MenuModal({ visible, onClose, currentTemplate, stage, onSelectStage, movesCount, onSelectMovesCount, hasPassiveSkill, onSelectPassiveSkill, weaknessesCount, onSelectWeaknessesCount, resistancesCount, onSelectResistancesCount, editMovesDescription, onSelectEditMovesDescription }: MenuModalProps) {
   const insets = useSafeAreaInsets();
 
   const [isStageSelectOpen, setIsStageSelectOpen] = useState(false);
@@ -33,6 +35,7 @@ export function MenuModal({ visible, onClose, currentTemplate, stage, onSelectSt
   const [isPassiveSelectOpen, setIsPassiveSelectOpen] = useState(false);
   const [isWeaknessesSelectOpen, setIsWeaknessesSelectOpen] = useState(false);
   const [isResistancesSelectOpen, setIsResistancesSelectOpen] = useState(false);
+  const [isMovesDescriptionSelectOpen, setIsMovesDescriptionSelectOpen] = useState(false);
 
   const handleStageSelect = (value: CardStage) => {
     onSelectStage(value);
@@ -57,6 +60,11 @@ export function MenuModal({ visible, onClose, currentTemplate, stage, onSelectSt
   const handleResistancesSelect = (value: number) => {
     onSelectResistancesCount(value);
     setIsResistancesSelectOpen(false);
+  };
+
+  const handleMovesDescriptionSelect = (value: boolean) => {
+    onSelectEditMovesDescription(value);
+    setIsMovesDescriptionSelectOpen(false);
   };
 
   return (
@@ -208,16 +216,7 @@ export function MenuModal({ visible, onClose, currentTemplate, stage, onSelectSt
               </View>
             </View>
 
-            <View
-              style={[
-                styles.optionContainer,
-                {
-                  zIndex: -1,
-                  borderBottomWidth: 0,
-                  marginBottom: 80
-                }
-              ]}
-            >
+            <View style={[styles.optionContainer, { zIndex: -1 }]}>
               <Text style={styles.label}>Resistências:</Text>
 
               {/* Custom Select Box */}
@@ -245,6 +244,49 @@ export function MenuModal({ visible, onClose, currentTemplate, stage, onSelectSt
                       onPress={() => handleResistancesSelect(2)}
                     >
                       <Text style={[styles.dropdownOptionText, resistancesCount === 2 && styles.selectedOptionText]}>2</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            </View>
+
+            <View
+              style={[
+                styles.optionContainer,
+                {
+                  zIndex: -2,
+                  borderBottomWidth: 0,
+                  marginBottom: 80
+                }
+              ]}
+            >
+              <Text style={styles.label}>Editar desc. de Mov.:</Text>
+
+              {/* Custom Select Box */}
+              <View style={styles.selectWrapper}>
+                <TouchableOpacity
+                  style={styles.selectBox}
+                  onPress={() => setIsMovesDescriptionSelectOpen(!isMovesDescriptionSelectOpen)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.selectValue}>{editMovesDescription ? 'Sim' : 'Não'}</Text>
+                  <Text style={styles.selectArrow}>{isMovesDescriptionSelectOpen ? '▲' : '▼'}</Text>
+                </TouchableOpacity>
+
+                {/* Dropdown Options */}
+                {isMovesDescriptionSelectOpen && (
+                  <View style={styles.dropdownMenu}>
+                    <TouchableOpacity
+                      style={styles.dropdownOption}
+                      onPress={() => handleMovesDescriptionSelect(true)}
+                    >
+                      <Text style={[styles.dropdownOptionText, editMovesDescription === true && styles.selectedOptionText]}>Sim</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.dropdownOption}
+                      onPress={() => handleMovesDescriptionSelect(false)}
+                    >
+                      <Text style={[styles.dropdownOptionText, editMovesDescription === false && styles.selectedOptionText]}>Não</Text>
                     </TouchableOpacity>
                   </View>
                 )}
